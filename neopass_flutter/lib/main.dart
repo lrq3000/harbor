@@ -4,7 +4,7 @@ import 'package:cryptography/cryptography.dart';
 import 'package:convert/convert.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:flutter_zxing/flutter_zxing.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'dart:convert';
 
@@ -245,11 +245,15 @@ class _IdentityPageState extends State<IdentityPage> {
               child: ElevatedButton(
                   child: Text('Scan Claim'),
                   onPressed: () async {
-                      final String rawScan = await FlutterBarcodeScanner.scanBarcode(
-                        "#ff6666", 
-                        'cancel', 
-                        false, 
-                        ScanMode.QR);
+                    await startCameraProcessing(); // Call this in initState
+                    cameraController?.startImageStream((image) async {
+                      CodeResult rawScan = await processCameraImage(image);
+                      if (rawScan.isValidBool) {
+                        debugPrint(rawScan.textString);
+                      }
+                    return null;
+                    });
+                    stopCameraProcessing(); // Call this in dispose
 
                     final ClaimWithIdentity claim = claimWithIdentityFromJSON(rawScan);
 
@@ -411,11 +415,18 @@ class PresentPage extends StatelessWidget {
         child: ElevatedButton(
             child: Text('Next'),
             onPressed: () async {
-              final String rawScan = await FlutterBarcodeScanner.scanBarcode(
-                "#ff6666", 
-                'cancel', 
-                false, 
-                ScanMode.QR);
+              // Or use flutter_zxing plugin methods 
+              // To read barcode from camera image directly
+             await startCameraProcessing(); // Call this in initState
+             cameraController?.startImageStream((image) async {
+                  CodeResult rawScan = await processCameraImage(image);
+                  if (rawScan.isValidBool) {
+                   debugPrint(rawScan.textString);
+                  }
+              return null;
+              });
+               stopCameraProcessing(); // Call this in dispose
+
 
               final Vouch vouch = vouchFromJSON(rawScan);
 
