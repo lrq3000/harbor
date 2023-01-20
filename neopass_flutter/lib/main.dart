@@ -169,20 +169,20 @@ class NeopassApp extends StatelessWidget {
           primarySwatch: buttonColor,
           canvasColor: Color(0xfff9e8d0),
         ),
-        home: const NewIdentityPage(),
+        home: const NewOrImportProfilePage(),
       ),
     );
   }
 }
 
-class NewIdentityPage extends StatefulWidget {
-  const NewIdentityPage({Key? key}) : super(key: key);
+class NewOrImportProfilePage extends StatefulWidget {
+  const NewOrImportProfilePage({Key? key}) : super(key: key);
 
   @override
-  State<NewIdentityPage> createState() => _NewIdentityPageState();
+  State<NewOrImportProfilePage> createState() => _NewOrImportProfilePageState();
 }
 
-class _NewIdentityPageState extends State<NewIdentityPage> {
+class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
   @override
   Widget build(BuildContext context) {
     var state = context.watch<NeopassModel>();
@@ -230,7 +230,11 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
                   ),
                 ],
               ),
-              onPressed: () async {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return NewProfilePage();
+                }));
+              },
             ),
           ),
           Container(
@@ -272,6 +276,79 @@ class _NewIdentityPageState extends State<NewIdentityPage> {
           Container(
             margin: const EdgeInsets.only(bottom: 25),
             child: Text('www.futo.org', textAlign: TextAlign.center),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class NewProfilePage extends StatefulWidget {
+  const NewProfilePage({Key? key}) : super(key: key);
+
+  @override
+  State<NewProfilePage> createState() => _NewProfilePageState();
+}
+
+class _NewProfilePageState extends State<NewProfilePage> {
+  TextEditingController textController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    var state = context.watch<NeopassModel>();
+
+    return Scaffold(
+      body: Column(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(left: 40, right: 40, top: 100),
+            child: CircleAvatar(
+                backgroundColor: Colors.white,
+                child: const Text(
+                  'Add Profile Picture',
+                  style: TextStyle(color: Colors.black),
+                ),
+                radius: 100,
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 40, right: 40, top: 80),
+            child: TextField(
+              controller: textController,
+              maxLines: 1,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(),
+                labelText: 'Name Profile',
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 30, right: 30, top: 70),
+            child: TextButton(
+              onPressed: () {},
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Next",
+                    style: TextStyle(
+                      fontSize: 30,
+                      decoration: TextDecoration.underline,
+                      color: Colors.black,
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_right,
+                    size: 70,
+                    semanticLabel: 'new profile',
+                    color: Colors.black,
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
