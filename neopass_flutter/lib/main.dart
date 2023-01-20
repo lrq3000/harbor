@@ -119,22 +119,23 @@ class Claim {
 
 class Identity {
   final String encodedPublicKey;
+  final String name;
   final SimpleKeyPair keyPair;
   final List<Claim> claims = [];
 
-  Identity(this.encodedPublicKey, this.keyPair);
+  Identity(this.encodedPublicKey, this.keyPair, this.name);
 }
 
 class NeopassModel extends ChangeNotifier {
   final List<Identity> _identities = [];
 
-  Future<void> createIdentity() async {
+  Future<void> createIdentity(String name) async {
     final algorithm = Ed25519();
     final keyPair = await algorithm.newKeyPair();
     final public = await keyPair.extractPublicKey();
     final encoded = hex.encode(public.bytes);
 
-    _identities.add(Identity(encoded, keyPair));
+    _identities.add(Identity(encoded, keyPair, name));
 
     notifyListeners();
   }
@@ -283,7 +284,6 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
   }
 }
 
-
 class NewProfilePage extends StatefulWidget {
   const NewProfilePage({Key? key}) : super(key: key);
 
@@ -328,7 +328,12 @@ class _NewProfilePageState extends State<NewProfilePage> {
           Container(
             margin: const EdgeInsets.only(left: 30, right: 30, top: 70),
             child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                state.createIdentity(textController.text);
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return ProfilesPage();
+                }));
+              },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -349,6 +354,108 @@ class _NewProfilePageState extends State<NewProfilePage> {
                 ],
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class ProfilesPage extends StatefulWidget {
+  const ProfilesPage({Key? key}) : super(key: key);
+
+  @override
+  State<ProfilesPage> createState() => _ProfilesPageState();
+}
+
+class _ProfilesPageState extends State<ProfilesPage> {
+  Widget _renderProfiles(List<Identity> identities) {
+    return ListView.builder(
+      itemCount: identities.length,
+      padding: const EdgeInsets.all(30),
+      itemBuilder: (BuildContext context, int index) {
+        return Container(
+          margin: const EdgeInsets.only(bottom: 30),
+          height: 90,
+          child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: buttonColor,
+                primary: Colors.black,
+                side: BorderSide(width: 3, color: buttonBorder),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  CircleAvatar(
+                    backgroundColor: Colors.white,
+                    radius: 30,
+                  ),
+                  Text(
+                    identities[index].name,
+                    style: TextStyle(height: 1.2, fontSize: 25)
+                  ),
+                ],
+              ),
+              onPressed: () {},
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var state = context.watch<NeopassModel>();
+
+    return Scaffold(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Container(
+            margin: const EdgeInsets.only(top: 80),
+            child: Text(
+              'Harbor',
+              textAlign: TextAlign.center,
+              style: TextStyle(height: 1, fontSize: 80),
+            ),
+          ),
+          Expanded(
+            child: _renderProfiles(state._identities),
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 30, right: 30, bottom: 30),
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: buttonColor,
+                primary: Colors.black,
+                side: BorderSide(width: 3, color: buttonBorder),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add,
+                    size: 30,
+                    semanticLabel: 'Add New'
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(left: 40),
+                    child: Text('Add New', style: TextStyle(height: 1.2, fontSize: 25)),
+                  ),
+                ],
+              ),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return NewOrImportProfilePage();
+                }));
+              },
+            ),
+          ),
+          Text('A project by FUTO technologies', textAlign: TextAlign.center),
+          Container(
+            margin: const EdgeInsets.only(bottom: 25),
+            child: Text('www.futo.org', textAlign: TextAlign.center),
           ),
         ],
       ),
@@ -400,7 +507,7 @@ class _IdentitiesPageState extends State<IdentitiesPage> {
         child: ElevatedButton(
           child: Text('Create Identity'),
           onPressed: () async {
-            state.createIdentity();
+            // state.createIdentity();
           },
         ),
       ),
