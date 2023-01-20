@@ -14,37 +14,31 @@ void main() {
   runApp(const NeopassApp());
 }
 
-const MaterialColor buttonColor = MaterialColor(
-  0xffeeca97,
-  <int, Color>{
-    50: Color(0xffeeca97),
-    100: Color(0xffeeca97),
-    200: Color(0xffeeca97),
-    300: Color(0xffeeca97),
-    400: Color(0xffeeca97),
-    500: Color(0xffeeca97),
-    600: Color(0xffeeca97),
-    700: Color(0xffeeca97),
-    800: Color(0xffeeca97),
-    900: Color(0xffeeca97),
-  }
-);
+const MaterialColor buttonColor = MaterialColor(0xffeeca97, <int, Color>{
+  50: Color(0xffeeca97),
+  100: Color(0xffeeca97),
+  200: Color(0xffeeca97),
+  300: Color(0xffeeca97),
+  400: Color(0xffeeca97),
+  500: Color(0xffeeca97),
+  600: Color(0xffeeca97),
+  700: Color(0xffeeca97),
+  800: Color(0xffeeca97),
+  900: Color(0xffeeca97),
+});
 
-const MaterialColor buttonBorder = MaterialColor(
-  0xff6a5a00,
-  <int, Color>{
-    50: Color(0xff6a5a00),
-    100: Color(0xff6a5a00),
-    200: Color(0xff6a5a00),
-    300: Color(0xff6a5a00),
-    400: Color(0xff6a5a00),
-    500: Color(0xff6a5a00),
-    600: Color(0xff6a5a00),
-    700: Color(0xff6a5a00),
-    800: Color(0xff6a5a00),
-    900: Color(0xff6a5a00),
-  }
-);
+const MaterialColor buttonBorder = MaterialColor(0xff6a5a00, <int, Color>{
+  50: Color(0xff6a5a00),
+  100: Color(0xff6a5a00),
+  200: Color(0xff6a5a00),
+  300: Color(0xff6a5a00),
+  400: Color(0xff6a5a00),
+  500: Color(0xff6a5a00),
+  600: Color(0xff6a5a00),
+  700: Color(0xff6a5a00),
+  800: Color(0xff6a5a00),
+  900: Color(0xff6a5a00),
+});
 
 class Vouch {
   final String claim;
@@ -210,22 +204,17 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.person_outlined,
-                    size: 100,
-                    semanticLabel: 'new profile'
-                  ),
-                  Icon(
-                    Icons.add,
-                    size: 30,
-                    semanticLabel: 'new profile'
-                  ),
+                  Icon(Icons.person_outlined,
+                      size: 100, semanticLabel: 'new profile'),
+                  Icon(Icons.add, size: 30, semanticLabel: 'new profile'),
                   Container(
                     margin: const EdgeInsets.only(left: 40),
                     child: Column(
                       children: [
-                        Text('New', style: TextStyle(height: 1.2, fontSize: 25)),
-                        Text('Profile', style: TextStyle(height: 1.2, fontSize: 25)),
+                        Text('New',
+                            style: TextStyle(height: 1.2, fontSize: 25)),
+                        Text('Profile',
+                            style: TextStyle(height: 1.2, fontSize: 25)),
                       ],
                     ),
                   ),
@@ -248,22 +237,18 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.person_outlined,
-                    size: 100,
-                    semanticLabel: 'import profile'
-                  ),
-                  Icon(
-                    Icons.arrow_upward,
-                    size: 30,
-                    semanticLabel: 'import profle'
-                  ),
+                  Icon(Icons.person_outlined,
+                      size: 100, semanticLabel: 'import profile'),
+                  Icon(Icons.arrow_upward,
+                      size: 30, semanticLabel: 'import profle'),
                   Container(
                     margin: const EdgeInsets.only(left: 40),
                     child: Column(
                       children: [
-                        Text('Import', style: TextStyle(height: 1.2, fontSize: 25)),
-                        Text('Profile', style: TextStyle(height: 1.2, fontSize: 25)),
+                        Text('Import',
+                            style: TextStyle(height: 1.2, fontSize: 25)),
+                        Text('Profile',
+                            style: TextStyle(height: 1.2, fontSize: 25)),
                       ],
                     ),
                   ),
@@ -304,12 +289,12 @@ class _NewProfilePageState extends State<NewProfilePage> {
           Container(
             margin: const EdgeInsets.only(left: 40, right: 40, top: 100),
             child: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: const Text(
-                  'Add Profile Picture',
-                  style: TextStyle(color: Colors.black),
-                ),
-                radius: 100,
+              backgroundColor: Colors.white,
+              child: const Text(
+                'Add Profile Picture',
+                style: TextStyle(color: Colors.black),
+              ),
+              radius: 100,
             ),
           ),
           Container(
@@ -361,7 +346,6 @@ class _NewProfilePageState extends State<NewProfilePage> {
   }
 }
 
-
 class ProfilesPage extends StatefulWidget {
   const ProfilesPage({Key? key}) : super(key: key);
 
@@ -379,25 +363,23 @@ class _ProfilesPageState extends State<ProfilesPage> {
           margin: const EdgeInsets.only(bottom: 30),
           height: 90,
           child: OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                backgroundColor: buttonColor,
-                primary: Colors.black,
-                side: BorderSide(width: 3, color: buttonBorder),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.white,
-                    radius: 30,
-                  ),
-                  Text(
-                    identities[index].name,
-                    style: TextStyle(height: 1.2, fontSize: 25)
-                  ),
-                ],
-              ),
-              onPressed: () {},
+            style: OutlinedButton.styleFrom(
+              backgroundColor: buttonColor,
+              primary: Colors.black,
+              side: BorderSide(width: 3, color: buttonBorder),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                CircleAvatar(
+                  backgroundColor: Colors.white,
+                  radius: 30,
+                ),
+                Text(identities[index].name,
+                    style: TextStyle(height: 1.2, fontSize: 25)),
+              ],
+            ),
+            onPressed: () {},
           ),
         );
       },
@@ -434,14 +416,11 @@ class _ProfilesPageState extends State<ProfilesPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.add,
-                    size: 30,
-                    semanticLabel: 'Add New'
-                  ),
+                  Icon(Icons.add, size: 30, semanticLabel: 'Add New'),
                   Container(
                     margin: const EdgeInsets.only(left: 40),
-                    child: Text('Add New', style: TextStyle(height: 1.2, fontSize: 25)),
+                    child: Text('Add New',
+                        style: TextStyle(height: 1.2, fontSize: 25)),
                   ),
                 ],
               ),
