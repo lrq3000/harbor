@@ -14,6 +14,38 @@ void main() {
   runApp(const NeopassApp());
 }
 
+const MaterialColor buttonColor = MaterialColor(
+  0xffeeca97,
+  <int, Color>{
+    50: Color(0xffeeca97),
+    100: Color(0xffeeca97),
+    200: Color(0xffeeca97),
+    300: Color(0xffeeca97),
+    400: Color(0xffeeca97),
+    500: Color(0xffeeca97),
+    600: Color(0xffeeca97),
+    700: Color(0xffeeca97),
+    800: Color(0xffeeca97),
+    900: Color(0xffeeca97),
+  }
+);
+
+const MaterialColor buttonBorder = MaterialColor(
+  0xff6a5a00,
+  <int, Color>{
+    50: Color(0xff6a5a00),
+    100: Color(0xff6a5a00),
+    200: Color(0xff6a5a00),
+    300: Color(0xff6a5a00),
+    400: Color(0xff6a5a00),
+    500: Color(0xff6a5a00),
+    600: Color(0xff6a5a00),
+    700: Color(0xff6a5a00),
+    800: Color(0xff6a5a00),
+    900: Color(0xff6a5a00),
+  }
+);
+
 class Vouch {
   final String claim;
   final String subjectPublicKey;
@@ -134,9 +166,114 @@ class NeopassApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Neopass',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: buttonColor,
+          canvasColor: Color(0xfff9e8d0),
         ),
-        home: const IdentitiesPage(),
+        home: const NewIdentityPage(),
+      ),
+    );
+  }
+}
+
+class NewIdentityPage extends StatefulWidget {
+  const NewIdentityPage({Key? key}) : super(key: key);
+
+  @override
+  State<NewIdentityPage> createState() => _NewIdentityPageState();
+}
+
+class _NewIdentityPageState extends State<NewIdentityPage> {
+  @override
+  Widget build(BuildContext context) {
+    var state = context.watch<NeopassModel>();
+
+    return Scaffold(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Container(
+            margin: const EdgeInsets.only(top: 80),
+            child: Text(
+              'Harbor',
+              textAlign: TextAlign.center,
+              style: TextStyle(height: 1, fontSize: 80),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 30, right: 30, top: 80),
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: buttonColor,
+                primary: Colors.black,
+                side: BorderSide(width: 3, color: buttonBorder),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.person_outlined,
+                    size: 100,
+                    semanticLabel: 'new profile'
+                  ),
+                  Icon(
+                    Icons.add,
+                    size: 30,
+                    semanticLabel: 'new profile'
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(left: 40),
+                    child: Column(
+                      children: [
+                        Text('New', style: TextStyle(height: 1.2, fontSize: 25)),
+                        Text('Profile', style: TextStyle(height: 1.2, fontSize: 25)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              onPressed: () async {},
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 30, right: 30, top: 30),
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: buttonColor,
+                primary: Colors.black,
+                side: BorderSide(width: 3, color: buttonBorder),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.person_outlined,
+                    size: 100,
+                    semanticLabel: 'import profile'
+                  ),
+                  Icon(
+                    Icons.arrow_upward,
+                    size: 30,
+                    semanticLabel: 'import profle'
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(left: 40),
+                    child: Column(
+                      children: [
+                        Text('Import', style: TextStyle(height: 1.2, fontSize: 25)),
+                        Text('Profile', style: TextStyle(height: 1.2, fontSize: 25)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              onPressed: () async {},
+            ),
+          ),
+          Expanded(flex: 1, child: Container()),
+          Text('A project by FUTO technologies', textAlign: TextAlign.center),
+          Container(
+            margin: const EdgeInsets.only(bottom: 25),
+            child: Text('www.futo.org', textAlign: TextAlign.center),
+          ),
+        ],
       ),
     );
   }
