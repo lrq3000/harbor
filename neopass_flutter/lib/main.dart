@@ -245,28 +245,25 @@ class _IdentityPageState extends State<IdentityPage> {
               child: ElevatedButton(
                   child: Text('Scan Claim'),
                   onPressed: () async {
-                      final String rawScan = await FlutterBarcodeScanner.scanBarcode(
-                        "#ff6666", 
-                        'cancel', 
-                        false, 
-                        ScanMode.QR);
+                    final String rawScan =
+                        await FlutterBarcodeScanner.scanBarcode(
+                            "#ff6666", 'cancel', false, ScanMode.QR);
 
-                    final ClaimWithIdentity claim = claimWithIdentityFromJSON(rawScan);
+                    final ClaimWithIdentity claim =
+                        claimWithIdentityFromJSON(rawScan);
 
                     final Vouch vouch = Vouch(
                         claim.claim,
                         claim.subjectPublicKey,
                         identity.encodedPublicKey,
-                        'lol'
-                    );
+                        'lol');
 
                     Navigator.push(context,
-                      MaterialPageRoute(builder: (context) {
-                        return PresentVouchPage(
-                          vouch: vouch,
-                        );
-                      })
-                    );
+                        MaterialPageRoute(builder: (context) {
+                      return PresentVouchPage(
+                        vouch: vouch,
+                      );
+                    }));
                   }),
             ),
             Expanded(
@@ -409,21 +406,18 @@ class PresentPage extends StatelessWidget {
       bottomSheet: Container(
         width: MediaQuery.of(context).size.width,
         child: ElevatedButton(
-            child: Text('Next'),
-            onPressed: () async {
-              final String rawScan = await FlutterBarcodeScanner.scanBarcode(
-                "#ff6666", 
-                'cancel', 
-                false, 
-                ScanMode.QR);
+          child: Text('Next'),
+          onPressed: () async {
+            final String rawScan = await FlutterBarcodeScanner.scanBarcode(
+                "#ff6666", 'cancel', false, ScanMode.QR);
 
-              final Vouch vouch = vouchFromJSON(rawScan);
+            final Vouch vouch = vouchFromJSON(rawScan);
 
-              state.addVouch(identityIndex, claimIndex, vouch);
+            state.addVouch(identityIndex, claimIndex, vouch);
 
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
         ),
       ),
     );
@@ -433,9 +427,7 @@ class PresentPage extends StatelessWidget {
 class PresentVouchPage extends StatelessWidget {
   final Vouch vouch;
 
-  const PresentVouchPage(
-      {Key? key, required this.vouch})
-      : super(key: key);
+  const PresentVouchPage({Key? key, required this.vouch}) : super(key: key);
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -452,4 +444,3 @@ class PresentVouchPage extends StatelessWidget {
     );
   }
 }
-
