@@ -159,7 +159,7 @@ class NeopassApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'Neopass',
+        title: 'Harbor',
         theme: ThemeData(
           primarySwatch: buttonColor,
           canvasColor: Color(0xfff9e8d0),
@@ -189,9 +189,13 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
           Container(
             margin: const EdgeInsets.only(top: 80),
             child: Text(
-              'Harbor',
+              'HARBOR',
               textAlign: TextAlign.center,
-              style: TextStyle(height: 1, fontSize: 80),
+              style: TextStyle(
+                fontFamily: 'NotoSerif',
+                height: 1,
+                fontSize: 80,
+              ),
             ),
           ),
           Container(
@@ -258,10 +262,22 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
             ),
           ),
           Expanded(flex: 1, child: Container()),
-          Text('A project by FUTO technologies', textAlign: TextAlign.center),
+          Text(
+            'A project by FUTO technologies',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'NotoSerif',
+            ),
+          ),
           Container(
             margin: const EdgeInsets.only(bottom: 25),
-            child: Text('www.futo.org', textAlign: TextAlign.center),
+            child: Text(
+              'www.futo.org',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'NotoSerif',
+              ),
+            ),
           ),
         ],
       ),
@@ -397,9 +413,13 @@ class _ProfilesPageState extends State<ProfilesPage> {
           Container(
             margin: const EdgeInsets.only(top: 80),
             child: Text(
-              'Harbor',
+              'HARBOR',
               textAlign: TextAlign.center,
-              style: TextStyle(height: 1, fontSize: 80),
+              style: TextStyle(
+                fontFamily: 'NotoSerif',
+                height: 1,
+                fontSize: 80,
+              ),
             ),
           ),
           Expanded(
@@ -431,10 +451,22 @@ class _ProfilesPageState extends State<ProfilesPage> {
               },
             ),
           ),
-          Text('A project by FUTO technologies', textAlign: TextAlign.center),
+          Text(
+            'A project by FUTO technologies',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'NotoSerif',
+            ),
+          ),
           Container(
             margin: const EdgeInsets.only(bottom: 25),
-            child: Text('www.futo.org', textAlign: TextAlign.center),
+            child: Text(
+              'www.futo.org',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'NotoSerif',
+              ),
+            ),
           ),
         ],
       ),
