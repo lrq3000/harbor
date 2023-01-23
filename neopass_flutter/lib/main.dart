@@ -395,7 +395,13 @@ class _ProfilesPageState extends State<ProfilesPage> {
                     style: TextStyle(height: 1.2, fontSize: 25)),
               ],
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return ProfilePage(
+                  identityIndex: index,
+                );
+              }));
+            },
           ),
         );
       },
@@ -490,7 +496,7 @@ class _IdentitiesPageState extends State<IdentitiesPage> {
         return TextButton(
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return IdentityPage(
+              return ProfilePage(
                 identityIndex: index,
               );
             }));
@@ -521,6 +527,113 @@ class _IdentitiesPageState extends State<IdentitiesPage> {
             // state.createIdentity();
           },
         ),
+      ),
+    );
+  }
+}
+
+class ProfilePage extends StatefulWidget {
+  final int identityIndex;
+
+  const ProfilePage({Key? key, required this.identityIndex}) : super(key: key);
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  Widget _renderClaims(List<Claim> claims) {
+    return ListView.builder(
+      itemCount: claims.length,
+      padding: const EdgeInsets.all(8),
+      itemBuilder: (BuildContext context, int index) {
+        return Container(
+          margin: const EdgeInsets.only(bottom: 30),
+          height: 90,
+          child: OutlinedButton(
+            style: OutlinedButton.styleFrom(
+              backgroundColor: buttonColor,
+              primary: Colors.black,
+              side: BorderSide(width: 3, color: buttonBorder),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(claims[index].claim,
+                    style: TextStyle(height: 1.2, fontSize: 25)),
+              ],
+            ),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return ClaimPage(
+                  identityIndex: widget.identityIndex,
+                  claimIndex: index,
+                );
+              }));
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var state = context.watch<NeopassModel>();
+    var identity = state._identities[widget.identityIndex];
+
+    return Scaffold(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 30, top: 50),
+            child: CircleAvatar(
+              backgroundColor: Colors.white,
+              radius: 100,
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(bottom: 30, top: 50),
+            child: Text(
+              identity.name,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                height: 1.2,
+                fontSize: 50,
+              ),
+            )
+          ),
+          Expanded(
+            child: _renderClaims(identity.claims),
+          ),
+          Container(
+            margin: const EdgeInsets.only(bottom: 30, left: 30, right: 30),
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: buttonColor,
+                primary: Colors.black,
+                side: BorderSide(width: 3, color: buttonBorder),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.add, size: 30, semanticLabel: 'Add New'),
+                  Container(
+                    margin: const EdgeInsets.only(left: 40),
+                    child: Text('Add New',
+                        style: TextStyle(height: 1.2, fontSize: 25)),
+                  ),
+                ],
+              ),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return CreateClaimPage(identityIndex: widget.identityIndex);
+                }));
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
