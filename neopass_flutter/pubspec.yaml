@@ -21,6 +21,7 @@ dependencies:
   sqflite: ^2.2.6
   protobuf: ^2.1.0
   http:
+  file_picker: ^5.2.6
 
 dev_dependencies:
   flutter_test:

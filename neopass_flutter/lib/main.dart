@@ -11,7 +11,9 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:path/path.dart' as Path;
 import 'package:fixnum/fixnum.dart' as FixNum;
+import 'package:file_picker/file_picker.dart' as FilePicker;
 import 'package:http/http.dart' as HTTP;
+import 'dart:io';
 
 import 'protocol.pb.dart' as Protocol;
 
@@ -997,12 +999,26 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       body: Column(
         children: [
-          Container(
-            margin: const EdgeInsets.only(top: 50),
-            child: CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 50,
+          InkWell(
+            child: Container(
+              margin: const EdgeInsets.only(top: 50),
+              child: CircleAvatar(
+                backgroundColor: Colors.white,
+                radius: 50,
+              ),
             ),
+            onTap: () async {
+              FilePicker.FilePickerResult? result =
+                await FilePicker.FilePicker.platform.pickFiles(
+                  type: FilePicker.FileType.custom,
+                  allowedExtensions: ['png', 'jpg'],
+                );
+
+              if (result != null) {
+                final bytes =
+                  await File(result.files.single.path!).readAsBytes();
+              }
+            },
           ),
           Container(
               margin: const EdgeInsets.only(bottom: 30, top: 10),
