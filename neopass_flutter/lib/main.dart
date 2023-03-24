@@ -316,18 +316,19 @@ Future<Protocol.SignedEvent?> loadEvent(
     AND process = ?
     AND logical_clock = ?
     LIMIT 1;
-  ''', [Uint8List.fromList(system), Uint8List.fromList(process),
-       logicalClock.toInt()]);
+  ''', [
+    Uint8List.fromList(system),
+    Uint8List.fromList(process),
+    logicalClock.toInt()
+  ]);
 
   if (rows.length > 0) {
     return Protocol.SignedEvent.fromBuffer(
-      rows.first["raw_event"] as List<int>
-    );
+        rows.first["raw_event"] as List<int>);
   }
 
   return null;
 }
-
 
 Future<Image?> loadImage(
   SQFLite.Database db,
@@ -407,7 +408,8 @@ Future<Image?> loadLatestAvatar(
       print("expected content type avatar");
 
       return null;
-    };
+    }
+    ;
 
     final Protocol.Pointer pointer = Protocol.Pointer.fromBuffer(
       event.lwwElement.value,
@@ -456,9 +458,8 @@ Future<Protocol.Pointer> saveEvent(SQFLite.Database db,
   return await signedEventToPointer(signedEvent);
 }
 
-Future<Protocol.Pointer> publishBlob(
-    SQFLite.Database db, ProcessSecret processInfo,
-    String mime, List<int> bytes) async {
+Future<Protocol.Pointer> publishBlob(SQFLite.Database db,
+    ProcessSecret processInfo, String mime, List<int> bytes) async {
   final Protocol.BlobMeta blobMeta = Protocol.BlobMeta();
   blobMeta.sectionCount = FixNum.Int64(1);
   blobMeta.mime = mime;
@@ -485,8 +486,7 @@ Future<Protocol.Pointer> publishBlob(
   return blobMetaPointer;
 }
 
-Future<void> setAvatar(
-    SQFLite.Database db, ProcessSecret processInfo,
+Future<void> setAvatar(SQFLite.Database db, ProcessSecret processInfo,
     Protocol.Pointer pointer) async {
   Protocol.LWWElement element = Protocol.LWWElement();
   element.unixMilliseconds =
@@ -899,8 +899,8 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
               backgroundColor: Colors.white,
               radius: 14,
               foregroundImage: identities[i].avatar != null
-                ? identities[i].avatar!.image
-                : null,
+                  ? identities[i].avatar!.image
+                  : null,
             ),
           ),
         ),
@@ -1177,28 +1177,32 @@ class _ProfilePageState extends State<ProfilePage> {
               child: CircleAvatar(
                 backgroundColor: Colors.white,
                 radius: 50,
-                foregroundImage: identity2.avatar != null
-                  ? identity2.avatar!.image
-                  : null,
+                foregroundImage:
+                    identity2.avatar != null ? identity2.avatar!.image : null,
               ),
             ),
             onTap: () async {
               FilePicker.FilePickerResult? result =
-                await FilePicker.FilePicker.platform.pickFiles(
-                  type: FilePicker.FileType.custom,
-                  allowedExtensions: ['png', 'jpg'],
-                );
+                  await FilePicker.FilePicker.platform.pickFiles(
+                type: FilePicker.FileType.custom,
+                allowedExtensions: ['png', 'jpg'],
+              );
 
               if (result != null) {
                 final bytes =
-                  await File(result.files.single.path!).readAsBytes();
+                    await File(result.files.single.path!).readAsBytes();
 
                 final pointer = await publishBlob(
-                  state2.db, identity2.processSecret, "image/jpeg", bytes,
+                  state2.db,
+                  identity2.processSecret,
+                  "image/jpeg",
+                  bytes,
                 );
 
                 await setAvatar(
-                  state2.db, identity2.processSecret, pointer,
+                  state2.db,
+                  identity2.processSecret,
+                  pointer,
                 );
 
                 print("set avatar");
@@ -1423,9 +1427,8 @@ class _ClaimPageState extends State<ClaimPage> {
             child: CircleAvatar(
               backgroundColor: Colors.white,
               radius: 50,
-              foregroundImage: identity2.avatar != null
-                ? identity2.avatar!.image
-                : null,
+              foregroundImage:
+                  identity2.avatar != null ? identity2.avatar!.image : null,
             ),
           ),
           Container(
@@ -1524,9 +1527,8 @@ class PresentPage extends StatelessWidget {
             child: CircleAvatar(
               backgroundColor: Colors.white,
               radius: 50,
-              foregroundImage: identity2.avatar != null
-                ? identity2.avatar!.image
-                : null,
+              foregroundImage:
+                  identity2.avatar != null ? identity2.avatar!.image : null,
             ),
           ),
           Container(
