@@ -836,7 +836,7 @@ class StandardButtonGeneric extends StatelessWidget {
                           height: 1.2, fontSize: 12, color: Colors.white)),
                   Text(actionDescription,
                       style: TextStyle(
-                          height: 1.2, fontSize: 8, color: Colors.white)),
+                          height: 1.2, fontSize: 8, color: Colors.grey)),
                 ],
               ),
             ),
