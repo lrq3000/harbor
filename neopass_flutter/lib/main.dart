@@ -38,72 +38,70 @@ CREATE TABLE IF NOT EXISTS process_secrets (
 ''';
 
 class ProcessSecret {
-    Cryptography.SimpleKeyPair system;
-    List<int> process;
+  Cryptography.SimpleKeyPair system;
+  List<int> process;
 
-    ProcessSecret(this.system, this.process);
+  ProcessSecret(this.system, this.process);
 }
 
 Future<ProcessSecret> createNewIdentity(SQFLite.Database db) async {
-    final algorithm = Cryptography.Ed25519();
-    final keyPair = await algorithm.newKeyPair();
-    final public = await keyPair.extractPublicKey();
+  final algorithm = Cryptography.Ed25519();
+  final keyPair = await algorithm.newKeyPair();
+  final public = await keyPair.extractPublicKey();
 
-    final privateBytes = await keyPair.extractPrivateKeyBytes();
-    final publicBytes = public.bytes;
+  final privateBytes = await keyPair.extractPrivateKeyBytes();
+  final publicBytes = public.bytes;
 
-    final process = List<int>.generate(16, (i) => Random.secure().nextInt(256));
+  final process = List<int>.generate(16, (i) => Random.secure().nextInt(256));
 
-    await db.rawInsert('''
+  await db.rawInsert('''
             INSERT INTO process_secrets (
                 system_key_type,
                 system_key,
                 system_key_pub,
                 process
             ) VALUES(?, ?, ?, ?);
-        ''',
-        [
-            1,
-            privateBytes,
-            publicBytes,
-            process,
-        ]
-    );
+        ''', [
+    1,
+    privateBytes,
+    publicBytes,
+    process,
+  ]);
 
-    final publicProto = Protocol.PublicKey();
-    publicProto.keyType = new FixNum.Int64(1);
-    publicProto.key = public.bytes;
-    print("new identity");
-    print(base64Url.encode(publicProto.writeToBuffer()));
+  final publicProto = Protocol.PublicKey();
+  publicProto.keyType = new FixNum.Int64(1);
+  publicProto.key = public.bytes;
+  print("new identity");
+  print(base64Url.encode(publicProto.writeToBuffer()));
 
-    return new ProcessSecret(keyPair, process);
+  return new ProcessSecret(keyPair, process);
 }
 
 Future<List<ProcessSecret>> loadIdentities(SQFLite.Database db) async {
-    final List<Map> rows = await db.rawQuery('''
+  final List<Map> rows = await db.rawQuery('''
         SELECT * FROM process_secrets;
     ''');
 
-    var result = new List<ProcessSecret>.empty(growable: true);
+  var result = new List<ProcessSecret>.empty(growable: true);
 
-    for (var row in rows) {
-        final public = Cryptography.SimplePublicKey(
-            row['system_key_pub'],
-            type: Cryptography.KeyPairType.ed25519,
-        );
+  for (var row in rows) {
+    final public = Cryptography.SimplePublicKey(
+      row['system_key_pub'],
+      type: Cryptography.KeyPairType.ed25519,
+    );
 
-        final keyPair = Cryptography.SimpleKeyPairData(
-            row['system_key'],
-            publicKey: public,
-            type: Cryptography.KeyPairType.ed25519,
-        );
+    final keyPair = Cryptography.SimpleKeyPairData(
+      row['system_key'],
+      publicKey: public,
+      type: Cryptography.KeyPairType.ed25519,
+    );
 
-        result.add(
-            new ProcessSecret(keyPair, row['process']),
-        );
-    }
+    result.add(
+      new ProcessSecret(keyPair, row['process']),
+    );
+  }
 
-    return result;
+  return result;
 }
 
 Future<void> deleteIdentity(
@@ -111,41 +109,40 @@ Future<void> deleteIdentity(
   List<int> system,
   List<int> process,
 ) async {
-    await db.rawDelete('''
+  await db.rawDelete('''
         DELETE FROM process_secrets
         WHERE system_key_type = 1
         AND system_key_pub = ?
         AND process = ?;
-    '''
-    , [Uint8List.fromList(system), Uint8List.fromList(process)]);
+    ''', [Uint8List.fromList(system), Uint8List.fromList(process)]);
 }
 
 Future<void> ingest(
-    SQFLite.Database db,
-    Protocol.SignedEvent signedEvent,
+  SQFLite.Database db,
+  Protocol.SignedEvent signedEvent,
 ) async {
-    Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
+  Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
 
-    final public = Cryptography.SimplePublicKey(
-        event.system.key,
-        type: Cryptography.KeyPairType.ed25519,
-    );
+  final public = Cryptography.SimplePublicKey(
+    event.system.key,
+    type: Cryptography.KeyPairType.ed25519,
+  );
 
-    final signature = new Cryptography.Signature(
-        signedEvent.signature,
-        publicKey: public,
-    );
+  final signature = new Cryptography.Signature(
+    signedEvent.signature,
+    publicKey: public,
+  );
 
-    final validSignature = await Cryptography.Ed25519().verify(
-        signedEvent.event,
-        signature: signature,
-    );
+  final validSignature = await Cryptography.Ed25519().verify(
+    signedEvent.event,
+    signature: signature,
+  );
 
-    if (!validSignature) {
-        throw 'invalid signature';
-    }
+  if (!validSignature) {
+    throw 'invalid signature';
+  }
 
-    await db.rawInsert('''
+  await db.rawInsert('''
             INSERT INTO events (
                 system_key_type,
                 system_key,
@@ -154,140 +151,134 @@ Future<void> ingest(
                 content_type,
                 raw_event
             ) VALUES(?, ?, ?, ?, ?, ?);
-        ''',
-        [
-            1,
-            Uint8List.fromList(event.system.key),
-            Uint8List.fromList(event.process.process),
-            event.logicalClock.toInt(),
-            event.contentType.toInt(),
-            signedEvent.writeToBuffer(),
-        ]
-    );
+        ''', [
+    1,
+    Uint8List.fromList(event.system.key),
+    Uint8List.fromList(event.process.process),
+    event.logicalClock.toInt(),
+    event.contentType.toInt(),
+    signedEvent.writeToBuffer(),
+  ]);
 }
 
 Future<int> loadLatestClock(
-    SQFLite.Database db,
-    List<int> system,
-    List<int> process,
+  SQFLite.Database db,
+  List<int> system,
+  List<int> process,
 ) async {
-    final f = SQFLite.Sqflite.firstIntValue(await db.rawQuery('''
+  final f = SQFLite.Sqflite.firstIntValue(await db.rawQuery('''
         SELECT MAX(logical_clock) as x FROM events
         WHERE system_key_type = 1
         AND system_key = ?
         AND process = ?;
-    '''
-    , [Uint8List.fromList(system), Uint8List.fromList(process)]));
+    ''', [Uint8List.fromList(system), Uint8List.fromList(process)]));
 
-    if (f == null) {
-        return 0;
-    } else {
-        return f + 1;
-    }
+  if (f == null) {
+    return 0;
+  } else {
+    return f + 1;
+  }
 }
 
 Future<Protocol.Pointer> signedEventToPointer(
-    Protocol.SignedEvent signedEvent
-) async {
-    Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
+    Protocol.SignedEvent signedEvent) async {
+  Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
 
-    final hash = await Cryptography.Sha256().hash(signedEvent.event);
+  final hash = await Cryptography.Sha256().hash(signedEvent.event);
 
-    Protocol.Digest digest = Protocol.Digest();
-    digest.digestType = new FixNum.Int64(1);
-    digest.digest = hash.bytes;
+  Protocol.Digest digest = Protocol.Digest();
+  digest.digestType = new FixNum.Int64(1);
+  digest.digest = hash.bytes;
 
-    Protocol.Pointer pointer = Protocol.Pointer();
-    pointer.system = event.system;
-    pointer.process = event.process;
-    pointer.logicalClock = event.logicalClock;
-    pointer.eventDigest = digest;
+  Protocol.Pointer pointer = Protocol.Pointer();
+  pointer.system = event.system;
+  pointer.process = event.process;
+  pointer.logicalClock = event.logicalClock;
+  pointer.eventDigest = digest;
 
-    return pointer;
+  return pointer;
 }
 
 Future<List<ClaimInfo>> loadClaims(
-    SQFLite.Database db,
-    List<int> system,
+  SQFLite.Database db,
+  List<int> system,
 ) async {
-    final rows = await db.rawQuery('''
+  final rows = await db.rawQuery('''
         SELECT raw_event FROM events
         WHERE system_key_type = 1
         AND system_key = ?
         AND content_type = 12;
-    '''
-    , [Uint8List.fromList(system)]);
+    ''', [Uint8List.fromList(system)]);
 
-    List<ClaimInfo> result = [];
+  List<ClaimInfo> result = [];
 
-    for (final row in rows) {
-        final rawEvent = row['raw_event'];
+  for (final row in rows) {
+    final rawEvent = row['raw_event'];
 
-        Protocol.SignedEvent signedEvent =
-            Protocol.SignedEvent.fromBuffer(rawEvent as List<int>);
+    Protocol.SignedEvent signedEvent =
+        Protocol.SignedEvent.fromBuffer(rawEvent as List<int>);
 
-        Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
+    Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
 
-        Protocol.Claim claim = Protocol.Claim.fromBuffer(event.content);
+    Protocol.Claim claim = Protocol.Claim.fromBuffer(event.content);
 
-        Protocol.ClaimIdentifier claimIdentifier =
-            Protocol.ClaimIdentifier.fromBuffer(claim.claim);
+    Protocol.ClaimIdentifier claimIdentifier =
+        Protocol.ClaimIdentifier.fromBuffer(claim.claim);
 
-        final pointer = await signedEventToPointer(signedEvent);
+    final pointer = await signedEventToPointer(signedEvent);
 
-        result.add(new ClaimInfo(claimIdentifier.identifier, pointer));
-    }
+    result.add(new ClaimInfo(claimIdentifier.identifier, pointer));
+  }
 
-    return result;
+  return result;
 }
 
 Future<void> sendAllEventsToServer(
-    SQFLite.Database db,
-    List<int> system,
+  SQFLite.Database db,
+  List<int> system,
 ) async {
-    final rows = await db.rawQuery('''
+  final rows = await db.rawQuery('''
         SELECT raw_event FROM events
         WHERE system_key_type = 1
         AND system_key = ?;
-    '''
-    , [Uint8List.fromList(system)]);
+    ''', [Uint8List.fromList(system)]);
 
-    Protocol.Events payload = Protocol.Events();
+  Protocol.Events payload = Protocol.Events();
 
-    for (final row in rows) {
-        final rawEvent = row['raw_event'];
+  for (final row in rows) {
+    final rawEvent = row['raw_event'];
 
-        Protocol.SignedEvent signedEvent =
-            Protocol.SignedEvent.fromBuffer(rawEvent as List<int>);
+    Protocol.SignedEvent signedEvent =
+        Protocol.SignedEvent.fromBuffer(rawEvent as List<int>);
 
-        payload.events.add(signedEvent);
+    payload.events.add(signedEvent);
+  }
+
+  try {
+    final response = await HTTP.post(
+      Uri.parse('https://srv1-stg.polycentric.io/events'),
+      headers: <String, String>{
+        'Content-Type': 'application/octet-stream',
+      },
+      body: payload.writeToBuffer(),
+    );
+
+    if (response.statusCode != 200) {
+      print('post events failed');
+      print(response.statusCode);
+      print(response.body);
     }
-
-    try {
-        final response = await HTTP.post(
-            Uri.parse('https://srv1-stg.polycentric.io/events'),
-            headers: <String, String>{
-                'Content-Type': 'application/octet-stream',
-            },
-            body: payload.writeToBuffer(),
-        );
-
-        if (response.statusCode != 200) {
-            print('post events failed');
-            print(response.statusCode);
-            print(response.body);
-        }
-    } catch (err) {
-        print(err);
-    }
+  } catch (err) {
+    print(err);
+  }
 }
 
 Future<String> loadLatestUsername(
-    SQFLite.Database db,
-    List<int> system,
-    List<int> process,
+  SQFLite.Database db,
+  List<int> system,
+  List<int> process,
 ) async {
-    final q = await db.rawQuery('''
+  final q = await db.rawQuery('''
         SELECT raw_event FROM events
         WHERE system_key_type = 1
         AND system_key = ?
@@ -296,120 +287,107 @@ Future<String> loadLatestUsername(
         ORDER BY
         logical_clock DESC
         LIMIT 1;
-    '''
-    , [Uint8List.fromList(system), Uint8List.fromList(process)]);
+    ''', [Uint8List.fromList(system), Uint8List.fromList(process)]);
 
-    if (q.length == 0) {
-        return 'unknown';
-    } else {
-        Protocol.SignedEvent signedEvent =
-            Protocol.SignedEvent.fromBuffer(q[0]['raw_event'] as List<int>);
+  if (q.length == 0) {
+    return 'unknown';
+  } else {
+    Protocol.SignedEvent signedEvent =
+        Protocol.SignedEvent.fromBuffer(q[0]['raw_event'] as List<int>);
 
-        Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
+    Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
 
-        return utf8.decode(event.lwwElement.value);
-    }
+    return utf8.decode(event.lwwElement.value);
+  }
 }
 
-Future<void> saveEvent(
-    SQFLite.Database db,
-    ProcessSecret processInfo,
-    Protocol.Event event
-) async {
-    final public = await processInfo.system.extractPublicKey();
-    Protocol.PublicKey system = Protocol.PublicKey();
-    system.keyType = new FixNum.Int64(1);
-    system.key = public.bytes;
+Future<void> saveEvent(SQFLite.Database db, ProcessSecret processInfo,
+    Protocol.Event event) async {
+  final public = await processInfo.system.extractPublicKey();
+  Protocol.PublicKey system = Protocol.PublicKey();
+  system.keyType = new FixNum.Int64(1);
+  system.key = public.bytes;
 
-    Protocol.Process process = Protocol.Process();
-    process.process = processInfo.process;
+  Protocol.Process process = Protocol.Process();
+  process.process = processInfo.process;
 
-    final clock = await loadLatestClock(
-        db,
-        public.bytes,
-        processInfo.process,
-    );
+  final clock = await loadLatestClock(
+    db,
+    public.bytes,
+    processInfo.process,
+  );
 
-    print(clock);
+  print(clock);
 
-    event.system = system;
-    event.process = process;
-    event.logicalClock = FixNum.Int64(clock);
-    event.vectorClock = Protocol.VectorClock();
-    event.indices = Protocol.Indices();
+  event.system = system;
+  event.process = process;
+  event.logicalClock = FixNum.Int64(clock);
+  event.vectorClock = Protocol.VectorClock();
+  event.indices = Protocol.Indices();
 
-    final encoded = event.writeToBuffer();
+  final encoded = event.writeToBuffer();
 
-    Protocol.SignedEvent signedEvent = Protocol.SignedEvent();
-    signedEvent.event = encoded;
-    signedEvent.signature = (await Cryptography.Ed25519().sign(
-        encoded,
-        keyPair: processInfo.system,
-    )).bytes;
+  Protocol.SignedEvent signedEvent = Protocol.SignedEvent();
+  signedEvent.event = encoded;
+  signedEvent.signature = (await Cryptography.Ed25519().sign(
+    encoded,
+    keyPair: processInfo.system,
+  ))
+      .bytes;
 
-    await ingest(db, signedEvent);
+  await ingest(db, signedEvent);
 }
 
 Future<void> setUsername(
-    SQFLite.Database db,
-    ProcessSecret processInfo,
-    String username
-) async {
-    Protocol.LWWElement element = Protocol.LWWElement();
-    element.unixMilliseconds = FixNum.Int64(
-        DateTime.now().millisecondsSinceEpoch
-    );
-    element.value = utf8.encode(username);
+    SQFLite.Database db, ProcessSecret processInfo, String username) async {
+  Protocol.LWWElement element = Protocol.LWWElement();
+  element.unixMilliseconds =
+      FixNum.Int64(DateTime.now().millisecondsSinceEpoch);
+  element.value = utf8.encode(username);
 
-    Protocol.Event event = Protocol.Event();
-    event.contentType = FixNum.Int64(5);
-    event.lwwElement = element;
+  Protocol.Event event = Protocol.Event();
+  event.contentType = FixNum.Int64(5);
+  event.lwwElement = element;
 
-    await saveEvent(db, processInfo, event);
+  await saveEvent(db, processInfo, event);
 
-    final public = await processInfo.system.extractPublicKey();
-    await sendAllEventsToServer(db, public.bytes);
+  final public = await processInfo.system.extractPublicKey();
+  await sendAllEventsToServer(db, public.bytes);
 }
 
 Future<void> makeClaim(
-    SQFLite.Database db,
-    ProcessSecret processInfo,
-    String claimText
-) async {
-    Protocol.ClaimIdentifier claimIdentifier = Protocol.ClaimIdentifier();
-    claimIdentifier.identifier = claimText;
+    SQFLite.Database db, ProcessSecret processInfo, String claimText) async {
+  Protocol.ClaimIdentifier claimIdentifier = Protocol.ClaimIdentifier();
+  claimIdentifier.identifier = claimText;
 
-    Protocol.Claim claim = Protocol.Claim();
-    claim.claimType = "Generic";
-    claim.claim = claimIdentifier.writeToBuffer();
+  Protocol.Claim claim = Protocol.Claim();
+  claim.claimType = "Generic";
+  claim.claim = claimIdentifier.writeToBuffer();
 
-    Protocol.Event event = Protocol.Event();
-    event.contentType = FixNum.Int64(12);
-    event.content = claim.writeToBuffer();
+  Protocol.Event event = Protocol.Event();
+  event.contentType = FixNum.Int64(12);
+  event.content = claim.writeToBuffer();
 
-    await saveEvent(db, processInfo, event);
+  await saveEvent(db, processInfo, event);
 
-    final public = await processInfo.system.extractPublicKey();
-    await sendAllEventsToServer(db, public.bytes);
+  final public = await processInfo.system.extractPublicKey();
+  await sendAllEventsToServer(db, public.bytes);
 }
 
-Future<void> makeVouch(
-    SQFLite.Database db,
-    ProcessSecret processInfo,
-    Protocol.Pointer pointer
-) async {
-    Protocol.Reference reference = Protocol.Reference() ;
-    reference.referenceType = FixNum.Int64(2);
-    reference.reference = pointer.writeToBuffer();
+Future<void> makeVouch(SQFLite.Database db, ProcessSecret processInfo,
+    Protocol.Pointer pointer) async {
+  Protocol.Reference reference = Protocol.Reference();
+  reference.referenceType = FixNum.Int64(2);
+  reference.reference = pointer.writeToBuffer();
 
-    Protocol.Event event = Protocol.Event();
-    event.contentType = FixNum.Int64(13);
-    event.references.add(reference);
+  Protocol.Event event = Protocol.Event();
+  event.contentType = FixNum.Int64(13);
+  event.references.add(reference);
 
-    await saveEvent(db, processInfo, event);
+  await saveEvent(db, processInfo, event);
 
-    final public = await processInfo.system.extractPublicKey();
-    await sendAllEventsToServer(db, public.bytes);
+  final public = await processInfo.system.extractPublicKey();
+  await sendAllEventsToServer(db, public.bytes);
 }
 
 Future<void> main() async {
@@ -425,7 +403,7 @@ Future<void> main() async {
 MaterialColor makeColor(Color color) {
   Map<int, Color> shades = {};
 
-  for(int i = 1; i < 20; i++) {
+  for (int i = 1; i < 20; i++) {
     shades[50 * i] = color;
   }
 
@@ -450,63 +428,64 @@ const MaterialColor buttonBorder = MaterialColor(0xff6a5a00, <int, Color>{
 });
 
 class ClaimInfo {
-    final String text;
-    final Protocol.Pointer pointer;
+  final String text;
+  final Protocol.Pointer pointer;
 
-    ClaimInfo(this.text, this.pointer);
+  ClaimInfo(this.text, this.pointer);
 }
 
 class ProcessInfo {
-    final ProcessSecret processSecret;
-    final String username;
-    final List<ClaimInfo> claims;
+  final ProcessSecret processSecret;
+  final String username;
+  final List<ClaimInfo> claims;
 
-    ProcessInfo(this.processSecret, this.username, this.claims);
+  ProcessInfo(this.processSecret, this.username, this.claims);
 }
 
 class PolycentricModel extends ChangeNotifier {
-    final SQFLite.Database db;
-    List<ProcessInfo> identities = [];
+  final SQFLite.Database db;
+  List<ProcessInfo> identities = [];
 
-    PolycentricModel(this.db);
+  PolycentricModel(this.db);
 
-    Future<void> mLoadIdentities() async {
-        final identities = await loadIdentities(this.db);
-        this.identities = [];
-        for (final identity in identities) {
-            final public = await identity.system.extractPublicKey();
-            final username = await loadLatestUsername(
-                this.db,
-                public.bytes,
-                identity.process,
-            );
-            final claims = await loadClaims(this.db, public.bytes);
+  Future<void> mLoadIdentities() async {
+    final identities = await loadIdentities(this.db);
+    this.identities = [];
+    for (final identity in identities) {
+      final public = await identity.system.extractPublicKey();
+      final username = await loadLatestUsername(
+        this.db,
+        public.bytes,
+        identity.process,
+      );
+      final claims = await loadClaims(this.db, public.bytes);
 
-            this.identities.add(
-                new ProcessInfo(identity, username, claims),
-            );
-        }
-
-        notifyListeners();
+      this.identities.add(
+            new ProcessInfo(identity, username, claims),
+          );
     }
+
+    notifyListeners();
+  }
 }
 
 Future<PolycentricModel> setupModel() async {
-    final db = await SQFLite.openDatabase(
-        Path.join(await SQFLite.getDatabasesPath(), 'harbor8.db'),
-        onCreate: (db, version) async {
-            await db.execute(SCHEMA_TABLE_EVENTS);
-            await db.execute(SCHEMA_TABLE_PROCESS_SECRETS);
-        },
-        version: 1,
-    );
+  final db = await SQFLite.openDatabase(
+    Path.join(await SQFLite.getDatabasesPath(), 'harbor8.db'),
+    onCreate: (db, version) async {
+      await db.execute(SCHEMA_TABLE_EVENTS);
+      await db.execute(SCHEMA_TABLE_PROCESS_SECRETS);
+    },
+    version: 1,
+  );
 
-    return new PolycentricModel(db);
+  return new PolycentricModel(db);
 }
 
 class NeopassApp extends StatelessWidget {
   final PolycentricModel polycentricModel;
-  const NeopassApp({Key? key, required this.polycentricModel}) : super(key: key);
+  const NeopassApp({Key? key, required this.polycentricModel})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -537,7 +516,8 @@ final StatelessWidget neopassLogoAndText = Container(
     children: [
       Image.asset('assets/logo.png'),
       SizedBox(height: 20),
-      Text('NeoPass',
+      Text(
+        'NeoPass',
         textAlign: TextAlign.center,
         style: TextStyle(
           fontFamily: 'NotoSerif',
@@ -551,15 +531,14 @@ final StatelessWidget neopassLogoAndText = Container(
 );
 
 final StatelessWidget futoLogoAndText = Container(
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Image.asset('assets/futo-logo.png'),
-      SizedBox(width: 10),
-      Image.asset('assets/futo-text.png'),
-    ],
-  )
-);
+    child: Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    Image.asset('assets/futo-logo.png'),
+    SizedBox(width: 10),
+    Image.asset('assets/futo-text.png'),
+  ],
+));
 
 class ClaimButtonGeneric extends StatelessWidget {
   final String nameText;
@@ -571,7 +550,7 @@ class ClaimButtonGeneric extends StatelessWidget {
     required this.nameText,
     required this.onPressed,
     required this.top,
-  }): super(key: key);
+  }) : super(key: key);
 
   Widget build(BuildContext context) {
     return Container(
@@ -586,7 +565,8 @@ class ClaimButtonGeneric extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             top,
-            Text(nameText,
+            Text(
+              nameText,
               style: TextStyle(
                 height: 1.2,
                 fontSize: 10,
@@ -611,13 +591,14 @@ class ClaimButtonIcon extends StatelessWidget {
     required this.nameText,
     required this.icon,
     required this.onPressed,
-  }) : super (key: key);
+  }) : super(key: key);
 
   Widget build(BuildContext context) {
     return ClaimButtonGeneric(
       nameText: nameText,
       onPressed: onPressed,
-      top: Icon(icon,
+      top: Icon(
+        icon,
         size: 50,
         semanticLabel: nameText,
         color: Colors.white,
@@ -636,7 +617,7 @@ class ClaimButtonImage extends StatelessWidget {
     required this.nameText,
     required this.image,
     required this.onPressed,
-  }) : super (key: key);
+  }) : super(key: key);
 
   Widget build(BuildContext context) {
     return ClaimButtonGeneric(
@@ -661,7 +642,7 @@ class StandardButtonGeneric extends StatelessWidget {
     required this.actionDescription,
     required this.left,
     required this.onPressed,
-  }) : super (key: key);
+  }) : super(key: key);
 
   Widget build(BuildContext context) {
     return Container(
@@ -680,15 +661,11 @@ class StandardButtonGeneric extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(actionText,
-                    style: TextStyle(
-                      height: 1.2,
-                      fontSize: 12,
-                      color: Colors.white)),
+                      style: TextStyle(
+                          height: 1.2, fontSize: 12, color: Colors.white)),
                   Text(actionDescription,
-                    style: TextStyle(
-                      height: 1.2,
-                      fontSize: 8,
-                      color: Colors.white)),
+                      style: TextStyle(
+                          height: 1.2, fontSize: 8, color: Colors.white)),
                 ],
               ),
             ),
@@ -712,14 +689,15 @@ class StandardButton extends StatelessWidget {
     required this.actionDescription,
     required this.icon,
     required this.onPressed,
-  }) : super (key: key);
+  }) : super(key: key);
 
   Widget build(BuildContext context) {
     return StandardButtonGeneric(
       actionText: actionText,
       actionDescription: actionDescription,
       onPressed: onPressed,
-      left: Icon(icon,
+      left: Icon(
+        icon,
         size: 50,
         semanticLabel: actionText,
         color: Colors.white,
@@ -727,7 +705,7 @@ class StandardButton extends StatelessWidget {
     );
   }
 }
- 
+
 class NewOrImportProfilePage extends StatefulWidget {
   const NewOrImportProfilePage({Key? key}) : super(key: key);
 
@@ -832,32 +810,30 @@ class _NewProfilePageState extends State<NewProfilePage> {
           neopassLogoAndText,
           Container(
             margin: const EdgeInsets.only(left: 40, right: 40, top: 100),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Profile Name",
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.white,
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(
+                "Profile Name",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(height: 5),
+              TextField(
+                controller: textController,
+                maxLines: 1,
+                cursorColor: Colors.white,
+                style: TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: formColor,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(40.0),
                   ),
                 ),
-                SizedBox(height: 5),
-                TextField(
-                  controller: textController,
-                  maxLines: 1,
-                  cursorColor: Colors.white,
-                  style: TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: formColor,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(40.0),
-                    ),
-                  ),
-                ),
-              ]
-            ),
+              ),
+            ]),
           ),
           SizedBox(height: 120),
           Container(
@@ -976,22 +952,13 @@ class _ProfilePageState extends State<ProfilePage> {
         icon: Icons.video_call,
         onPressed: () async {
           try {
-            final String rawScan =
-                await FlutterBarcodeScanner.scanBarcode(
-                    "#ff6666",
-                    'cancel',
-                    false,
-                    ScanMode.QR
-                );
+            final String rawScan = await FlutterBarcodeScanner.scanBarcode(
+                "#ff6666", 'cancel', false, ScanMode.QR);
             final List<int> buffer = base64.decode(rawScan);
             final Protocol.Pointer pointer =
                 Protocol.Pointer.fromBuffer(buffer);
 
-            await makeVouch(
-              state2.db,
-              identity2.processSecret,
-              pointer
-            );
+            await makeVouch(state2.db, identity2.processSecret, pointer);
           } catch (err) {
             print(err);
           }
@@ -1013,13 +980,10 @@ class _ProfilePageState extends State<ProfilePage> {
         icon: Icons.delete,
         onPressed: () async {
           final public =
-            await identity2.processSecret.system.extractPublicKey();
+              await identity2.processSecret.system.extractPublicKey();
 
           await deleteIdentity(
-            state2.db,
-            public.bytes,
-            identity2.processSecret.process
-          );
+              state2.db, public.bytes, identity2.processSecret.process);
 
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return NewOrImportProfilePage();
@@ -1027,7 +991,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
           await state2.mLoadIdentities();
         },
-      ), 
+      ),
     ]);
 
     return Scaffold(
@@ -1041,17 +1005,16 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           Container(
-            margin: const EdgeInsets.only(bottom: 30, top: 10),
-            child: Text(
-              identity2.username,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                height: 1.2,
-                fontSize: 30,
-                color: Colors.white,
-              ),
-            )
-          ),
+              margin: const EdgeInsets.only(bottom: 30, top: 10),
+              child: Text(
+                identity2.username,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  height: 1.2,
+                  fontSize: 30,
+                  color: Colors.white,
+                ),
+              )),
           Expanded(
             child: ListView(
               shrinkWrap: true,
@@ -1119,20 +1082,17 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
           Align(
             alignment: AlignmentDirectional.centerEnd,
             child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: blueButtonColor,
-                shape: StadiumBorder(),
-              ),
-              child: Text('Make Claim'),
-              onPressed: () async {
-                await makeClaim(
-                  state2.db,
-                  identity2.processSecret,
-                  textController.text
-                );
-                await state2.mLoadIdentities();
-                Navigator.pop(context);
-              }),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: blueButtonColor,
+                  shape: StadiumBorder(),
+                ),
+                child: Text('Make Claim'),
+                onPressed: () async {
+                  await makeClaim(
+                      state2.db, identity2.processSecret, textController.text);
+                  await state2.mLoadIdentities();
+                  Navigator.pop(context);
+                }),
           ),
           Text(
             "Common",
@@ -1265,38 +1225,37 @@ class _ClaimPageState extends State<ClaimPage> {
             ),
           ),
           Container(
-            margin: const EdgeInsets.only(bottom: 10, top: 10),
-            child: Text(
-              identity2.username,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                height: 1.2,
-                fontSize: 30,
-                color: Colors.white,
-              ),
-            )
-          ),
+              margin: const EdgeInsets.only(bottom: 10, top: 10),
+              child: Text(
+                identity2.username,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  height: 1.2,
+                  fontSize: 30,
+                  color: Colors.white,
+                ),
+              )),
           Text(
             "Claims",
-             style: TextStyle(
-               fontSize: 15,
-               color: Colors.grey,
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.grey,
             ),
           ),
           SizedBox(height: 15),
           Text(
             "Freeform",
-             style: TextStyle(
-               fontSize: 15,
-               color: Colors.white,
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.white,
             ),
           ),
           SizedBox(height: 10),
           Text(
-             claim2.text,
-             style: TextStyle(
-               fontSize: 15,
-               color: Colors.grey,
+            claim2.text,
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.grey,
             ),
           ),
           SizedBox(height: 10),
@@ -1313,7 +1272,8 @@ class _ClaimPageState extends State<ClaimPage> {
           ),
           StandardButton(
             actionText: 'Automated',
-            actionDescription: 'Get an automated authority to vouch for this claim',
+            actionDescription:
+                'Get an automated authority to vouch for this claim',
             icon: Icons.refresh,
             onPressed: () {},
           ),
@@ -1363,38 +1323,37 @@ class PresentPage extends StatelessWidget {
             ),
           ),
           Container(
-            margin: const EdgeInsets.only(bottom: 10, top: 10),
-            child: Text(
-              identity2.username,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                height: 1.2,
-                fontSize: 30,
-                color: Colors.white,
-              ),
-            )
-          ),
+              margin: const EdgeInsets.only(bottom: 10, top: 10),
+              child: Text(
+                identity2.username,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  height: 1.2,
+                  fontSize: 30,
+                  color: Colors.white,
+                ),
+              )),
           Text(
             "Requests you to verify their claim",
-             style: TextStyle(
-               fontSize: 15,
-               color: Colors.grey,
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.grey,
             ),
           ),
           SizedBox(height: 15),
           Text(
             "Freeform",
-             style: TextStyle(
-               fontSize: 15,
-               color: Colors.white,
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.white,
             ),
           ),
           SizedBox(height: 10),
           Text(
-             claim2.text,
-             style: TextStyle(
-               fontSize: 15,
-               color: Colors.grey,
+            claim2.text,
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.grey,
             ),
           ),
           SizedBox(height: 20),
@@ -1409,9 +1368,9 @@ class PresentPage extends StatelessWidget {
           SizedBox(height: 15),
           Text(
             "Scan to Verify",
-             style: TextStyle(
-               fontSize: 15,
-               color: Colors.grey,
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.grey,
             ),
           ),
           StandardButton(
@@ -1431,4 +1390,3 @@ class PresentPage extends StatelessWidget {
     );
   }
 }
-
