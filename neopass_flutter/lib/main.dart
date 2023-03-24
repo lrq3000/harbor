@@ -303,8 +303,122 @@ Future<String> loadLatestUsername(
   }
 }
 
-Future<void> saveEvent(SQFLite.Database db, ProcessSecret processInfo,
-    Protocol.Event event) async {
+Future<Protocol.SignedEvent?> loadEvent(
+  SQFLite.Database db,
+  List<int> system,
+  List<int> process,
+  FixNum.Int64 logicalClock,
+) async {
+  final rows = await db.rawQuery('''
+    SELECT raw_event FROM events
+    WHERE system_key_type = 1
+    AND system_key = ?
+    AND process = ?
+    AND logical_clock = ?
+    LIMIT 1;
+  ''', [Uint8List.fromList(system), Uint8List.fromList(process),
+       logicalClock.toInt()]);
+
+  if (rows.length > 0) {
+    return Protocol.SignedEvent.fromBuffer(
+      rows.first["raw_event"] as List<int>
+    );
+  }
+
+  return null;
+}
+
+
+Future<Image?> loadImage(
+  SQFLite.Database db,
+  Protocol.Pointer pointer,
+) async {
+  final metaSignedEvent = await loadEvent(
+    db,
+    pointer.system.key,
+    pointer.process.process,
+    pointer.logicalClock,
+  );
+
+  if (metaSignedEvent == null) {
+    return null;
+  }
+
+  final metaEvent = Protocol.Event.fromBuffer(metaSignedEvent.event);
+
+  if (metaEvent.contentType != FixNum.Int64(7)) {
+    print("expected blob meta event");
+    print(metaEvent.contentType);
+
+    return null;
+  }
+
+  final blobMeta = Protocol.BlobMeta.fromBuffer(metaEvent.content);
+
+  final contentSignedEvent = await loadEvent(
+    db,
+    metaEvent.system.key,
+    metaEvent.process.process,
+    metaEvent.logicalClock + 1,
+  );
+
+  if (contentSignedEvent == null) {
+    return null;
+  }
+
+  final contentEvent = Protocol.Event.fromBuffer(contentSignedEvent.event);
+
+  if (contentEvent.contentType != FixNum.Int64(8)) {
+    print("expected blob section event");
+
+    return null;
+  }
+
+  final blobSection = Protocol.BlobSection.fromBuffer(contentEvent.content);
+
+  return Image.memory(Uint8List.fromList(blobSection.content));
+}
+
+Future<Image?> loadLatestAvatar(
+  SQFLite.Database db,
+  List<int> system,
+  List<int> process,
+) async {
+  final q = await db.rawQuery('''
+        SELECT raw_event FROM events
+        WHERE system_key_type = 1
+        AND system_key = ?
+        AND process = ?
+        AND content_type = 9
+        ORDER BY
+        logical_clock DESC
+        LIMIT 1;
+    ''', [Uint8List.fromList(system), Uint8List.fromList(process)]);
+
+  if (q.length == 0) {
+    return null;
+  } else {
+    Protocol.SignedEvent signedEvent =
+        Protocol.SignedEvent.fromBuffer(q.first['raw_event'] as List<int>);
+
+    Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
+
+    if (event.contentType != FixNum.Int64(9)) {
+      print("expected content type avatar");
+
+      return null;
+    };
+
+    final Protocol.Pointer pointer = Protocol.Pointer.fromBuffer(
+      event.lwwElement.value,
+    );
+
+    return loadImage(db, pointer);
+  }
+}
+
+Future<Protocol.Pointer> saveEvent(SQFLite.Database db,
+    ProcessSecret processInfo, Protocol.Event event) async {
   final public = await processInfo.system.extractPublicKey();
   Protocol.PublicKey system = Protocol.PublicKey();
   system.keyType = new FixNum.Int64(1);
@@ -338,6 +452,55 @@ Future<void> saveEvent(SQFLite.Database db, ProcessSecret processInfo,
       .bytes;
 
   await ingest(db, signedEvent);
+
+  return await signedEventToPointer(signedEvent);
+}
+
+Future<Protocol.Pointer> publishBlob(
+    SQFLite.Database db, ProcessSecret processInfo,
+    String mime, List<int> bytes) async {
+  final Protocol.BlobMeta blobMeta = Protocol.BlobMeta();
+  blobMeta.sectionCount = FixNum.Int64(1);
+  blobMeta.mime = mime;
+
+  final Protocol.Event blobMetaEvent = Protocol.Event();
+  blobMetaEvent.contentType = FixNum.Int64(7);
+  blobMetaEvent.content = blobMeta.writeToBuffer();
+
+  final blobMetaPointer = await saveEvent(db, processInfo, blobMetaEvent);
+
+  final Protocol.BlobSection blobSection = Protocol.BlobSection();
+  blobSection.metaPointer = blobMetaPointer.logicalClock;
+  blobSection.content = bytes;
+
+  final Protocol.Event blobSectionEvent = Protocol.Event();
+  blobSectionEvent.contentType = FixNum.Int64(8);
+  blobSectionEvent.content = blobSection.writeToBuffer();
+
+  await saveEvent(db, processInfo, blobSectionEvent);
+
+  final public = await processInfo.system.extractPublicKey();
+  await sendAllEventsToServer(db, public.bytes);
+
+  return blobMetaPointer;
+}
+
+Future<void> setAvatar(
+    SQFLite.Database db, ProcessSecret processInfo,
+    Protocol.Pointer pointer) async {
+  Protocol.LWWElement element = Protocol.LWWElement();
+  element.unixMilliseconds =
+      FixNum.Int64(DateTime.now().millisecondsSinceEpoch);
+  element.value = pointer.writeToBuffer();
+
+  Protocol.Event event = Protocol.Event();
+  event.contentType = FixNum.Int64(9);
+  event.lwwElement = element;
+
+  await saveEvent(db, processInfo, event);
+
+  final public = await processInfo.system.extractPublicKey();
+  await sendAllEventsToServer(db, public.bytes);
 }
 
 Future<void> setUsername(
@@ -440,8 +603,9 @@ class ProcessInfo {
   final ProcessSecret processSecret;
   final String username;
   final List<ClaimInfo> claims;
+  final Image? avatar;
 
-  ProcessInfo(this.processSecret, this.username, this.claims);
+  ProcessInfo(this.processSecret, this.username, this.claims, this.avatar);
 }
 
 class PolycentricModel extends ChangeNotifier {
@@ -460,10 +624,15 @@ class PolycentricModel extends ChangeNotifier {
         public.bytes,
         identity.process,
       );
+      final avatar = await loadLatestAvatar(
+        this.db,
+        public.bytes,
+        identity.process,
+      );
       final claims = await loadClaims(this.db, public.bytes);
 
       this.identities.add(
-            new ProcessInfo(identity, username, claims),
+            new ProcessInfo(identity, username, claims, avatar),
           );
     }
 
@@ -729,6 +898,9 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
             child: CircleAvatar(
               backgroundColor: Colors.white,
               radius: 14,
+              foregroundImage: identities[i].avatar != null
+                ? identities[i].avatar!.image
+                : null,
             ),
           ),
         ),
@@ -1005,6 +1177,9 @@ class _ProfilePageState extends State<ProfilePage> {
               child: CircleAvatar(
                 backgroundColor: Colors.white,
                 radius: 50,
+                foregroundImage: identity2.avatar != null
+                  ? identity2.avatar!.image
+                  : null,
               ),
             ),
             onTap: () async {
@@ -1017,6 +1192,16 @@ class _ProfilePageState extends State<ProfilePage> {
               if (result != null) {
                 final bytes =
                   await File(result.files.single.path!).readAsBytes();
+
+                final pointer = await publishBlob(
+                  state2.db, identity2.processSecret, "image/jpeg", bytes,
+                );
+
+                await setAvatar(
+                  state2.db, identity2.processSecret, pointer,
+                );
+
+                print("set avatar");
               }
             },
           ),
@@ -1238,6 +1423,9 @@ class _ClaimPageState extends State<ClaimPage> {
             child: CircleAvatar(
               backgroundColor: Colors.white,
               radius: 50,
+              foregroundImage: identity2.avatar != null
+                ? identity2.avatar!.image
+                : null,
             ),
           ),
           Container(
@@ -1336,6 +1524,9 @@ class PresentPage extends StatelessWidget {
             child: CircleAvatar(
               backgroundColor: Colors.white,
               radius: 50,
+              foregroundImage: identity2.avatar != null
+                ? identity2.avatar!.image
+                : null,
             ),
           ),
           Container(
