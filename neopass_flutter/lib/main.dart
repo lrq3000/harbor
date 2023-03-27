@@ -276,6 +276,43 @@ Future<void> sendAllEventsToServer(
   }
 }
 
+Future<bool> requestVerification(
+  Protocol.Pointer pointer,
+  String claimType,
+) async {
+  final url = "https://autoupdate.unkto.com/verifiers/" +
+    claimType.toLowerCase() +
+    "/api/v1/vouch";
+
+  try {
+    final response = await HTTP.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/octet-stream',
+      },
+      body: pointer.writeToBuffer(),
+    );
+ 
+    if (response.statusCode != 200) {
+      print('request verification failed');
+      print(response.statusCode);
+      print(response.body);
+
+      return false;
+    } else {
+      return true;
+    }
+  } catch (err) {
+    print(err);
+  }
+
+  return false;
+}
+
+// curl -X POST -H "Content-Type: application/octet-stream"
+// --data-binary "@claimpointer.hex" 
+// https://autoupdate.unkto.com/verifiers/youtube/api/v1/vouch
+
 Future<String> loadLatestUsername(
   SQFLite.Database db,
   List<int> system,
@@ -540,7 +577,7 @@ Future<void> makeClaim(
   await sendAllEventsToServer(db, public.bytes);
 }
 
-Future<Protocol.Pointer> makePlatformClaim(
+Future<ClaimInfo> makePlatformClaim(
     SQFLite.Database db, ProcessSecret processInfo,
     String claimType, String account) async {
   Protocol.ClaimIdentifier claimIdentifier = Protocol.ClaimIdentifier();
@@ -559,7 +596,7 @@ Future<Protocol.Pointer> makePlatformClaim(
   final public = await processInfo.system.extractPublicKey();
   await sendAllEventsToServer(db, public.bytes);
 
-  return pointer;
+  return new ClaimInfo(claimType, account, pointer);
 }
 
 Future<void> makeVouch(SQFLite.Database db, ProcessSecret processInfo,
@@ -1521,7 +1558,7 @@ class _ClaimPageState extends State<ClaimPage> {
             onPressed: () {
                Navigator.push(context, MaterialPageRoute(builder: (context) {
                  return AddTokenPage(
-                   pointer: claim2.pointer,
+                   claim: claim2,
                  );
               }));
             },
@@ -1769,7 +1806,7 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
                   ),
                   child: Text('Next step'),
                   onPressed: () async {
-                    final pointer = await makePlatformClaim(
+                    final claim = await makePlatformClaim(
                         state2.db,
                         identity2.processSecret,
                         widget.claimType,
@@ -1779,7 +1816,7 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
                    Navigator.push(context, MaterialPageRoute(builder: (context)
                    {
                      return AddTokenPage(
-                       pointer: pointer,
+                       claim: claim,
                      );
                   }));
                 }),
@@ -1792,9 +1829,9 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
 }
 
 class AddTokenPage extends StatelessWidget {
-  final Protocol.Pointer pointer;
+  final ClaimInfo claim;
 
-  const AddTokenPage({Key? key, required this.pointer}): super(key: key);
+  const AddTokenPage({Key? key, required this.claim}): super(key: key);
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1835,7 +1872,7 @@ class AddTokenPage extends StatelessWidget {
                      (context)
                      {
                        return AutomatedVerificationPage(
-                         pointer: pointer,
+                         claim: claim,
                        );
                     }));
                   }),
@@ -1848,9 +1885,10 @@ class AddTokenPage extends StatelessWidget {
 }
 
 class AutomatedVerificationPage extends StatefulWidget {
-  final Protocol.Pointer pointer;
+  final ClaimInfo claim;
 
-  AutomatedVerificationPage({Key? key, required this.pointer})
+  AutomatedVerificationPage({
+    Key? key, required this.claim})
       : super(key: key); 
 
   @override
@@ -1862,15 +1900,25 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
   int page = 0;
 
   void initState() {
-    doThing();
+    doVerification();
   }
 
-  Future<void> doThing() async {
-  }
-
-  void retry() {
+  Future<void> doVerification() async {
     setState(() {
       page = 0;
+    });
+
+    final success = await requestVerification(
+      widget.claim.pointer,
+      widget.claim.claimType,
+    );
+
+    setState(() {
+      if (success) {
+        page = 1;
+      } else {
+        page = 2;
+      }
     });
   }
 
@@ -1953,7 +2001,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
             ),
             child: Text('Retry verification'),
             onPressed: () async {
-              retry();
+              doVerification();
             },
           ),
         ),
