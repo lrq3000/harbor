@@ -46,6 +46,7 @@ class AddTokenPage extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
+                    SizedBox(height: 5),
                     Text(token,
                         style: TextStyle(
                           color: Colors.white,
@@ -60,6 +61,7 @@ class AddTokenPage extends StatelessWidget {
                         ),
                       ),
                     ),
+                    SizedBox(height: 5),
                   ],
                 ),
                 onPressed: () async {
