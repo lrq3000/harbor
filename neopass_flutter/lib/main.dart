@@ -1252,6 +1252,18 @@ class CreateClaimPage extends StatefulWidget {
   State<CreateClaimPage> createState() => _CreateClaimPageState();
 }
 
+Image claimTypeToImage(String claimType) {
+  switch (claimType) {
+    case "YouTube": { return Image.asset('assets/youtube.png'); } break;
+    case "Odysee": { return Image.asset('assets/odysee.png'); } break;
+    case "Rumble": { return Image.asset('assets/rumble.png'); } break;
+    case "Twitch": { return Image.asset('assets/twitch.png'); } break;
+    case "Instagram": { return Image.asset('assets/instagram.png'); } break;
+  }
+
+  throw Exception("unknown claim type");
+}
+
 class _CreateClaimPageState extends State<CreateClaimPage> {
   TextEditingController textController = TextEditingController();
 
@@ -1259,6 +1271,21 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
   Widget build(BuildContext context) {
     var state2 = context.watch<PolycentricModel>();
     var identity2 = state2.identities[widget.identityIndex];
+
+    StatelessWidget makePlatformButton(String claimType) {
+      return ClaimButtonImage(
+        nameText: claimType,
+        image: claimTypeToImage(claimType),
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return MakePlatformClaimPage(
+              identityIndex: widget.identityIndex,
+              claimType: claimType,
+            );
+          }));
+        },
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -1355,36 +1382,11 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
             shrinkWrap: true,
             childAspectRatio: 123.0 / 106.0,
             children: [
-              ClaimButtonImage(
-                nameText: "YouTube",
-                image: Image.asset('assets/youtube.png'),
-                onPressed: () {},
-              ),
-              ClaimButtonImage(
-                nameText: "Odysee",
-                image: Image.asset('assets/odysee.png'),
-                onPressed: () {},
-              ),
-              ClaimButtonImage(
-                nameText: "Rumble",
-                image: Image.asset('assets/rumble.png'),
-                onPressed: () {},
-              ),
-              ClaimButtonImage(
-                nameText: "Twitch",
-                image: Image.asset('assets/twitch.png'),
-                onPressed: () {},
-              ),
-              ClaimButtonImage(
-                nameText: "Instagram",
-                image: Image.asset('assets/instagram.png'),
-                onPressed: () {},
-              ),
-              ClaimButtonIcon(
-                nameText: "Minds",
-                icon: Icons.language,
-                onPressed: () {},
-              ),
+              makePlatformButton("YouTube" ),
+              makePlatformButton("Odysee"),
+              makePlatformButton("Rumble"),
+              makePlatformButton("Twitch"),
+              makePlatformButton("Instagram"),
             ],
           ),
         ],
@@ -1658,3 +1660,87 @@ class PresentPage extends StatelessWidget {
     );
   }
 }
+
+class MakePlatformClaimPage extends StatelessWidget {
+
+  final int identityIndex;
+  final String claimType;
+
+  const MakePlatformClaimPage(
+      {Key? key, required this.identityIndex, required this.claimType})
+      : super(key: key);
+
+  Widget build(BuildContext context) {
+    var state2 = context.watch<PolycentricModel>();
+    var identity2 = state2.identities[identityIndex];
+
+    TextEditingController textController = TextEditingController();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Make Claim'),
+      ),
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: 75),
+            claimTypeToImage(claimType),
+            SizedBox(height: 75),
+            Text(
+              claimType,
+              style: TextStyle(
+                fontSize: 30,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(height: 100),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: Text(
+                "Profile information",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            SizedBox(height: 5),
+            TextField(
+              controller: textController,
+              maxLines: null,
+              cursorColor: Colors.white,
+              style: TextStyle(color: Colors.white, fontSize: 12),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: formColor,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(40.0),
+                ),
+                labelText: "Profile name",
+                labelStyle: TextStyle(
+                  color: Colors.white,
+                ),
+                floatingLabelBehavior: FloatingLabelBehavior.never,
+              ),
+            ),
+            SizedBox(height: 150),
+            Align(
+              alignment: AlignmentDirectional.center,
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: blueButtonColor,
+                    shape: StadiumBorder(),
+                  ),
+                  child: Text('Next step'),
+                  onPressed: () async {
+                  }),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
