@@ -309,10 +309,6 @@ Future<bool> requestVerification(
   return false;
 }
 
-// curl -X POST -H "Content-Type: application/octet-stream"
-// --data-binary "@claimpointer.hex" 
-// https://autoupdate.unkto.com/verifiers/youtube/api/v1/vouch
-
 Future<String> loadLatestUsername(
   SQFLite.Database db,
   List<int> system,
@@ -638,19 +634,6 @@ MaterialColor makeColor(Color color) {
 MaterialColor buttonColor = makeColor(Color(0xFF1B1B1B));
 MaterialColor blueButtonColor = makeColor(Color(0xFF2D63ED));
 MaterialColor formColor = makeColor(Color(0xFF303030));
-
-const MaterialColor buttonBorder = MaterialColor(0xff6a5a00, <int, Color>{
-  50: Color(0xff6a5a00),
-  100: Color(0xff6a5a00),
-  200: Color(0xff6a5a00),
-  300: Color(0xff6a5a00),
-  400: Color(0xff6a5a00),
-  500: Color(0xff6a5a00),
-  600: Color(0xff6a5a00),
-  700: Color(0xff6a5a00),
-  800: Color(0xff6a5a00),
-  900: Color(0xff6a5a00),
-});
 
 class ClaimInfo {
   final String claimType;
