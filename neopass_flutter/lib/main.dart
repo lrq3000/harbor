@@ -540,7 +540,7 @@ Future<void> makeClaim(
   await sendAllEventsToServer(db, public.bytes);
 }
 
-Future<void> makePlatformClaim(
+Future<Protocol.Pointer> makePlatformClaim(
     SQFLite.Database db, ProcessSecret processInfo,
     String claimType, String account) async {
   Protocol.ClaimIdentifier claimIdentifier = Protocol.ClaimIdentifier();
@@ -554,10 +554,12 @@ Future<void> makePlatformClaim(
   event.contentType = FixNum.Int64(12);
   event.content = claim.writeToBuffer();
 
-  await saveEvent(db, processInfo, event);
+  final pointer = await saveEvent(db, processInfo, event);
 
   final public = await processInfo.system.extractPublicKey();
   await sendAllEventsToServer(db, public.bytes);
+
+  return pointer;
 }
 
 Future<void> makeVouch(SQFLite.Database db, ProcessSecret processInfo,
@@ -1516,7 +1518,13 @@ class _ClaimPageState extends State<ClaimPage> {
             actionDescription:
                 'Get an automated authority to vouch for this claim',
             icon: Icons.refresh,
-            onPressed: () {},
+            onPressed: () {
+               Navigator.push(context, MaterialPageRoute(builder: (context) {
+                 return AddTokenPage(
+                   pointer: claim2.pointer,
+                 );
+              }));
+            },
           ),
           StandardButton(
             actionText: 'Manual',
@@ -1761,12 +1769,75 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
                   ),
                   child: Text('Next step'),
                   onPressed: () async {
-                    await makePlatformClaim(
+                    final pointer = await makePlatformClaim(
                         state2.db,
                         identity2.processSecret,
                         widget.claimType,
                         textController.text);
                     await state2.mLoadIdentities();
+
+                   Navigator.push(context, MaterialPageRoute(builder: (context)
+                   {
+                     return AddTokenPage(
+                       pointer: pointer,
+                     );
+                  }));
+                }),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class AddTokenPage extends StatelessWidget {
+  final Protocol.Pointer pointer;
+
+  const AddTokenPage({Key? key, required this.pointer}): super(key: key);
+
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Add Token'),
+      ),
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          children: [
+            SizedBox(height: 20),
+            Text(
+              "Token",
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+            ),
+            SizedBox(height: 20),
+            Text(
+              "My Token",
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+            ),
+            SizedBox(height: 450),
+            Align(
+              alignment: AlignmentDirectional.center,
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: blueButtonColor,
+                    shape: StadiumBorder(),
+                  ),
+                  child: Text('Verify'),
+                  onPressed: () async {
+                     Navigator.push(context, MaterialPageRoute(builder:
+                     (context)
+                     {
+                       return AutomatedVerificationPage(
+                         pointer: pointer,
+                       );
+                    }));
                   }),
             ),
           ],
@@ -1776,3 +1847,129 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
   }
 }
 
+class AutomatedVerificationPage extends StatefulWidget {
+  final Protocol.Pointer pointer;
+
+  AutomatedVerificationPage({Key? key, required this.pointer})
+      : super(key: key); 
+
+  @override
+  State<AutomatedVerificationPage> createState() =>
+    _AutomatedVerificationPageState();
+}
+
+class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
+  int page = 0;
+
+  void initState() {
+    doThing();
+  }
+
+  Future<void> doThing() async {
+  }
+
+  void retry() {
+    setState(() {
+      page = 0;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> columnChildren = [
+        SizedBox(height: 100),
+        neopassLogoAndText,
+        SizedBox(height: 150),
+    ];
+
+    if (page == 0) {
+      columnChildren.addAll([
+          CircularProgressIndicator(
+            color: Colors.white,
+          ),
+          SizedBox(height: 20),
+          Text(
+            "Waiting for verification",
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.white,
+            ),
+          ),
+      ]);
+    } else if (page == 1) {
+      columnChildren.addAll([
+        Icon(
+          Icons.done,
+          size: 75,
+          semanticLabel: "success",
+          color: Colors.green,
+        ),
+        Text(
+          "Success!",
+          style: TextStyle(
+            fontSize: 15,
+            color: Colors.white,
+          ),
+        ),
+        SizedBox(height: 120),
+        Align(
+          alignment: AlignmentDirectional.center,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: blueButtonColor,
+              shape: StadiumBorder(),
+            ),
+            child: Text('Continue'),
+            onPressed: () async {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return NewOrImportProfilePage();
+              }));
+            },
+          ),
+        ),
+      ]);
+    } else if (page == 2) {
+      columnChildren.addAll([
+        Icon(
+          Icons.close,
+          size: 75,
+          semanticLabel: "failure",
+          color: Colors.red,
+        ),
+        Text(
+          "Verification failed.",
+          style: TextStyle(
+            fontSize: 15,
+            color: Colors.white,
+          ),
+        ),
+        SizedBox(height: 120),
+        Align(
+          alignment: AlignmentDirectional.center,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: blueButtonColor,
+              shape: StadiumBorder(),
+            ),
+            child: Text('Retry verification'),
+            onPressed: () async {
+              retry();
+            },
+          ),
+        ),
+      ]);
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Verifying Claim"),
+      ),
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          children: columnChildren,
+        ),
+      ),
+    );
+  }
+}
