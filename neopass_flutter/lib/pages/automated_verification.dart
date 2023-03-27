@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 
 import 'new_or_import_profile.dart';
 import '../main.dart' as Main;
+import '../api_methods.dart' as APIMethods;
 import '../protocol.pb.dart' as Protocol;
 
 class AutomatedVerificationPage extends StatefulWidget {
   final Main.ClaimInfo claim;
 
-  AutomatedVerificationPage({
-    Key? key, required this.claim})
-      : super(key: key); 
+  AutomatedVerificationPage({Key? key, required this.claim}) : super(key: key);
 
   @override
   State<AutomatedVerificationPage> createState() =>
-    _AutomatedVerificationPageState();
+      _AutomatedVerificationPageState();
 }
 
 class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
@@ -28,7 +27,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
       page = 0;
     });
 
-    final success = await Main.requestVerification(
+    final success = await APIMethods.requestVerification(
       widget.claim.pointer,
       widget.claim.claimType,
     );
@@ -45,24 +44,24 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
   @override
   Widget build(BuildContext context) {
     List<Widget> columnChildren = [
-        SizedBox(height: 100),
-        Main.neopassLogoAndText,
-        SizedBox(height: 150),
+      SizedBox(height: 100),
+      Main.neopassLogoAndText,
+      SizedBox(height: 150),
     ];
 
     if (page == 0) {
       columnChildren.addAll([
-          CircularProgressIndicator(
+        CircularProgressIndicator(
+          color: Colors.white,
+        ),
+        SizedBox(height: 20),
+        Text(
+          "Waiting for verification",
+          style: TextStyle(
+            fontSize: 15,
             color: Colors.white,
           ),
-          SizedBox(height: 20),
-          Text(
-            "Waiting for verification",
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.white,
-            ),
-          ),
+        ),
       ]);
     } else if (page == 1) {
       columnChildren.addAll([

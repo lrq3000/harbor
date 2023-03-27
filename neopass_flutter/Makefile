@@ -11,4 +11,4 @@ lint:
 	flutter analyze
 
 format:
-	dart format lib/main.dart
+	dart format lib/main.dart lib/pages/* lib/api_methods.dart

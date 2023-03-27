@@ -27,8 +27,8 @@ Future<bool> requestVerification(
   String claimType,
 ) async {
   final url = "https://autoupdate.unkto.com/verifiers/" +
-    claimType.toLowerCase() +
-    "/api/v1/vouch";
+      claimType.toLowerCase() +
+      "/api/v1/vouch";
 
   try {
     final response = await HTTP.post(
@@ -38,7 +38,7 @@ Future<bool> requestVerification(
       },
       body: pointer.writeToBuffer(),
     );
- 
+
     if (response.statusCode != 200) {
       print('request verification failed');
       print(response.statusCode);
@@ -54,4 +54,3 @@ Future<bool> requestVerification(
 
   return false;
 }
-

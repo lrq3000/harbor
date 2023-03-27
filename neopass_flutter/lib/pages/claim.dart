@@ -105,10 +105,10 @@ class _ClaimPageState extends State<ClaimPage> {
                 'Get an automated authority to vouch for this claim',
             icon: Icons.refresh,
             onPressed: () {
-               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                 return AddTokenPage(
-                   claim: claim2,
-                 );
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return AddTokenPage(
+                  claim: claim2,
+                );
               }));
             },
           ),
@@ -130,4 +130,3 @@ class _ClaimPageState extends State<ClaimPage> {
     );
   }
 }
-

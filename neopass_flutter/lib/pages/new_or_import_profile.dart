@@ -90,4 +90,3 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
     );
   }
 }
-

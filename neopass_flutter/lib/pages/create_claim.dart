@@ -132,7 +132,7 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
             shrinkWrap: true,
             childAspectRatio: 123.0 / 106.0,
             children: [
-              makePlatformButton("YouTube" ),
+              makePlatformButton("YouTube"),
               makePlatformButton("Odysee"),
               makePlatformButton("Rumble"),
               makePlatformButton("Twitch"),
@@ -144,4 +144,3 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
     );
   }
 }
-

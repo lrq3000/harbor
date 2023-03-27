@@ -241,8 +241,8 @@ Future<List<ClaimInfo>> loadClaims(
 
     final pointer = await signedEventToPointer(signedEvent);
 
-    result.add(new ClaimInfo(
-      claim.claimType, claimIdentifier.identifier, pointer));
+    result.add(
+        new ClaimInfo(claim.claimType, claimIdentifier.identifier, pointer));
   }
 
   return result;
@@ -270,39 +270,6 @@ Future<void> sendAllEventsToServer(
   }
 
   await postEvents(payload);
-}
-
-Future<bool> requestVerification(
-  Protocol.Pointer pointer,
-  String claimType,
-) async {
-  final url = "https://autoupdate.unkto.com/verifiers/" +
-    claimType.toLowerCase() +
-    "/api/v1/vouch";
-
-  try {
-    final response = await HTTP.post(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/octet-stream',
-      },
-      body: pointer.writeToBuffer(),
-    );
- 
-    if (response.statusCode != 200) {
-      print('request verification failed');
-      print(response.statusCode);
-      print(response.body);
-
-      return false;
-    } else {
-      return true;
-    }
-  } catch (err) {
-    print(err);
-  }
-
-  return false;
 }
 
 Future<String> loadLatestUsername(
@@ -569,9 +536,8 @@ Future<void> makeClaim(
   await sendAllEventsToServer(db, public.bytes);
 }
 
-Future<ClaimInfo> makePlatformClaim(
-    SQFLite.Database db, ProcessSecret processInfo,
-    String claimType, String account) async {
+Future<ClaimInfo> makePlatformClaim(SQFLite.Database db,
+    ProcessSecret processInfo, String claimType, String account) async {
   Protocol.ClaimIdentifier claimIdentifier = Protocol.ClaimIdentifier();
   claimIdentifier.identifier = account;
 
@@ -919,13 +885,32 @@ class StandardButton extends StatelessWidget {
 
 Image claimTypeToImage(String claimType) {
   switch (claimType) {
-    case "YouTube": { return Image.asset('assets/youtube.png'); } break;
-    case "Odysee": { return Image.asset('assets/odysee.png'); } break;
-    case "Rumble": { return Image.asset('assets/rumble.png'); } break;
-    case "Twitch": { return Image.asset('assets/twitch.png'); } break;
-    case "Instagram": { return Image.asset('assets/instagram.png'); } break;
+    case "YouTube":
+      {
+        return Image.asset('assets/youtube.png');
+      }
+      break;
+    case "Odysee":
+      {
+        return Image.asset('assets/odysee.png');
+      }
+      break;
+    case "Rumble":
+      {
+        return Image.asset('assets/rumble.png');
+      }
+      break;
+    case "Twitch":
+      {
+        return Image.asset('assets/twitch.png');
+      }
+      break;
+    case "Instagram":
+      {
+        return Image.asset('assets/instagram.png');
+      }
+      break;
   }
 
   throw Exception("unknown claim type");
 }
-

@@ -9,8 +9,8 @@ class MakePlatformClaimPage extends StatefulWidget {
   final String claimType;
 
   const MakePlatformClaimPage(
-    {Key? key, required this.identityIndex, required this.claimType})
-    : super(key: key);
+      {Key? key, required this.identityIndex, required this.claimType})
+      : super(key: key);
 
   @override
   State<MakePlatformClaimPage> createState() => _MakePlatformClaimPageState();
@@ -89,13 +89,13 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
                         textController.text);
                     await state2.mLoadIdentities();
 
-                   Navigator.push(context, MaterialPageRoute(builder: (context)
-                   {
-                     return AddTokenPage(
-                       claim: claim,
-                     );
-                  }));
-                }),
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return AddTokenPage(
+                        claim: claim,
+                      );
+                    }));
+                  }),
             ),
           ],
         ),
@@ -103,4 +103,3 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
     );
   }
 }
-

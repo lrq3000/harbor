@@ -6,7 +6,7 @@ import '../main.dart' as Main;
 class AddTokenPage extends StatelessWidget {
   final Main.ClaimInfo claim;
 
-  const AddTokenPage({Key? key, required this.claim}): super(key: key);
+  const AddTokenPage({Key? key, required this.claim}) : super(key: key);
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,12 +43,11 @@ class AddTokenPage extends StatelessWidget {
                   ),
                   child: Text('Verify'),
                   onPressed: () async {
-                     Navigator.push(context, MaterialPageRoute(builder:
-                     (context)
-                     {
-                       return AutomatedVerificationPage(
-                         claim: claim,
-                       );
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return AutomatedVerificationPage(
+                        claim: claim,
+                      );
                     }));
                   }),
             ),
@@ -58,4 +57,3 @@ class AddTokenPage extends StatelessWidget {
     );
   }
 }
-

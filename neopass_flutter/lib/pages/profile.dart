@@ -54,40 +54,39 @@ class _ProfilePageState extends State<ProfilePage> {
     Main.ProcessSecret identity,
   ) async {
     await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Edit Username"),
-          content: TextField(
-            onChanged: (next) {
-              setState(() {
-                newUsername = next;
-              });
-            },
-            controller: usernameController,
-          ),
-          actions: [
-            TextButton(
-              child: const Text("cancel"),
-              onPressed: () {
-                Navigator.of(context).pop();
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Edit Username"),
+            content: TextField(
+              onChanged: (next) {
+                setState(() {
+                  newUsername = next;
+                });
               },
+              controller: usernameController,
             ),
-            TextButton(
-              child: const Text("submit"),
-              onPressed: () async {
-                await Main.setUsername(
-                  state.db, identity, usernameController.text);
+            actions: [
+              TextButton(
+                child: const Text("cancel"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text("submit"),
+                onPressed: () async {
+                  await Main.setUsername(
+                      state.db, identity, usernameController.text);
 
-                await state.mLoadIdentities();
+                  await state.mLoadIdentities();
 
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      }
-    );
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   @override
@@ -273,5 +272,3 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
-
-
