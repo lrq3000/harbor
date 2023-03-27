@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'new_or_import_profile.dart';
 import '../main.dart' as Main;
 import '../protocol.pb.dart' as Protocol;
 
@@ -89,7 +90,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
             child: Text('Continue'),
             onPressed: () async {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return Main.NewOrImportProfilePage();
+                return NewOrImportProfilePage();
               }));
             },
           ),

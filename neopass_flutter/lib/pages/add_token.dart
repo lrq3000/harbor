@@ -38,7 +38,7 @@ class AddTokenPage extends StatelessWidget {
               alignment: AlignmentDirectional.center,
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: blueButtonColor,
+                    backgroundColor: Main.blueButtonColor,
                     shape: StadiumBorder(),
                   ),
                   child: Text('Verify'),

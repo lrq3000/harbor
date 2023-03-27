@@ -9,6 +9,9 @@ import 'package:file_picker/file_picker.dart' as FilePicker;
 import '../main.dart' as Main;
 import '../protocol.pb.dart' as Protocol;
 import 'backup.dart';
+import 'claim.dart';
+import 'create_claim.dart';
+import 'new_or_import_profile.dart';
 
 class ProfilePage extends StatefulWidget {
   final int identityIndex;
@@ -30,7 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
         icon: Icons.format_quote,
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return Main.ClaimPage(
+            return ClaimPage(
               identityIndex: widget.identityIndex,
               claimIndex: i,
             );
@@ -83,7 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
         icon: Icons.person_add,
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return Main.CreateClaimPage(identityIndex: widget.identityIndex);
+            return CreateClaimPage(identityIndex: widget.identityIndex);
           }));
         },
       ),
@@ -111,7 +114,7 @@ class _ProfilePageState extends State<ProfilePage> {
         icon: Icons.switch_account,
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return Main.NewOrImportProfilePage();
+            return NewOrImportProfilePage();
           }));
         },
       ),
@@ -137,7 +140,7 @@ class _ProfilePageState extends State<ProfilePage> {
               state2.db, public.bytes, identity2.processSecret.process);
 
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return Main.NewOrImportProfilePage();
+            return NewOrImportProfilePage();
           }));
 
           await state2.mLoadIdentities();
