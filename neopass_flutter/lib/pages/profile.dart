@@ -45,6 +45,51 @@ class _ProfilePageState extends State<ProfilePage> {
     return result;
   }
 
+  final TextEditingController usernameController = TextEditingController();
+  String newUsername = "";
+
+  Future<void> editUsername(
+    BuildContext context,
+    Main.PolycentricModel state,
+    Main.ProcessSecret identity,
+  ) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Edit Username"),
+          content: TextField(
+            onChanged: (next) {
+              setState(() {
+                newUsername = next;
+              });
+            },
+            controller: usernameController,
+          ),
+          actions: [
+            TextButton(
+              child: const Text("cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text("submit"),
+              onPressed: () async {
+                await Main.setUsername(
+                  state.db, identity, usernameController.text);
+
+                await state.mLoadIdentities();
+
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var state2 = context.watch<Main.PolycentricModel>();
@@ -189,9 +234,12 @@ class _ProfilePageState extends State<ProfilePage> {
               }
             },
           ),
-          Container(
-              margin: const EdgeInsets.only(bottom: 30, top: 10),
-              child: Text(
+          SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(width: 30),
+              Text(
                 identity2.username,
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -199,7 +247,21 @@ class _ProfilePageState extends State<ProfilePage> {
                   fontSize: 30,
                   color: Colors.white,
                 ),
-              )),
+              ),
+              OutlinedButton(
+                child: Icon(
+                  Icons.edit_outlined,
+                  size: 20,
+                  semanticLabel: "edit",
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  editUsername(context, state2, identity2.processSecret);
+                },
+              ),
+            ],
+          ),
+          SizedBox(height: 30),
           Expanded(
             child: ListView(
               shrinkWrap: true,
