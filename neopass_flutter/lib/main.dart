@@ -596,6 +596,7 @@ MaterialColor makeColor(Color color) {
 final MaterialColor buttonColor = makeColor(Color(0xFF1B1B1B));
 final MaterialColor blueButtonColor = makeColor(Color(0xFF2D63ED));
 final MaterialColor formColor = makeColor(Color(0xFF303030));
+final MaterialColor tokenColor = makeColor(Color(0xFF141414));
 
 class ClaimInfo {
   final String claimType;
