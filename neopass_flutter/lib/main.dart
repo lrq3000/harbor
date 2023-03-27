@@ -229,7 +229,8 @@ Future<List<ClaimInfo>> loadClaims(
 
     final pointer = await signedEventToPointer(signedEvent);
 
-    result.add(new ClaimInfo(claimIdentifier.identifier, pointer));
+    result.add(new ClaimInfo(
+      claim.claimType, claimIdentifier.identifier, pointer));
   }
 
   return result;
@@ -539,6 +540,26 @@ Future<void> makeClaim(
   await sendAllEventsToServer(db, public.bytes);
 }
 
+Future<void> makePlatformClaim(
+    SQFLite.Database db, ProcessSecret processInfo,
+    String claimType, String account) async {
+  Protocol.ClaimIdentifier claimIdentifier = Protocol.ClaimIdentifier();
+  claimIdentifier.identifier = account;
+
+  Protocol.Claim claim = Protocol.Claim();
+  claim.claimType = claimType;
+  claim.claim = claimIdentifier.writeToBuffer();
+
+  Protocol.Event event = Protocol.Event();
+  event.contentType = FixNum.Int64(12);
+  event.content = claim.writeToBuffer();
+
+  await saveEvent(db, processInfo, event);
+
+  final public = await processInfo.system.extractPublicKey();
+  await sendAllEventsToServer(db, public.bytes);
+}
+
 Future<void> makeVouch(SQFLite.Database db, ProcessSecret processInfo,
     Protocol.Pointer pointer) async {
   Protocol.Reference reference = Protocol.Reference();
@@ -593,10 +614,11 @@ const MaterialColor buttonBorder = MaterialColor(0xff6a5a00, <int, Color>{
 });
 
 class ClaimInfo {
+  final String claimType;
   final String text;
   final Protocol.Pointer pointer;
 
-  ClaimInfo(this.text, this.pointer);
+  ClaimInfo(this.claimType, this.text, this.pointer);
 }
 
 class ProcessInfo {
@@ -1058,7 +1080,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     for (var i = 0; i < claims.length; i++) {
       result.add(StandardButton(
-        actionText: 'Freeform claim',
+        actionText: claims[i].claimType,
         actionDescription: claims[i].text,
         icon: Icons.format_quote,
         onPressed: () {
@@ -1463,7 +1485,7 @@ class _ClaimPageState extends State<ClaimPage> {
           ),
           SizedBox(height: 15),
           Text(
-            "Freeform",
+            claim2.claimType,
             style: TextStyle(
               fontSize: 15,
               color: Colors.white,
@@ -1612,7 +1634,7 @@ class PresentPage extends StatelessWidget {
           ),
           SizedBox(height: 15),
           Text(
-            "Freeform",
+            claim2.claimType,
             style: TextStyle(
               fontSize: 15,
               color: Colors.white,
@@ -1661,20 +1683,24 @@ class PresentPage extends StatelessWidget {
   }
 }
 
-class MakePlatformClaimPage extends StatelessWidget {
-
+class MakePlatformClaimPage extends StatefulWidget {
   final int identityIndex;
   final String claimType;
 
   const MakePlatformClaimPage(
-      {Key? key, required this.identityIndex, required this.claimType})
-      : super(key: key);
+    {Key? key, required this.identityIndex, required this.claimType})
+    : super(key: key);
+
+  @override
+  State<MakePlatformClaimPage> createState() => _MakePlatformClaimPageState();
+}
+
+class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
+  TextEditingController textController = TextEditingController();
 
   Widget build(BuildContext context) {
     var state2 = context.watch<PolycentricModel>();
-    var identity2 = state2.identities[identityIndex];
-
-    TextEditingController textController = TextEditingController();
+    var identity2 = state2.identities[widget.identityIndex];
 
     return Scaffold(
       appBar: AppBar(
@@ -1686,10 +1712,10 @@ class MakePlatformClaimPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: 75),
-            claimTypeToImage(claimType),
+            claimTypeToImage(widget.claimType),
             SizedBox(height: 75),
             Text(
-              claimType,
+              widget.claimType,
               style: TextStyle(
                 fontSize: 30,
                 color: Colors.white,
@@ -1735,6 +1761,12 @@ class MakePlatformClaimPage extends StatelessWidget {
                   ),
                   child: Text('Next step'),
                   onPressed: () async {
+                    await makePlatformClaim(
+                        state2.db,
+                        identity2.processSecret,
+                        widget.claimType,
+                        textController.text);
+                    await state2.mLoadIdentities();
                   }),
             ),
           ],
