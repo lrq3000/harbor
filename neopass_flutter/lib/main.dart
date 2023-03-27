@@ -15,6 +15,7 @@ import 'package:file_picker/file_picker.dart' as FilePicker;
 import 'package:http/http.dart' as HTTP;
 import 'dart:io';
 
+import 'api_methods.dart';
 import 'pages/new_or_import_profile.dart';
 import 'pages/new_profile.dart';
 import 'pages/create_claim.dart';
@@ -268,23 +269,7 @@ Future<void> sendAllEventsToServer(
     payload.events.add(signedEvent);
   }
 
-  try {
-    final response = await HTTP.post(
-      Uri.parse('https://srv1-stg.polycentric.io/events'),
-      headers: <String, String>{
-        'Content-Type': 'application/octet-stream',
-      },
-      body: payload.writeToBuffer(),
-    );
-
-    if (response.statusCode != 200) {
-      print('post events failed');
-      print(response.statusCode);
-      print(response.body);
-    }
-  } catch (err) {
-    print(err);
-  }
+  await postEvents(payload);
 }
 
 Future<bool> requestVerification(
