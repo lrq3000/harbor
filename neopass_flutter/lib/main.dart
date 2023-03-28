@@ -1009,6 +1009,26 @@ Widget claimTypeToVisual(String claimType) {
         return makeButtonImage('assets/instagram.png');
       }
       break;
+    case "Minds":
+      {
+        return makeButtonImage('assets/Minds.png');
+      }
+      break;
+    case "Twitter":
+      {
+        return makeButtonImage('assets/twitter.png');
+      }
+      break;
+    case "Discord":
+      {
+        return makeButtonImage('assets/discord.png');
+      }
+      break;
+    case "Patreon":
+      {
+        return makeButtonImage('assets/patreon.png');
+      }
+      break;
   }
 
   throw Exception("unknown claim type");
@@ -1039,6 +1059,26 @@ Image claimTypeToImage(String claimType) {
     case "Instagram":
       {
         return Image.asset('assets/instagram.png');
+      }
+      break;
+    case "Minds":
+      {
+        return Image.asset('assets/minds.png');
+      }
+      break;
+    case "Twitter":
+      {
+        return Image.asset('assets/twitter.png');
+      }
+      break;
+    case "Discord":
+      {
+        return Image.asset('assets/discord.png');
+      }
+      break;
+    case "Patreon":
+      {
+        return Image.asset('assets/patreon.png');
       }
       break;
   }

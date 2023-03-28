@@ -99,23 +99,13 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
             childAspectRatio: 123.0 / 106.0,
             children: [
               Main.ClaimButtonIcon(
-                nameText: "Affiliation",
-                icon: Icons.location_city,
+                nameText: "Occupation",
+                icon: Icons.work,
                 onPressed: () {},
               ),
               Main.ClaimButtonIcon(
                 nameText: "Skill",
                 icon: Icons.build,
-                onPressed: () {},
-              ),
-              Main.ClaimButtonIcon(
-                nameText: "Job",
-                icon: Icons.work,
-                onPressed: () {},
-              ),
-              Main.ClaimButtonIcon(
-                nameText: "Education",
-                icon: Icons.school,
                 onPressed: () {},
               ),
             ],
@@ -137,6 +127,10 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
               makePlatformButton("Rumble"),
               makePlatformButton("Twitch"),
               makePlatformButton("Instagram"),
+              makePlatformButton("Minds"),
+              makePlatformButton("Twitter"),
+              makePlatformButton("Discord"),
+              makePlatformButton("Patreon"),
             ],
           ),
         ],
