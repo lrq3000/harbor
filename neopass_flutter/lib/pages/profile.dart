@@ -89,6 +89,50 @@ class _ProfilePageState extends State<ProfilePage> {
         });
   }
 
+  final TextEditingController descriptionController= TextEditingController();
+  String newDescription = "";
+
+  Future<void> editDescription(
+    BuildContext context,
+    Main.PolycentricModel state,
+    Main.ProcessSecret identity,
+  ) async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Edit Description"),
+            content: TextField(
+              onChanged: (next) {
+                setState(() {
+                  newDescription = next;
+                });
+              },
+              controller: descriptionController,
+            ),
+            actions: [
+              TextButton(
+                child: const Text("cancel"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text("submit"),
+                onPressed: () async {
+                  await Main.setUsername(
+                      state.db, identity, usernameController.text);
+
+                  await state.mLoadIdentities();
+
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     var state2 = context.watch<Main.PolycentricModel>();
@@ -262,7 +306,57 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ],
           ),
-          SizedBox(height: 30),
+          SizedBox(height: 10),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Container(
+              margin: new EdgeInsets.only(left: 20.0),
+              child: Text(
+                "About",
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 10),
+          Container(
+            margin: new EdgeInsets.only(left: 20.0, right: 20.0),
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: Main.tokenColor,
+                primary: Colors.black,
+              ),
+              child: Column(
+                children: [
+                  SizedBox(height: 5),
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text("about",
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.white,
+                      )),
+                  ),
+                  SizedBox(height: 10),
+                  Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: Icon(
+                      Icons.edit_outlined,
+                      size: 15,
+                      semanticLabel: "edit",
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                ],
+              ),
+              onPressed: () {
+                editDescription(context, state2, identity2.processSecret);
+              },
+            ),
+          ),
           Expanded(
             child: ListView(
               shrinkWrap: true,
