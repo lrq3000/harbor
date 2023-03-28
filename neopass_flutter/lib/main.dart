@@ -272,28 +272,67 @@ Future<void> sendAllEventsToServer(
   await postEvents(payload);
 }
 
-Future<String> loadLatestUsername(
+Future<Protocol.SignedEvent?> loadLatestEventByContentType(
   SQFLite.Database db,
   List<int> system,
   List<int> process,
+  int contentType,
 ) async {
   final q = await db.rawQuery('''
         SELECT raw_event FROM events
         WHERE system_key_type = 1
         AND system_key = ?
         AND process = ?
-        AND content_type = 5
+        AND content_type = ?
         ORDER BY
         logical_clock DESC
         LIMIT 1;
-    ''', [Uint8List.fromList(system), Uint8List.fromList(process)]);
+    ''',
+      [Uint8List.fromList(system), Uint8List.fromList(process), contentType]);
 
   if (q.length == 0) {
+    return null;
+  } else {
+    return Protocol.SignedEvent.fromBuffer(q[0]['raw_event'] as List<int>);
+  }
+}
+
+Future<String> loadLatestUsername(
+  SQFLite.Database db,
+  List<int> system,
+  List<int> process,
+) async {
+  final signedEvent = await loadLatestEventByContentType(
+    db,
+    system,
+    process,
+    5,
+  );
+
+  if (signedEvent == null) {
     return 'unknown';
   } else {
-    Protocol.SignedEvent signedEvent =
-        Protocol.SignedEvent.fromBuffer(q[0]['raw_event'] as List<int>);
+    Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
 
+    return utf8.decode(event.lwwElement.value);
+  }
+}
+
+Future<String> loadLatestDescription(
+  SQFLite.Database db,
+  List<int> system,
+  List<int> process,
+) async {
+  final signedEvent = await loadLatestEventByContentType(
+    db,
+    system,
+    process,
+    6,
+  );
+
+  if (signedEvent == null) {
+    return '';
+  } else {
     Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
 
     return utf8.decode(event.lwwElement.value);
@@ -517,6 +556,23 @@ Future<void> setUsername(
   await sendAllEventsToServer(db, public.bytes);
 }
 
+Future<void> setDescription(
+    SQFLite.Database db, ProcessSecret processInfo, String description) async {
+  Protocol.LWWElement element = Protocol.LWWElement();
+  element.unixMilliseconds =
+      FixNum.Int64(DateTime.now().millisecondsSinceEpoch);
+  element.value = utf8.encode(description);
+
+  Protocol.Event event = Protocol.Event();
+  event.contentType = FixNum.Int64(6);
+  event.lwwElement = element;
+
+  await saveEvent(db, processInfo, event);
+
+  final public = await processInfo.system.extractPublicKey();
+  await sendAllEventsToServer(db, public.bytes);
+}
+
 Future<void> makeClaim(
     SQFLite.Database db, ProcessSecret processInfo, String claimText) async {
   Protocol.ClaimIdentifier claimIdentifier = Protocol.ClaimIdentifier();
@@ -611,8 +667,15 @@ class ProcessInfo {
   final String username;
   final List<ClaimInfo> claims;
   final Image? avatar;
+  final String description;
 
-  ProcessInfo(this.processSecret, this.username, this.claims, this.avatar);
+  ProcessInfo(
+    this.processSecret,
+    this.username,
+    this.claims,
+    this.avatar,
+    this.description,
+  );
 }
 
 class PolycentricModel extends ChangeNotifier {
@@ -631,6 +694,11 @@ class PolycentricModel extends ChangeNotifier {
         public.bytes,
         identity.process,
       );
+      final description = await loadLatestDescription(
+        this.db,
+        public.bytes,
+        identity.process,
+      );
       final avatar = await loadLatestAvatar(
         this.db,
         public.bytes,
@@ -639,7 +707,7 @@ class PolycentricModel extends ChangeNotifier {
       final claims = await loadClaims(this.db, public.bytes);
 
       this.identities.add(
-            new ProcessInfo(identity, username, claims, avatar),
+            new ProcessInfo(identity, username, claims, avatar, description),
           );
     }
 

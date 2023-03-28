@@ -89,7 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
         });
   }
 
-  final TextEditingController descriptionController= TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
   String newDescription = "";
 
   Future<void> editDescription(
@@ -120,8 +120,8 @@ class _ProfilePageState extends State<ProfilePage> {
               TextButton(
                 child: const Text("submit"),
                 onPressed: () async {
-                  await Main.setUsername(
-                      state.db, identity, usernameController.text);
+                  await Main.setDescription(
+                      state.db, identity, descriptionController.text);
 
                   await state.mLoadIdentities();
 
@@ -333,11 +333,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   SizedBox(height: 5),
                   Align(
                     alignment: AlignmentDirectional.centerStart,
-                    child: Text("about",
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.white,
-                      )),
+                    child: Text(identity2.description,
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.white,
+                        )),
                   ),
                   SizedBox(height: 10),
                   Align(
