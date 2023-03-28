@@ -824,32 +824,39 @@ class StandardButtonGeneric extends StatelessWidget {
 
   Widget build(BuildContext context) {
     return Container(
+      width: MediaQuery.of(context).size.width,
       margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
-      child: OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          backgroundColor: buttonColor,
-          primary: Colors.black,
-        ),
-        child: Row(
-          children: [
-            left,
-            Container(
-              margin: const EdgeInsets.only(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(actionText,
-                      style: TextStyle(
-                          height: 1.2, fontSize: 12, color: Colors.white)),
-                  Text(actionDescription,
-                      style: TextStyle(
-                          height: 1.2, fontSize: 8, color: Colors.grey)),
-                ],
-              ),
+      child: Row(
+        children: [
+          Expanded(
+              child: OutlinedButton(
+            style: OutlinedButton.styleFrom(
+              backgroundColor: buttonColor,
+              primary: Colors.black,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-          ],
-        ),
-        onPressed: onPressed,
+            child: Row(
+              children: [
+                left,
+                Container(
+                  margin: const EdgeInsets.only(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(actionText,
+                          style: TextStyle(
+                              height: 1.2, fontSize: 12, color: Colors.white)),
+                      Text(actionDescription,
+                          style: TextStyle(
+                              height: 1.2, fontSize: 8, color: Colors.grey)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            onPressed: onPressed,
+          )),
+        ],
       ),
     );
   }

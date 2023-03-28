@@ -193,7 +193,9 @@ class _ProfilePageState extends State<ProfilePage> {
     ]);
 
     return Scaffold(
-      body: Column(
+        body: Container(
+      width: MediaQuery.of(context).size.width,
+      child: Column(
         children: [
           InkWell(
             child: Container(
@@ -269,6 +271,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ],
       ),
-    );
+    ));
   }
 }
