@@ -27,10 +27,13 @@ class _ProfilePageState extends State<ProfilePage> {
     List<StatelessWidget> result = [];
 
     for (var i = 0; i < claims.length; i++) {
-      result.add(Main.StandardButton(
+      result.add(Main.StandardButtonGeneric(
         actionText: claims[i].claimType,
         actionDescription: claims[i].text,
-        icon: Icons.format_quote,
+        left: Container(
+          margin: const EdgeInsets.only(top: 5, bottom: 5),
+          child: Main.claimTypeToVisual(claims[i].claimType),
+        ),
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return ClaimPage(

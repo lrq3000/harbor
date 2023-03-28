@@ -879,7 +879,7 @@ class ClaimButtonImage extends StatelessWidget {
 class StandardButtonGeneric extends StatelessWidget {
   final String actionText;
   final String actionDescription;
-  final StatelessWidget left;
+  final Widget left;
   final Function() onPressed;
 
   const StandardButtonGeneric({
@@ -905,7 +905,12 @@ class StandardButtonGeneric extends StatelessWidget {
             ),
             child: Row(
               children: [
-                left,
+                SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: left,
+                ),
+                SizedBox(width: 5),
                 Container(
                   margin: const EdgeInsets.only(),
                   child: Column(
@@ -957,6 +962,56 @@ class StandardButton extends StatelessWidget {
       ),
     );
   }
+}
+
+Icon makeButtonIcon(IconData icon, String actionText) {
+  return Icon(
+    icon,
+    size: 50,
+    semanticLabel: actionText,
+    color: Colors.white,
+  );
+}
+
+Image makeButtonImage(String path) {
+  return Image.asset(path);
+}
+
+Widget claimTypeToVisual(String claimType) {
+  switch (claimType) {
+    case "Generic":
+      {
+        return makeButtonIcon(Icons.format_quote, claimType);
+      }
+      break;
+    case "YouTube":
+      {
+        return makeButtonImage('assets/youtube.png');
+      }
+      break;
+    case "Odysee":
+      {
+        return makeButtonImage('assets/odysee.png');
+      }
+      break;
+    case "Rumble":
+      {
+        return makeButtonImage('assets/rumble.png');
+      }
+      break;
+    case "Twitch":
+      {
+        return makeButtonImage('assets/twitch.png');
+      }
+      break;
+    case "Instagram":
+      {
+        return makeButtonImage('assets/instagram.png');
+      }
+      break;
+  }
+
+  throw Exception("unknown claim type");
 }
 
 Image claimTypeToImage(String claimType) {
