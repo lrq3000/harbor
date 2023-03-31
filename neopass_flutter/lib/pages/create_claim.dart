@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'make_platform_claim.dart';
 import 'create_skill_claim.dart';
+import 'create_occupation_claim.dart';
 import '../main.dart' as Main;
 
 class CreateClaimPage extends StatefulWidget {
@@ -102,7 +103,13 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
               Main.ClaimButtonIcon(
                 nameText: "Occupation",
                 icon: Icons.work,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return CreateOccupationClaimPage(
+                      identityIndex: widget.identityIndex,
+                    );
+                  }));
+                },
               ),
               Main.ClaimButtonIcon(
                 nameText: "Skill",

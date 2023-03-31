@@ -989,6 +989,11 @@ Widget claimTypeToVisual(String claimType) {
         return makeButtonIcon(Icons.build, claimType);
       }
       break;
+    case "Occupation":
+      {
+        return makeButtonIcon(Icons.work, claimType);
+      }
+      break;
     case "YouTube":
       {
         return makeButtonImage('assets/youtube.png');
