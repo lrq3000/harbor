@@ -967,7 +967,7 @@ class StandardButton extends StatelessWidget {
 Icon makeButtonIcon(IconData icon, String actionText) {
   return Icon(
     icon,
-    size: 50,
+    size: 40,
     semanticLabel: actionText,
     color: Colors.white,
   );
@@ -982,6 +982,11 @@ Widget claimTypeToVisual(String claimType) {
     case "Generic":
       {
         return makeButtonIcon(Icons.format_quote, claimType);
+      }
+      break;
+    case "Skill":
+      {
+        return makeButtonIcon(Icons.build, claimType);
       }
       break;
     case "YouTube":
