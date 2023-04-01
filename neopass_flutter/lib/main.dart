@@ -613,6 +613,30 @@ Future<ClaimInfo> makePlatformClaim(SQFLite.Database db,
   return new ClaimInfo(claimType, account, pointer);
 }
 
+Future<ClaimInfo> makeOccupationClaim(SQFLite.Database db,
+    ProcessSecret processInfo,
+    String organization, String role, String location) async {
+  Protocol.ClaimOccupation claimOccupation = Protocol.ClaimOccupation();
+  claimOccupation.organization = organization;
+  claimOccupation.role = role;
+  claimOccupation.location = location;
+
+  Protocol.Claim claim = Protocol.Claim();
+  claim.claimType = "Occupation";
+  claim.claim = claimOccupation.writeToBuffer();
+
+  Protocol.Event event = Protocol.Event();
+  event.contentType = FixNum.Int64(12);
+  event.content = claim.writeToBuffer();
+
+  final pointer = await saveEvent(db, processInfo, event);
+
+  final public = await processInfo.system.extractPublicKey();
+  await sendAllEventsToServer(db, public.bytes);
+
+  return new ClaimInfo("Occupation", organization, pointer);
+}
+
 Future<void> makeVouch(SQFLite.Database db, ProcessSecret processInfo,
     Protocol.Pointer pointer) async {
   Protocol.Reference reference = Protocol.Reference();

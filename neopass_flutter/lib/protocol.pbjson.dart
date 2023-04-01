@@ -337,6 +337,18 @@ const ClaimIdentifier$json = const {
 
 /// Descriptor for `ClaimIdentifier`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List claimIdentifierDescriptor = $convert.base64Decode('Cg9DbGFpbUlkZW50aWZpZXISHgoKaWRlbnRpZmllchgBIAEoCVIKaWRlbnRpZmllcg==');
+@$core.Deprecated('Use claimOccupationDescriptor instead')
+const ClaimOccupation$json = const {
+  '1': 'ClaimOccupation',
+  '2': const [
+    const {'1': 'organization', '3': 1, '4': 1, '5': 9, '10': 'organization'},
+    const {'1': 'role', '3': 2, '4': 1, '5': 9, '10': 'role'},
+    const {'1': 'location', '3': 3, '4': 1, '5': 9, '10': 'location'},
+  ],
+};
+
+/// Descriptor for `ClaimOccupation`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List claimOccupationDescriptor = $convert.base64Decode('Cg9DbGFpbU9jY3VwYXRpb24SIgoMb3JnYW5pemF0aW9uGAEgASgJUgxvcmdhbml6YXRpb24SEgoEcm9sZRgCIAEoCVIEcm9sZRIaCghsb2NhdGlvbhgDIAEoCVIIbG9jYXRpb24=');
 @$core.Deprecated('Use vouchDescriptor instead')
 const Vouch$json = const {
   '1': 'Vouch',

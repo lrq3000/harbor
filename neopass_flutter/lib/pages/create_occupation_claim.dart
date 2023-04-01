@@ -35,11 +35,12 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
             ),
             child: Text("Save"),
             onPressed: () async {
-              await Main.makePlatformClaim(
+              await Main.makeOccupationClaim(
                 state.db,
                 identity.processSecret,
-                'Occupation',
                 textControllerOrganization.text,
+                textControllerRole.text,
+                textControllerLocation.text,
               );
 
               await state.mLoadIdentities();
