@@ -12,7 +12,7 @@ class CreateOccupationClaimPage extends StatefulWidget {
 
   @override
   State<CreateOccupationClaimPage> createState() =>
-    _CreateOccupationClaimPageState();
+      _CreateOccupationClaimPageState();
 }
 
 class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
@@ -137,7 +137,7 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
               ),
               floatingLabelBehavior: FloatingLabelBehavior.never,
             ),
-          ), 
+          ),
         ],
       ),
     );

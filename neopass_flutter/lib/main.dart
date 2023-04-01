@@ -613,9 +613,12 @@ Future<ClaimInfo> makePlatformClaim(SQFLite.Database db,
   return new ClaimInfo(claimType, account, pointer);
 }
 
-Future<ClaimInfo> makeOccupationClaim(SQFLite.Database db,
+Future<ClaimInfo> makeOccupationClaim(
+    SQFLite.Database db,
     ProcessSecret processInfo,
-    String organization, String role, String location) async {
+    String organization,
+    String role,
+    String location) async {
   Protocol.ClaimOccupation claimOccupation = Protocol.ClaimOccupation();
   claimOccupation.organization = organization;
   claimOccupation.role = role;
@@ -677,6 +680,7 @@ final MaterialColor buttonColor = makeColor(Color(0xFF1B1B1B));
 final MaterialColor blueButtonColor = makeColor(Color(0xFF2D63ED));
 final MaterialColor formColor = makeColor(Color(0xFF303030));
 final MaterialColor tokenColor = makeColor(Color(0xFF141414));
+final MaterialColor deleteColor = makeColor(Color(0xFF2F2F2F));
 
 class ClaimInfo {
   final String claimType;
@@ -905,6 +909,7 @@ class StandardButtonGeneric extends StatelessWidget {
   final String actionDescription;
   final Widget left;
   final Function() onPressed;
+  final Function()? onDelete;
 
   const StandardButtonGeneric({
     Key? key,
@@ -912,47 +917,72 @@ class StandardButtonGeneric extends StatelessWidget {
     required this.actionDescription,
     required this.left,
     required this.onPressed,
+    this.onDelete,
   }) : super(key: key);
 
   Widget build(BuildContext context) {
+    final List<Widget> rowChildren = [
+      SizedBox(width: 10),
+      SizedBox(
+        width: 50,
+        height: 50,
+        child: left,
+      ),
+      SizedBox(width: 5),
+      Expanded(
+        child: Container(
+          margin: const EdgeInsets.only(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(actionText,
+                  style: TextStyle(
+                      height: 1.2, fontSize: 12, color: Colors.white)),
+              Text(actionDescription,
+                  style:
+                      TextStyle(height: 1.2, fontSize: 8, color: Colors.grey)),
+            ],
+          ),
+        ),
+      ),
+    ];
+
+    if (onDelete != null) {
+      rowChildren.add(
+        SizedBox(
+          height: 50,
+          width: 50,
+          child: TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: deleteColor,
+                textStyle: const TextStyle(fontSize: 12),
+              ),
+              child: Text("Delete"),
+              onPressed: () {}),
+        ),
+      );
+    }
+
     return Container(
       width: MediaQuery.of(context).size.width,
       margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
       child: Row(
         children: [
           Expanded(
-              child: OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              backgroundColor: buttonColor,
-              primary: Colors.black,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: buttonColor,
+                primary: Colors.black,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                padding: EdgeInsets.zero,
+              ),
+              child: Row(
+                children: rowChildren,
+              ),
+              onPressed: onPressed,
             ),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: left,
-                ),
-                SizedBox(width: 5),
-                Container(
-                  margin: const EdgeInsets.only(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(actionText,
-                          style: TextStyle(
-                              height: 1.2, fontSize: 12, color: Colors.white)),
-                      Text(actionDescription,
-                          style: TextStyle(
-                              height: 1.2, fontSize: 8, color: Colors.grey)),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            onPressed: onPressed,
-          )),
+          ),
         ],
       ),
     );

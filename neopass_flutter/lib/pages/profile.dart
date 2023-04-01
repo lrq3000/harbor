@@ -42,6 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
             );
           }));
         },
+        onDelete: () {},
       ));
     }
 
