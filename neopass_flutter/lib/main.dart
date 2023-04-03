@@ -494,6 +494,39 @@ Future<Protocol.Pointer> saveEvent(SQFLite.Database db,
   return await signedEventToPointer(signedEvent);
 }
 
+Future<void> deleteEvent(
+  SQFLite.Database db,
+  ProcessSecret processInfo,
+  Protocol.Pointer pointer,
+) async {
+    final signedEvent = await loadEvent(
+      db,
+      pointer.system.key,
+      pointer.process.process,
+      pointer.logicalClock,
+    );
+
+    if (signedEvent == null) {
+      return;
+    } else {
+      final Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
+      
+      final Protocol.Delete deleteBody = Protocol.Delete();
+      deleteBody.process = pointer.process;
+      deleteBody.logicalClock = pointer.logicalClock;
+      deleteBody.indices = event.indices;
+
+      final Protocol.Event deleteEvent = Protocol.Event();
+      deleteEvent.contentType = FixNum.Int64(1);
+      deleteEvent.content = deleteBody.writeToBuffer();
+  
+      await saveEvent(db, processInfo, deleteEvent);
+
+      final public = await processInfo.system.extractPublicKey();
+      sendAllEventsToServer(db, public.bytes);
+    }
+}
+
 Future<Protocol.Pointer> publishBlob(SQFLite.Database db,
     ProcessSecret processInfo, String mime, List<int> bytes) async {
   final Protocol.BlobMeta blobMeta = Protocol.BlobMeta();
