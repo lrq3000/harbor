@@ -936,23 +936,19 @@ class StandardButtonGeneric extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                actionText,
-                style: TextStyle(
-                  fontFamily: 'inter',
-                  fontWeight: FontWeight.w300,
-                  fontSize: 14,
-                  color: Colors.white
-                )
-              ),
-              Text(
-                actionDescription,
-                style: TextStyle(
-                  fontFamily: 'inter',
-                  fontWeight: FontWeight.w200,
-                  fontSize: 12,
-                  color: Colors.grey,
-                )),
+              Text(actionText,
+                  style: TextStyle(
+                      fontFamily: 'inter',
+                      fontWeight: FontWeight.w300,
+                      fontSize: 14,
+                      color: Colors.white)),
+              Text(actionDescription,
+                  style: TextStyle(
+                    fontFamily: 'inter',
+                    fontWeight: FontWeight.w200,
+                    fontSize: 12,
+                    color: Colors.grey,
+                  )),
             ],
           ),
         ),
@@ -1167,7 +1163,8 @@ Image claimTypeToImage(String claimType) {
 }
 
 Text makeAppBarTitleText(String text) {
-  return Text(text,
+  return Text(
+    text,
     style: TextStyle(
       fontFamily: 'inter',
       fontSize: 24,

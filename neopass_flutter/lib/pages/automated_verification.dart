@@ -58,7 +58,9 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
         Text(
           "Waiting for verification",
           style: TextStyle(
-            fontSize: 15,
+            fontFamily: 'inter',
+            fontWeight: FontWeight.w400,
+            fontSize: 13,
             color: Colors.white,
           ),
         ),
@@ -74,7 +76,9 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
         Text(
           "Success!",
           style: TextStyle(
-            fontSize: 15,
+            fontFamily: 'inter',
+            fontWeight: FontWeight.w400,
+            fontSize: 13,
             color: Colors.white,
           ),
         ),
@@ -86,7 +90,15 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
               backgroundColor: Main.blueButtonColor,
               shape: StadiumBorder(),
             ),
-            child: Text('Continue'),
+            child: Text(
+              'Continue',
+              style: TextStyle(
+                fontFamily: 'inter',
+                fontWeight: FontWeight.w300,
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
             onPressed: () async {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return NewOrImportProfilePage();
@@ -106,7 +118,9 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
         Text(
           "Verification failed.",
           style: TextStyle(
-            fontSize: 15,
+            fontFamily: 'inter',
+            fontWeight: FontWeight.w400,
+            fontSize: 13,
             color: Colors.white,
           ),
         ),
@@ -118,7 +132,15 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
               backgroundColor: Main.blueButtonColor,
               shape: StadiumBorder(),
             ),
-            child: Text('Retry verification'),
+            child: Text(
+              'Retry verification',
+              style: TextStyle(
+                fontFamily: 'inter',
+                fontWeight: FontWeight.w300,
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
             onPressed: () async {
               doVerification();
             },

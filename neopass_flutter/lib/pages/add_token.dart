@@ -30,7 +30,9 @@ class AddTokenPage extends StatelessWidget {
                 child: Text(
                   "Token",
                   style: TextStyle(
-                    fontSize: 12,
+                    fontFamily: 'inter',
+                    fontWeight: FontWeight.w300,
+                    fontSize: 14,
                     color: Colors.white,
                   ),
                 ),
@@ -50,6 +52,9 @@ class AddTokenPage extends StatelessWidget {
                     Text(token,
                         style: TextStyle(
                           color: Colors.white,
+                          fontFamily: 'inter',
+                          fontWeight: FontWeight.w300,
+                          fontSize: 14,
                         )),
                     SizedBox(height: 10),
                     Align(
@@ -57,6 +62,9 @@ class AddTokenPage extends StatelessWidget {
                       child: Text(
                         "Tap to copy",
                         style: TextStyle(
+                          fontFamily: 'inter',
+                          fontWeight: FontWeight.w300,
+                          fontSize: 14,
                           color: Colors.grey,
                         ),
                       ),
@@ -81,7 +89,15 @@ class AddTokenPage extends StatelessWidget {
                     backgroundColor: Main.blueButtonColor,
                     shape: StadiumBorder(),
                   ),
-                  child: Text('     Verify     '),
+                  child: Text(
+                    '     Verify     ',
+                    style: TextStyle(
+                      fontFamily: 'inter',
+                      fontWeight: FontWeight.w300,
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
                   onPressed: () async {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
