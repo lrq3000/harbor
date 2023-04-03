@@ -21,7 +21,7 @@ class PresentPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Request Verification'),
+        title: Main.makeAppBarTitleText('Request Verification'),
       ),
       body: Column(
         children: [
@@ -40,15 +40,18 @@ class PresentPage extends StatelessWidget {
                 identity2.username,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  height: 1.2,
-                  fontSize: 30,
+                  fontFamily: 'inter',
+                  fontWeight: FontWeight.w300,
+                  fontSize: 32,
                   color: Colors.white,
                 ),
               )),
           Text(
             "Requests you to verify their claim",
             style: TextStyle(
-              fontSize: 15,
+              fontFamily: 'inter',
+              fontWeight: FontWeight.w300,
+              fontSize: 20,
               color: Colors.grey,
             ),
           ),
@@ -56,7 +59,9 @@ class PresentPage extends StatelessWidget {
           Text(
             claim2.claimType,
             style: TextStyle(
-              fontSize: 15,
+              fontFamily: 'inter',
+              fontWeight: FontWeight.w200,
+              fontSize: 24,
               color: Colors.white,
             ),
           ),
@@ -64,11 +69,12 @@ class PresentPage extends StatelessWidget {
           Text(
             claim2.text,
             style: TextStyle(
-              fontSize: 15,
+              fontFamily: 'inter',
+              fontWeight: FontWeight.w200,
+              fontSize: 20,
               color: Colors.grey,
             ),
           ),
-          SizedBox(height: 20),
           Center(
             child: QrImage(
               backgroundColor: Colors.white,
@@ -81,7 +87,9 @@ class PresentPage extends StatelessWidget {
           Text(
             "Scan to Verify",
             style: TextStyle(
-              fontSize: 15,
+              fontFamily: 'inter',
+              fontWeight: FontWeight.w200,
+              fontSize: 20,
               color: Colors.grey,
             ),
           ),

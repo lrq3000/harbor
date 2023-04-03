@@ -149,8 +149,9 @@ class _ProfilePageState extends State<ProfilePage> {
           'Claims',
           textAlign: TextAlign.left,
           style: TextStyle(
-            height: 1.2,
-            fontSize: 15,
+            fontFamily: 'inter',
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
             color: Colors.white,
           ),
         ),
@@ -166,8 +167,9 @@ class _ProfilePageState extends State<ProfilePage> {
           'Other',
           textAlign: TextAlign.left,
           style: TextStyle(
-            height: 1.2,
-            fontSize: 15,
+            fontFamily: 'inter',
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
             color: Colors.white,
           ),
         ),
@@ -292,8 +294,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 identity2.username,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  height: 1.2,
-                  fontSize: 30,
+                  fontFamily: 'inter',
+                  fontWeight: FontWeight.w300,
+                  fontSize: 32,
                   color: Colors.white,
                 ),
               ),
@@ -318,7 +321,9 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Text(
                 "About",
                 style: TextStyle(
-                  fontSize: 12,
+                  fontFamily: 'inter',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w300,
                   color: Colors.white,
                 ),
               ),
@@ -339,7 +344,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     alignment: AlignmentDirectional.centerStart,
                     child: Text(identity2.description,
                         style: TextStyle(
-                          fontSize: 10,
+                          fontFamily: 'inter',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
                           color: Colors.white,
                         )),
                   ),

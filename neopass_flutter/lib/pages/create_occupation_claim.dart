@@ -26,7 +26,7 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Occupation'),
+        title: Main.makeAppBarTitleText('Occupation'),
         actions: [
           TextButton(
             style: TextButton.styleFrom(
@@ -61,7 +61,9 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
           Text(
             "Organization",
             style: TextStyle(
-              fontSize: 15,
+              fontFamily: 'inter',
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
               color: Colors.white,
             ),
           ),
@@ -88,7 +90,9 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
           Text(
             "Role",
             style: TextStyle(
-              fontSize: 15,
+              fontFamily: 'inter',
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
               color: Colors.white,
             ),
           ),
@@ -115,7 +119,9 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
           Text(
             "Location",
             style: TextStyle(
-              fontSize: 15,
+              fontFamily: 'inter',
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
               color: Colors.white,
             ),
           ),

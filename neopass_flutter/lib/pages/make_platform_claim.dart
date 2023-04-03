@@ -25,7 +25,7 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Make Claim'),
+        title: Main.makeAppBarTitleText('Make Claim'),
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,

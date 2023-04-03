@@ -41,7 +41,7 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Make Claim'),
+        title: Main.makeAppBarTitleText("Make Claim"),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,7 +50,9 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
           Text(
             "Freeform",
             style: TextStyle(
-              fontSize: 15,
+              fontFamily: 'inter',
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
               color: Colors.white,
             ),
           ),
@@ -59,7 +61,12 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
             controller: textController,
             maxLines: null,
             cursorColor: Colors.white,
-            style: TextStyle(color: Colors.white, fontSize: 12),
+            style: TextStyle(
+              fontFamily: 'inter',
+              fontSize: 14,
+              fontWeight: FontWeight.w300,
+              color: Colors.white,
+            ),
             decoration: InputDecoration(
               filled: true,
               fillColor: Main.formColor,
@@ -80,7 +87,15 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
                   backgroundColor: Main.blueButtonColor,
                   shape: StadiumBorder(),
                 ),
-                child: Text('Make Claim'),
+                child: Text(
+                  'Make Claim',
+                  style: TextStyle(
+                    fontFamily: 'inter',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
+                    color: Colors.white,
+                  ),
+                ),
                 onPressed: () async {
                   await Main.makeClaim(
                       state2.db, identity2.processSecret, textController.text);
@@ -91,7 +106,9 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
           Text(
             "Common",
             style: TextStyle(
-              fontSize: 15,
+              fontFamily: 'inter',
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
               color: Colors.white,
             ),
           ),
@@ -127,7 +144,9 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
           Text(
             "Platforms",
             style: TextStyle(
-              fontSize: 15,
+              fontFamily: 'inter',
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
               color: Colors.white,
             ),
           ),

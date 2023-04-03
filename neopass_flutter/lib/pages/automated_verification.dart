@@ -129,7 +129,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Verifying Claim"),
+        title: Main.makeAppBarTitleText('Verifying Claim'),
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,

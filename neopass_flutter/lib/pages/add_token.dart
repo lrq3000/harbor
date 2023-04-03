@@ -16,7 +16,7 @@ class AddTokenPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Token'),
+        title: Main.makeAppBarTitleText('Add Token'),
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,

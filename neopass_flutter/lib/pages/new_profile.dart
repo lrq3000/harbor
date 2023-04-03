@@ -30,7 +30,9 @@ class _NewProfilePageState extends State<NewProfilePage> {
               Text(
                 "Profile Name",
                 style: TextStyle(
-                  fontSize: 15,
+                  fontFamily: 'inter',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w300,
                   color: Colors.white,
                 ),
               ),
@@ -70,7 +72,9 @@ class _NewProfilePageState extends State<NewProfilePage> {
               child: Text(
                 "Create Profile",
                 style: TextStyle(
-                  fontSize: 15,
+                  fontFamily: 'inter',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w300,
                   color: Colors.white,
                 ),
               ),

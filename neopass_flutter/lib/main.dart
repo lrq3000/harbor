@@ -794,9 +794,9 @@ final StatelessWidget neopassLogoAndText = Container(
         'NeoPass',
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontFamily: 'NotoSerif',
-          height: 1,
-          fontSize: 40,
+          fontFamily: 'inter',
+          fontWeight: FontWeight.w300,
+          fontSize: 32,
           color: Colors.white,
         ),
       ),
@@ -842,8 +842,9 @@ class ClaimButtonGeneric extends StatelessWidget {
             Text(
               nameText,
               style: TextStyle(
-                height: 1.2,
-                fontSize: 10,
+                fontFamily: 'inter',
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
                 color: Colors.white,
               ),
             ),
@@ -935,12 +936,23 @@ class StandardButtonGeneric extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(actionText,
-                  style: TextStyle(
-                      height: 1.2, fontSize: 12, color: Colors.white)),
-              Text(actionDescription,
-                  style:
-                      TextStyle(height: 1.2, fontSize: 8, color: Colors.grey)),
+              Text(
+                actionText,
+                style: TextStyle(
+                  fontFamily: 'inter',
+                  fontWeight: FontWeight.w300,
+                  fontSize: 14,
+                  color: Colors.white
+                )
+              ),
+              Text(
+                actionDescription,
+                style: TextStyle(
+                  fontFamily: 'inter',
+                  fontWeight: FontWeight.w200,
+                  fontSize: 12,
+                  color: Colors.grey,
+                )),
             ],
           ),
         ),
@@ -956,7 +968,11 @@ class StandardButtonGeneric extends StatelessWidget {
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: deleteColor,
-                textStyle: const TextStyle(fontSize: 12),
+                textStyle: const TextStyle(
+                  fontFamily: 'inter',
+                  fontSize: 10,
+                  fontWeight: FontWeight.w300,
+                ),
               ),
               child: Text("Delete"),
               onPressed: () {}),
@@ -966,7 +982,7 @@ class StandardButtonGeneric extends StatelessWidget {
 
     return Container(
       width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
+      margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
       child: Row(
         children: [
           Expanded(
@@ -1148,4 +1164,15 @@ Image claimTypeToImage(String claimType) {
   }
 
   throw Exception("unknown claim type");
+}
+
+Text makeAppBarTitleText(String text) {
+  return Text(text,
+    style: TextStyle(
+      fontFamily: 'inter',
+      fontSize: 24,
+      fontWeight: FontWeight.w200,
+      color: Colors.white,
+    ),
+  );
 }

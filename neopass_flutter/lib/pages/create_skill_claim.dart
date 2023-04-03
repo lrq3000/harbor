@@ -23,7 +23,7 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Skill'),
+        title: Main.makeAppBarTitleText('Skill'),
         actions: [
           TextButton(
             style: TextButton.styleFrom(
@@ -57,7 +57,9 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
           Text(
             "Name",
             style: TextStyle(
-              fontSize: 15,
+              fontFamily: 'inter',
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
               color: Colors.white,
             ),
           ),

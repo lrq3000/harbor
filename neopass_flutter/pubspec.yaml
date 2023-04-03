@@ -33,10 +33,11 @@ flutter:
   assets:
     - assets/
   fonts:
-    - family: NotoSerif
+    - family: inter
       fonts:
-        - asset: fonts/NotoSerif-Regular.ttf
-        - asset: fonts/NotoSerif-Italic.ttf
-          style: italic
-        - asset: fonts/NotoSerif-Bold.ttf
-          weight: 700
+        - asset: fonts/inter_regular.ttf
+          weight: 400
+        - asset: fonts/inter_light.ttf
+          weight: 300
+        - asset: fonts/inter_extra_light.ttf
+          weight: 200 

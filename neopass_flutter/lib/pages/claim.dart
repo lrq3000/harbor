@@ -39,7 +39,7 @@ class _ClaimPageState extends State<ClaimPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Claim'),
+        title: Main.makeAppBarTitleText('Claim'),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -59,15 +59,18 @@ class _ClaimPageState extends State<ClaimPage> {
                 identity2.username,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  height: 1.2,
-                  fontSize: 30,
+                  fontFamily: 'inter',
+                  fontWeight: FontWeight.w300,
+                  fontSize: 32,
                   color: Colors.white,
                 ),
               )),
           Text(
             "Claims",
             style: TextStyle(
-              fontSize: 15,
+              fontFamily: 'inter',
+              fontWeight: FontWeight.w300,
+              fontSize: 20,
               color: Colors.grey,
             ),
           ),
@@ -75,7 +78,9 @@ class _ClaimPageState extends State<ClaimPage> {
           Text(
             claim2.claimType,
             style: TextStyle(
-              fontSize: 15,
+              fontFamily: 'inter',
+              fontWeight: FontWeight.w200,
+              fontSize: 24,
               color: Colors.white,
             ),
           ),
@@ -83,18 +88,22 @@ class _ClaimPageState extends State<ClaimPage> {
           Text(
             claim2.text,
             style: TextStyle(
-              fontSize: 15,
+              fontFamily: 'inter',
+              fontWeight: FontWeight.w200,
+              fontSize: 20,
               color: Colors.grey,
             ),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 30),
           Container(
             margin: const EdgeInsets.only(left: 20),
             alignment: AlignmentDirectional.centerStart,
             child: Text(
               "Request Verification",
               style: TextStyle(
-                fontSize: 15,
+                fontFamily: 'inter',
+                fontWeight: FontWeight.w300,
+                fontSize: 16,
                 color: Colors.white,
               ),
             ),
