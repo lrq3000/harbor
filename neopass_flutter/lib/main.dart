@@ -2,18 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:cryptography_flutter/cryptography_flutter.dart';
 import 'package:cryptography/cryptography.dart' as Cryptography;
 import 'package:sqflite/sqflite.dart' as SQFLite;
-import 'package:convert/convert.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'dart:convert';
 import 'dart:math';
 import 'package:path/path.dart' as Path;
 import 'package:fixnum/fixnum.dart' as FixNum;
-import 'package:file_picker/file_picker.dart' as FilePicker;
-import 'package:http/http.dart' as HTTP;
-import 'dart:io';
 
 import 'api_methods.dart';
 import 'pages/new_or_import_profile.dart';
@@ -29,7 +23,7 @@ import 'pages/automated_verification.dart';
 import 'models.dart' as Models;
 import 'protocol.pb.dart' as Protocol;
 
-final SCHEMA_TABLE_EVENTS = '''
+const SCHEMA_TABLE_EVENTS = '''
 CREATE TABLE IF NOT EXISTS events (
     id              INTEGER PRIMARY KEY,
     system_key_type INTEGER NOT NULL,
@@ -41,7 +35,7 @@ CREATE TABLE IF NOT EXISTS events (
 );
 ''';
 
-final SCHEMA_TABLE_PROCESS_SECRETS = '''
+const SCHEMA_TABLE_PROCESS_SECRETS = '''
 CREATE TABLE IF NOT EXISTS process_secrets (
     id              INTEGER PRIMARY KEY,
     system_key_type INTEGER NOT NULL,
@@ -291,7 +285,7 @@ Future<Protocol.SignedEvent?> loadLatestEventByContentType(
       [Uint8List.fromList(system), Uint8List.fromList(process),
       contentType.toInt()]);
 
-  if (q.length == 0) {
+  if (q.isEmpty) {
     return null;
   } else {
     return Protocol.SignedEvent.fromBuffer(q[0]['raw_event'] as List<int>);
@@ -433,7 +427,7 @@ Future<Image?> loadLatestAvatar(
         LIMIT 1;
     ''', [Uint8List.fromList(system), Uint8List.fromList(process)]);
 
-  if (q.length == 0) {
+  if (q.isEmpty) {
     return null;
   } else {
     Protocol.SignedEvent signedEvent =
@@ -446,7 +440,6 @@ Future<Image?> loadLatestAvatar(
 
       return null;
     }
-    ;
 
     final Protocol.Pointer pointer = Protocol.Pointer.fromBuffer(
       event.lwwElement.value,
@@ -787,7 +780,7 @@ Future<PolycentricModel> setupModel() async {
     version: 1,
   );
 
-  return new PolycentricModel(db);
+  return PolycentricModel(db);
 }
 
 class NeopassApp extends StatelessWidget {
@@ -797,21 +790,21 @@ class NeopassApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final initialPage = this.polycentricModel.identities.length == 0
+    final initialPage = polycentricModel.identities.isEmpty
         ? const NewOrImportProfilePage()
         : const NewOrImportProfilePage();
 
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<PolycentricModel>(
-          create: (context) => this.polycentricModel,
+          create: (context) => polycentricModel,
         ),
       ],
       child: MaterialApp(
         title: 'Harbor',
         theme: ThemeData(
           primarySwatch: buttonColor,
-          canvasColor: Color(0xFF000000),
+          canvasColor: const Color(0xFF000000),
         ),
         home: initialPage,
       ),
@@ -823,8 +816,8 @@ final StatelessWidget neopassLogoAndText = Container(
   child: Column(
     children: [
       Image.asset('assets/logo.png'),
-      SizedBox(height: 20),
-      Text(
+      const SizedBox(height: 20),
+      const Text(
         'NeoPass',
         textAlign: TextAlign.center,
         style: TextStyle(
@@ -843,7 +836,7 @@ final StatelessWidget futoLogoAndText = Container(
   mainAxisAlignment: MainAxisAlignment.center,
   children: [
     Image.asset('assets/futo-logo.png'),
-    SizedBox(width: 10),
+    const SizedBox(width: 10),
     Image.asset('assets/futo-text.png'),
   ],
 ));
@@ -860,14 +853,16 @@ class ClaimButtonGeneric extends StatelessWidget {
     required this.top,
   }) : super(key: key);
 
+  @override
   Widget build(BuildContext context) {
     return Container(
-      margin: new EdgeInsets.all(5.0),
+      margin: const EdgeInsets.all(5.0),
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
           backgroundColor: buttonColor,
-          primary: Colors.black,
+          foregroundColor: Colors.black,
         ),
+        onPressed: onPressed,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -875,7 +870,7 @@ class ClaimButtonGeneric extends StatelessWidget {
             top,
             Text(
               nameText,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'inter',
                 fontSize: 12,
                 fontWeight: FontWeight.w400,
@@ -884,7 +879,6 @@ class ClaimButtonGeneric extends StatelessWidget {
             ),
           ],
         ),
-        onPressed: onPressed,
       ),
     );
   }
@@ -902,6 +896,7 @@ class ClaimButtonIcon extends StatelessWidget {
     required this.onPressed,
   }) : super(key: key);
 
+  @override
   Widget build(BuildContext context) {
     return ClaimButtonGeneric(
       nameText: nameText,
@@ -928,6 +923,7 @@ class ClaimButtonImage extends StatelessWidget {
     required this.onPressed,
   }) : super(key: key);
 
+  @override
   Widget build(BuildContext context) {
     return ClaimButtonGeneric(
       nameText: nameText,
@@ -955,15 +951,16 @@ class StandardButtonGeneric extends StatelessWidget {
     this.onDelete,
   }) : super(key: key);
 
+  @override
   Widget build(BuildContext context) {
     final List<Widget> rowChildren = [
-      SizedBox(width: 10),
+      const SizedBox(width: 10),
       SizedBox(
         width: 50,
         height: 50,
         child: left,
       ),
-      SizedBox(width: 5),
+      const SizedBox(width: 5),
       Expanded(
         child: Container(
           margin: const EdgeInsets.only(),
@@ -971,13 +968,13 @@ class StandardButtonGeneric extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(actionText,
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontFamily: 'inter',
                       fontWeight: FontWeight.w300,
                       fontSize: 14,
                       color: Colors.white)),
               Text(actionDescription,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: 'inter',
                     fontWeight: FontWeight.w200,
                     fontSize: 12,
@@ -1004,7 +1001,7 @@ class StandardButtonGeneric extends StatelessWidget {
                   fontWeight: FontWeight.w300,
                 ),
               ),
-              child: Text("Delete"),
+              child: const Text("Delete"),
               onPressed: () {}),
         ),
       );
@@ -1019,14 +1016,14 @@ class StandardButtonGeneric extends StatelessWidget {
             child: OutlinedButton(
               style: OutlinedButton.styleFrom(
                 backgroundColor: buttonColor,
-                primary: Colors.black,
+                foregroundColor: Colors.black,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 padding: EdgeInsets.zero,
               ),
+              onPressed: onPressed,
               child: Row(
                 children: rowChildren,
               ),
-              onPressed: onPressed,
             ),
           ),
         ],
@@ -1049,6 +1046,7 @@ class StandardButton extends StatelessWidget {
     required this.onPressed,
   }) : super(key: key);
 
+  @override
   Widget build(BuildContext context) {
     return StandardButtonGeneric(
       actionText: actionText,
@@ -1199,7 +1197,7 @@ Image claimTypeToImage(String claimType) {
 Text makeAppBarTitleText(String text) {
   return Text(
     text,
-    style: TextStyle(
+    style: const TextStyle(
       fontFamily: 'inter',
       fontSize: 24,
       fontWeight: FontWeight.w200,
