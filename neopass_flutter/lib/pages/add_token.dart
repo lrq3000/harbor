@@ -11,6 +11,7 @@ class AddTokenPage extends StatelessWidget {
 
   const AddTokenPage({Key? key, required this.claim}) : super(key: key);
 
+  @override
   Widget build(BuildContext context) {
     final token = base64Url.encode(claim.pointer.system.key);
 
@@ -22,12 +23,12 @@ class AddTokenPage extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         child: Column(
           children: [
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: Container(
-                margin: new EdgeInsets.only(left: 5.0),
-                child: Text(
+                margin: const EdgeInsets.only(left: 5.0),
+                child: const Text(
                   "Token",
                   style: TextStyle(
                     fontFamily: 'inter',
@@ -38,26 +39,26 @@ class AddTokenPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             Container(
-              margin: new EdgeInsets.all(5.0),
+              margin: const EdgeInsets.all(5.0),
               child: OutlinedButton(
                 style: OutlinedButton.styleFrom(
                   backgroundColor: Main.tokenColor,
-                  primary: Colors.black,
+                  foregroundColor: Colors.black,
                 ),
                 child: Column(
                   children: [
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Text(token,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontFamily: 'inter',
                           fontWeight: FontWeight.w300,
                           fontSize: 14,
                         )),
-                    SizedBox(height: 10),
-                    Align(
+                    const SizedBox(height: 10),
+                    const Align(
                       alignment: AlignmentDirectional.centerEnd,
                       child: Text(
                         "Tap to copy",
@@ -69,7 +70,7 @@ class AddTokenPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                   ],
                 ),
                 onPressed: () async {
@@ -81,15 +82,15 @@ class AddTokenPage extends StatelessWidget {
                 },
               ),
             ),
-            SizedBox(height: 450),
+            const SizedBox(height: 450),
             Align(
               alignment: AlignmentDirectional.center,
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Main.blueButtonColor,
-                    shape: StadiumBorder(),
+                    shape: const StadiumBorder(),
                   ),
-                  child: Text(
+                  child: const Text(
                     '     Verify     ',
                     style: TextStyle(
                       fontFamily: 'inter',

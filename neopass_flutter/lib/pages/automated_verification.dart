@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'new_or_import_profile.dart';
 import '../main.dart' as Main;
 import '../api_methods.dart' as APIMethods;
-import '../protocol.pb.dart' as Protocol;
 
 class AutomatedVerificationPage extends StatefulWidget {
   final Main.ClaimInfo claim;
@@ -18,6 +17,7 @@ class AutomatedVerificationPage extends StatefulWidget {
 class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
   int page = 0;
 
+  @override
   void initState() {
     doVerification();
   }
@@ -44,18 +44,18 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
   @override
   Widget build(BuildContext context) {
     List<Widget> columnChildren = [
-      SizedBox(height: 100),
+      const SizedBox(height: 100),
       Main.neopassLogoAndText,
-      SizedBox(height: 150),
+      const SizedBox(height: 150),
     ];
 
     if (page == 0) {
       columnChildren.addAll([
-        CircularProgressIndicator(
+        const CircularProgressIndicator(
           color: Colors.white,
         ),
-        SizedBox(height: 20),
-        Text(
+        const SizedBox(height: 20),
+        const Text(
           "Waiting for verification",
           style: TextStyle(
             fontFamily: 'inter',
@@ -67,13 +67,13 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
       ]);
     } else if (page == 1) {
       columnChildren.addAll([
-        Icon(
+        const Icon(
           Icons.done,
           size: 75,
           semanticLabel: "success",
           color: Colors.green,
         ),
-        Text(
+        const Text(
           "Success!",
           style: TextStyle(
             fontFamily: 'inter',
@@ -82,15 +82,15 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
             color: Colors.white,
           ),
         ),
-        SizedBox(height: 120),
+        const SizedBox(height: 120),
         Align(
           alignment: AlignmentDirectional.center,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Main.blueButtonColor,
-              shape: StadiumBorder(),
+              shape: const StadiumBorder(),
             ),
-            child: Text(
+            child: const Text(
               'Continue',
               style: TextStyle(
                 fontFamily: 'inter',
@@ -101,7 +101,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
             ),
             onPressed: () async {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return NewOrImportProfilePage();
+                return const NewOrImportProfilePage();
               }));
             },
           ),
@@ -109,13 +109,13 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
       ]);
     } else if (page == 2) {
       columnChildren.addAll([
-        Icon(
+        const Icon(
           Icons.close,
           size: 75,
           semanticLabel: "failure",
           color: Colors.red,
         ),
-        Text(
+        const Text(
           "Verification failed.",
           style: TextStyle(
             fontFamily: 'inter',
@@ -124,15 +124,15 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
             color: Colors.white,
           ),
         ),
-        SizedBox(height: 120),
+        const SizedBox(height: 120),
         Align(
           alignment: AlignmentDirectional.center,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Main.blueButtonColor,
-              shape: StadiumBorder(),
+              shape: const StadiumBorder(),
             ),
-            child: Text(
+            child: const Text(
               'Retry verification',
               style: TextStyle(
                 fontFamily: 'inter',

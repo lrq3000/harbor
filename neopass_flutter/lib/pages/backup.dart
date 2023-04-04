@@ -11,13 +11,13 @@ class BackupPage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 150),
+          const SizedBox(height: 150),
           Main.neopassLogoAndText,
-          SizedBox(height: 120),
+          const SizedBox(height: 120),
           Container(
             margin: const EdgeInsets.only(left: 20),
             alignment: AlignmentDirectional.centerStart,
-            child: Text(
+            child: const Text(
               "If you lose this backup you will lose your identity. " +
                   "You will be able to backup your identity at any time. " +
                   "Do not share your identity over an insecure channel.",

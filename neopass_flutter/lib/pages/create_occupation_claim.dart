@@ -20,9 +20,10 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
   TextEditingController textControllerRole = TextEditingController();
   TextEditingController textControllerLocation = TextEditingController();
 
+  @override
   Widget build(BuildContext context) {
-    var state = context.watch<Main.PolycentricModel>();
-    var identity = state.identities[widget.identityIndex];
+    final state = context.watch<Main.PolycentricModel>();
+    final identity = state.identities[widget.identityIndex];
 
     return Scaffold(
       appBar: AppBar(
@@ -33,7 +34,7 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
               foregroundColor: Colors.blue,
               textStyle: const TextStyle(fontSize: 20),
             ),
-            child: Text("Save"),
+            child: const Text("Save"),
             onPressed: () async {
               await Main.makeOccupationClaim(
                 state.db,
@@ -57,8 +58,8 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 20),
-          Text(
+          const SizedBox(height: 20),
+          const Text(
             "Organization",
             style: TextStyle(
               fontFamily: 'inter',
@@ -67,12 +68,12 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
               color: Colors.white,
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           TextField(
             controller: textControllerOrganization,
             maxLines: null,
             cursorColor: Colors.white,
-            style: TextStyle(color: Colors.white, fontSize: 12),
+            style: const TextStyle(color: Colors.white, fontSize: 12),
             decoration: InputDecoration(
               filled: true,
               fillColor: Main.formColor,
@@ -80,14 +81,14 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
                 borderRadius: BorderRadius.circular(40.0),
               ),
               labelText: "Stanford University, Amazon, Goldman Sachs, ...",
-              labelStyle: TextStyle(
+              labelStyle: const TextStyle(
                 color: Colors.white,
               ),
               floatingLabelBehavior: FloatingLabelBehavior.never,
             ),
           ),
-          SizedBox(height: 20),
-          Text(
+          const SizedBox(height: 20),
+          const Text(
             "Role",
             style: TextStyle(
               fontFamily: 'inter',
@@ -96,12 +97,12 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
               color: Colors.white,
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           TextField(
             controller: textControllerRole,
             maxLines: null,
             cursorColor: Colors.white,
-            style: TextStyle(color: Colors.white, fontSize: 12),
+            style: const TextStyle(color: Colors.white, fontSize: 12),
             decoration: InputDecoration(
               filled: true,
               fillColor: Main.formColor,
@@ -109,14 +110,14 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
                 borderRadius: BorderRadius.circular(40.0),
               ),
               labelText: "Professor of Physics, Engineer, Analyst, ...",
-              labelStyle: TextStyle(
+              labelStyle: const TextStyle(
                 color: Colors.white,
               ),
               floatingLabelBehavior: FloatingLabelBehavior.never,
             ),
           ),
-          SizedBox(height: 20),
-          Text(
+          const SizedBox(height: 20),
+          const Text(
             "Location",
             style: TextStyle(
               fontFamily: 'inter',
@@ -125,12 +126,12 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
               color: Colors.white,
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           TextField(
             controller: textControllerLocation,
             maxLines: null,
             cursorColor: Colors.white,
-            style: TextStyle(color: Colors.white, fontSize: 12),
+            style: const TextStyle(color: Colors.white, fontSize: 12),
             decoration: InputDecoration(
               filled: true,
               fillColor: Main.formColor,
@@ -138,7 +139,7 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
                 borderRadius: BorderRadius.circular(40.0),
               ),
               labelText: "Midwest, Massachusetts, New York City, ...",
-              labelStyle: TextStyle(
+              labelStyle: const TextStyle(
                 color: Colors.white,
               ),
               floatingLabelBehavior: FloatingLabelBehavior.never,

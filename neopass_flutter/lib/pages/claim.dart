@@ -23,7 +23,7 @@ class _ClaimPageState extends State<ClaimPage> {
       itemCount: vouches.length,
       padding: const EdgeInsets.all(8),
       itemBuilder: (BuildContext context, int index) {
-        return Text('');
+        return const Text('');
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(
         thickness: 1,
@@ -58,14 +58,14 @@ class _ClaimPageState extends State<ClaimPage> {
               child: Text(
                 identity2.username,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'inter',
                   fontWeight: FontWeight.w300,
                   fontSize: 32,
                   color: Colors.white,
                 ),
               )),
-          Text(
+          const Text(
             "Claims",
             style: TextStyle(
               fontFamily: 'inter',
@@ -74,31 +74,31 @@ class _ClaimPageState extends State<ClaimPage> {
               color: Colors.grey,
             ),
           ),
-          SizedBox(height: 15),
+          const SizedBox(height: 15),
           Text(
             claim2.claimType,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: 'inter',
               fontWeight: FontWeight.w200,
               fontSize: 24,
               color: Colors.white,
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
             claim2.text,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: 'inter',
               fontWeight: FontWeight.w200,
               fontSize: 20,
               color: Colors.grey,
             ),
           ),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           Container(
             margin: const EdgeInsets.only(left: 20),
             alignment: AlignmentDirectional.centerStart,
-            child: Text(
+            child: const Text(
               "Request Verification",
               style: TextStyle(
                 fontFamily: 'inter',

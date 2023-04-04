@@ -139,13 +139,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    var state2 = context.watch<Main.PolycentricModel>();
-    var identity2 = state2.identities[widget.identityIndex];
+    final state2 = context.watch<Main.PolycentricModel>();
+    final identity2 = state2.identities[widget.identityIndex];
 
     List<StatelessWidget> listViewChildren = [
       Container(
         margin: const EdgeInsets.only(left: 20),
-        child: Text(
+        child: const Text(
           'Claims',
           textAlign: TextAlign.left,
           style: TextStyle(
@@ -163,7 +163,7 @@ class _ProfilePageState extends State<ProfilePage> {
     listViewChildren.addAll([
       Container(
         margin: const EdgeInsets.only(left: 20, top: 20),
-        child: Text(
+        child: const Text(
           'Other',
           textAlign: TextAlign.left,
           style: TextStyle(
@@ -208,7 +208,7 @@ class _ProfilePageState extends State<ProfilePage> {
         icon: Icons.switch_account,
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return NewOrImportProfilePage();
+            return const NewOrImportProfilePage();
           }));
         },
       ),
@@ -218,7 +218,7 @@ class _ProfilePageState extends State<ProfilePage> {
         icon: Icons.save,
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return BackupPage();
+            return const BackupPage();
           }));
         },
       ),
@@ -234,7 +234,7 @@ class _ProfilePageState extends State<ProfilePage> {
               state2.db, public.bytes, identity2.processSecret.process);
 
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return NewOrImportProfilePage();
+            return const NewOrImportProfilePage();
           }));
 
           await state2.mLoadIdentities();
@@ -285,7 +285,7 @@ class _ProfilePageState extends State<ProfilePage> {
               }
             },
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -293,7 +293,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Text(
                 identity2.username,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'inter',
                   fontWeight: FontWeight.w300,
                   fontSize: 32,
@@ -301,7 +301,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               OutlinedButton(
-                child: Icon(
+                child: const Icon(
                   Icons.edit_outlined,
                   size: 20,
                   semanticLabel: "edit",
@@ -313,12 +313,12 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Align(
             alignment: AlignmentDirectional.centerStart,
             child: Container(
-              margin: new EdgeInsets.only(left: 20.0),
-              child: Text(
+              margin: const EdgeInsets.only(left: 20.0),
+              child: const Text(
                 "About",
                 style: TextStyle(
                   fontFamily: 'inter',
@@ -329,29 +329,29 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Container(
-            margin: new EdgeInsets.only(left: 20.0, right: 20.0),
+            margin: const EdgeInsets.only(left: 20.0, right: 20.0),
             child: OutlinedButton(
               style: OutlinedButton.styleFrom(
                 backgroundColor: Main.tokenColor,
-                primary: Colors.black,
+                foregroundColor: Colors.black,
               ),
               child: Column(
                 children: [
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   Align(
                     alignment: AlignmentDirectional.centerStart,
                     child: Text(identity2.description,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontFamily: 'inter',
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                           color: Colors.white,
                         )),
                   ),
-                  SizedBox(height: 10),
-                  Align(
+                  const SizedBox(height: 10),
+                  const Align(
                     alignment: AlignmentDirectional.centerEnd,
                     child: Icon(
                       Icons.edit_outlined,
@@ -360,7 +360,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                 ],
               ),
               onPressed: () {

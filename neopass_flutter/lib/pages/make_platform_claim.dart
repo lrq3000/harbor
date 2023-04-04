@@ -19,9 +19,10 @@ class MakePlatformClaimPage extends StatefulWidget {
 class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
   TextEditingController textController = TextEditingController();
 
+  @override
   Widget build(BuildContext context) {
-    var state2 = context.watch<Main.PolycentricModel>();
-    var identity2 = state2.identities[widget.identityIndex];
+    final state2 = context.watch<Main.PolycentricModel>();
+    final identity2 = state2.identities[widget.identityIndex];
 
     return Scaffold(
       appBar: AppBar(
@@ -32,18 +33,18 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 75),
+            const SizedBox(height: 75),
             Main.claimTypeToImage(widget.claimType),
-            SizedBox(height: 75),
+            const SizedBox(height: 75),
             Text(
               widget.claimType,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 30,
                 color: Colors.white,
               ),
             ),
-            SizedBox(height: 100),
-            Align(
+            const SizedBox(height: 100),
+            const Align(
               alignment: AlignmentDirectional.centerStart,
               child: Text(
                 "Profile information",
@@ -53,12 +54,12 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
                 ),
               ),
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             TextField(
               controller: textController,
               maxLines: null,
               cursorColor: Colors.white,
-              style: TextStyle(color: Colors.white, fontSize: 12),
+              style: const TextStyle(color: Colors.white, fontSize: 12),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Main.formColor,
@@ -66,21 +67,21 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
                   borderRadius: BorderRadius.circular(40.0),
                 ),
                 labelText: "Profile name",
-                labelStyle: TextStyle(
+                labelStyle: const TextStyle(
                   color: Colors.white,
                 ),
                 floatingLabelBehavior: FloatingLabelBehavior.never,
               ),
             ),
-            SizedBox(height: 150),
+            const SizedBox(height: 150),
             Align(
               alignment: AlignmentDirectional.center,
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Main.blueButtonColor,
-                    shape: StadiumBorder(),
+                    shape: const StadiumBorder(),
                   ),
-                  child: Text('Next step'),
+                  child: const Text('Next step'),
                   onPressed: () async {
                     final claim = await Main.makePlatformClaim(
                         state2.db,

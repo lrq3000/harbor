@@ -14,10 +14,11 @@ class PresentPage extends StatelessWidget {
       {Key? key, required this.identityIndex, required this.claimIndex})
       : super(key: key);
 
+  @override
   Widget build(BuildContext context) {
-    var state2 = context.watch<Main.PolycentricModel>();
-    var identity2 = state2.identities[identityIndex];
-    var claim2 = identity2.claims[claimIndex];
+    final state2 = context.watch<Main.PolycentricModel>();
+    final identity2 = state2.identities[identityIndex];
+    final claim2 = identity2.claims[claimIndex];
 
     return Scaffold(
       appBar: AppBar(
@@ -39,14 +40,14 @@ class PresentPage extends StatelessWidget {
               child: Text(
                 identity2.username,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'inter',
                   fontWeight: FontWeight.w300,
                   fontSize: 32,
                   color: Colors.white,
                 ),
               )),
-          Text(
+          const Text(
             "Requests you to verify their claim",
             style: TextStyle(
               fontFamily: 'inter',
@@ -55,20 +56,20 @@ class PresentPage extends StatelessWidget {
               color: Colors.grey,
             ),
           ),
-          SizedBox(height: 15),
+          const SizedBox(height: 15),
           Text(
             claim2.claimType,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: 'inter',
               fontWeight: FontWeight.w200,
               fontSize: 24,
               color: Colors.white,
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
             claim2.text,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: 'inter',
               fontWeight: FontWeight.w200,
               fontSize: 20,
@@ -83,8 +84,8 @@ class PresentPage extends StatelessWidget {
               size: 200.0,
             ),
           ),
-          SizedBox(height: 15),
-          Text(
+          const SizedBox(height: 15),
+          const Text(
             "Scan to Verify",
             style: TextStyle(
               fontFamily: 'inter',

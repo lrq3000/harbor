@@ -17,9 +17,10 @@ class CreateSkillClaimPage extends StatefulWidget {
 class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
   TextEditingController textController = TextEditingController();
 
+  @override
   Widget build(BuildContext context) {
-    var state = context.watch<Main.PolycentricModel>();
-    var identity = state.identities[widget.identityIndex];
+    final state = context.watch<Main.PolycentricModel>();
+    final identity = state.identities[widget.identityIndex];
 
     return Scaffold(
       appBar: AppBar(
@@ -30,7 +31,7 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
               foregroundColor: Colors.blue,
               textStyle: const TextStyle(fontSize: 20),
             ),
-            child: Text("Save"),
+            child: const Text("Save"),
             onPressed: () async {
               await Main.makePlatformClaim(
                 state.db,
@@ -53,8 +54,8 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 20),
-          Text(
+          const SizedBox(height: 20),
+          const Text(
             "Name",
             style: TextStyle(
               fontFamily: 'inter',
@@ -63,12 +64,12 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
               color: Colors.white,
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           TextField(
             controller: textController,
             maxLines: null,
             cursorColor: Colors.white,
-            style: TextStyle(color: Colors.white, fontSize: 12),
+            style: const TextStyle(color: Colors.white, fontSize: 12),
             decoration: InputDecoration(
               filled: true,
               fillColor: Main.formColor,
@@ -76,7 +77,7 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
                 borderRadius: BorderRadius.circular(40.0),
               ),
               labelText: "Python programming, Web Marketing, ...",
-              labelStyle: TextStyle(
+              labelStyle: const TextStyle(
                 color: Colors.white,
               ),
               floatingLabelBehavior: FloatingLabelBehavior.never,

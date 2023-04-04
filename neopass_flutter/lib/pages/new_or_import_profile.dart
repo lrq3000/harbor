@@ -22,7 +22,7 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
         actionDescription: 'Sign in to this identity',
         left: Container(
           child: Padding(
-            padding: EdgeInsets.all(7),
+            padding: const EdgeInsets.all(7),
             child: CircleAvatar(
               backgroundColor: Colors.white,
               radius: 14,
@@ -47,9 +47,9 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    var state2 = context.watch<Main.PolycentricModel>();
+    final state2 = context.watch<Main.PolycentricModel>();
 
-    var listViewChildren = _renderProfiles(state2.identities);
+    final listViewChildren = _renderProfiles(state2.identities);
 
     listViewChildren.addAll([
       Main.StandardButton(
@@ -58,7 +58,7 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
         icon: Icons.person_add,
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return NewProfilePage();
+            return const NewProfilePage();
           }));
         },
       ),
@@ -73,18 +73,18 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
     return Scaffold(
       body: Column(
         children: [
-          SizedBox(height: 150),
+          const SizedBox(height: 150),
           Main.neopassLogoAndText,
-          SizedBox(height: 50),
+          const SizedBox(height: 50),
           Expanded(
             child: ListView(
               shrinkWrap: true,
               children: listViewChildren,
             ),
           ),
-          SizedBox(height: 50),
+          const SizedBox(height: 50),
           Main.futoLogoAndText,
-          SizedBox(height: 50),
+          const SizedBox(height: 50),
         ],
       ),
     );

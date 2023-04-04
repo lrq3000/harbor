@@ -46,8 +46,8 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 20),
-          Text(
+          const SizedBox(height: 20),
+          const Text(
             "Freeform",
             style: TextStyle(
               fontFamily: 'inter',
@@ -56,12 +56,12 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
               color: Colors.white,
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           TextField(
             controller: textController,
             maxLines: null,
             cursorColor: Colors.white,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: 'inter',
               fontSize: 14,
               fontWeight: FontWeight.w300,
@@ -74,7 +74,7 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
                 borderRadius: BorderRadius.circular(40.0),
               ),
               labelText: "Type of claim",
-              labelStyle: TextStyle(
+              labelStyle: const TextStyle(
                 color: Colors.white,
               ),
               floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -85,9 +85,9 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Main.blueButtonColor,
-                  shape: StadiumBorder(),
+                  shape: const StadiumBorder(),
                 ),
-                child: Text(
+                child: const Text(
                   'Make Claim',
                   style: TextStyle(
                     fontFamily: 'inter',
@@ -103,7 +103,7 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
                   Navigator.pop(context);
                 }),
           ),
-          Text(
+          const Text(
             "Common",
             style: TextStyle(
               fontFamily: 'inter',
@@ -141,7 +141,7 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
               ),
             ],
           ),
-          Text(
+          const Text(
             "Platforms",
             style: TextStyle(
               fontFamily: 'inter',

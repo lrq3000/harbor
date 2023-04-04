@@ -16,18 +16,18 @@ class _NewProfilePageState extends State<NewProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    var state2 = context.watch<Main.PolycentricModel>();
+    final state2 = context.watch<Main.PolycentricModel>();
 
     return Scaffold(
       body: Column(
         children: [
-          SizedBox(height: 150),
+          const SizedBox(height: 150),
           Main.neopassLogoAndText,
           Container(
             margin: const EdgeInsets.only(left: 40, right: 40, top: 100),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(
+              const Text(
                 "Profile Name",
                 style: TextStyle(
                   fontFamily: 'inter',
@@ -36,12 +36,12 @@ class _NewProfilePageState extends State<NewProfilePage> {
                   color: Colors.white,
                 ),
               ),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               TextField(
                 controller: textController,
                 maxLines: 1,
                 cursorColor: Colors.white,
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Main.formColor,
@@ -52,13 +52,13 @@ class _NewProfilePageState extends State<NewProfilePage> {
               ),
             ]),
           ),
-          SizedBox(height: 120),
+          const SizedBox(height: 120),
           Container(
             alignment: Alignment.center,
             child: TextButton(
               style: TextButton.styleFrom(
                 backgroundColor: Main.blueButtonColor,
-                shape: StadiumBorder(),
+                shape: const StadiumBorder(),
               ),
               onPressed: () async {
                 final identity = await Main.createNewIdentity(state2.db);
@@ -69,7 +69,7 @@ class _NewProfilePageState extends State<NewProfilePage> {
                   return NewOrImportProfilePage();
                 }));
               },
-              child: Text(
+              child: const Text(
                 "Create Profile",
                 style: TextStyle(
                   fontFamily: 'inter',
@@ -82,7 +82,7 @@ class _NewProfilePageState extends State<NewProfilePage> {
           ),
           Expanded(flex: 1, child: Container()),
           Main.futoLogoAndText,
-          SizedBox(height: 50),
+          const SizedBox(height: 50),
         ],
       ),
     );
