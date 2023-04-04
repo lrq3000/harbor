@@ -26,7 +26,7 @@ import 'pages/profile.dart';
 import 'pages/present.dart';
 import 'pages/backup.dart';
 import 'pages/automated_verification.dart';
-
+import 'models.dart' as Models;
 import 'protocol.pb.dart' as Protocol;
 
 final SCHEMA_TABLE_EVENTS = '''
@@ -276,7 +276,7 @@ Future<Protocol.SignedEvent?> loadLatestEventByContentType(
   SQFLite.Database db,
   List<int> system,
   List<int> process,
-  int contentType,
+  FixNum.Int64 contentType,
 ) async {
   final q = await db.rawQuery('''
         SELECT raw_event FROM events
@@ -288,7 +288,8 @@ Future<Protocol.SignedEvent?> loadLatestEventByContentType(
         logical_clock DESC
         LIMIT 1;
     ''',
-      [Uint8List.fromList(system), Uint8List.fromList(process), contentType]);
+      [Uint8List.fromList(system), Uint8List.fromList(process),
+      contentType.toInt()]);
 
   if (q.length == 0) {
     return null;
@@ -306,7 +307,7 @@ Future<String> loadLatestUsername(
     db,
     system,
     process,
-    5,
+    Models.ContentType.ContentTypeUsername,
   );
 
   if (signedEvent == null) {
@@ -327,7 +328,7 @@ Future<String> loadLatestDescription(
     db,
     system,
     process,
-    6,
+    Models.ContentType.ContentTypeDescription,
   );
 
   if (signedEvent == null) {
@@ -383,7 +384,7 @@ Future<Image?> loadImage(
 
   final metaEvent = Protocol.Event.fromBuffer(metaSignedEvent.event);
 
-  if (metaEvent.contentType != FixNum.Int64(7)) {
+  if (metaEvent.contentType != Models.ContentType.ContentTypeBlobMeta) {
     print("expected blob meta event");
     print(metaEvent.contentType);
 
@@ -405,7 +406,7 @@ Future<Image?> loadImage(
 
   final contentEvent = Protocol.Event.fromBuffer(contentSignedEvent.event);
 
-  if (contentEvent.contentType != FixNum.Int64(8)) {
+  if (contentEvent.contentType != Models.ContentType.ContentTypeBlobSection) {
     print("expected blob section event");
 
     return null;
@@ -440,7 +441,7 @@ Future<Image?> loadLatestAvatar(
 
     Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
 
-    if (event.contentType != FixNum.Int64(9)) {
+    if (event.contentType != Models.ContentType.ContentTypeAvatar) {
       print("expected content type avatar");
 
       return null;
@@ -517,7 +518,7 @@ Future<void> deleteEvent(
       deleteBody.indices = event.indices;
 
       final Protocol.Event deleteEvent = Protocol.Event();
-      deleteEvent.contentType = FixNum.Int64(1);
+      deleteEvent.contentType = Models.ContentType.ContentTypeDelete;
       deleteEvent.content = deleteBody.writeToBuffer();
   
       await saveEvent(db, processInfo, deleteEvent);
@@ -534,7 +535,7 @@ Future<Protocol.Pointer> publishBlob(SQFLite.Database db,
   blobMeta.mime = mime;
 
   final Protocol.Event blobMetaEvent = Protocol.Event();
-  blobMetaEvent.contentType = FixNum.Int64(7);
+  blobMetaEvent.contentType = Models.ContentType.ContentTypeBlobMeta;
   blobMetaEvent.content = blobMeta.writeToBuffer();
 
   final blobMetaPointer = await saveEvent(db, processInfo, blobMetaEvent);
@@ -544,7 +545,7 @@ Future<Protocol.Pointer> publishBlob(SQFLite.Database db,
   blobSection.content = bytes;
 
   final Protocol.Event blobSectionEvent = Protocol.Event();
-  blobSectionEvent.contentType = FixNum.Int64(8);
+  blobSectionEvent.contentType = Models.ContentType.ContentTypeBlobSection;
   blobSectionEvent.content = blobSection.writeToBuffer();
 
   await saveEvent(db, processInfo, blobSectionEvent);
@@ -563,7 +564,7 @@ Future<void> setAvatar(SQFLite.Database db, ProcessSecret processInfo,
   element.value = pointer.writeToBuffer();
 
   Protocol.Event event = Protocol.Event();
-  event.contentType = FixNum.Int64(9);
+  event.contentType = Models.ContentType.ContentTypeAvatar;
   event.lwwElement = element;
 
   await saveEvent(db, processInfo, event);
@@ -580,7 +581,7 @@ Future<void> setUsername(
   element.value = utf8.encode(username);
 
   Protocol.Event event = Protocol.Event();
-  event.contentType = FixNum.Int64(5);
+  event.contentType = Models.ContentType.ContentTypeUsername;
   event.lwwElement = element;
 
   await saveEvent(db, processInfo, event);
@@ -597,7 +598,7 @@ Future<void> setDescription(
   element.value = utf8.encode(description);
 
   Protocol.Event event = Protocol.Event();
-  event.contentType = FixNum.Int64(6);
+  event.contentType = Models.ContentType.ContentTypeDescription;
   event.lwwElement = element;
 
   await saveEvent(db, processInfo, event);
@@ -616,7 +617,7 @@ Future<void> makeClaim(
   claim.claim = claimIdentifier.writeToBuffer();
 
   Protocol.Event event = Protocol.Event();
-  event.contentType = FixNum.Int64(12);
+  event.contentType = Models.ContentType.ContentTypeClaim;
   event.content = claim.writeToBuffer();
 
   await saveEvent(db, processInfo, event);
@@ -635,7 +636,7 @@ Future<ClaimInfo> makePlatformClaim(SQFLite.Database db,
   claim.claim = claimIdentifier.writeToBuffer();
 
   Protocol.Event event = Protocol.Event();
-  event.contentType = FixNum.Int64(12);
+  event.contentType = Models.ContentType.ContentTypeClaim;
   event.content = claim.writeToBuffer();
 
   final pointer = await saveEvent(db, processInfo, event);
@@ -662,7 +663,7 @@ Future<ClaimInfo> makeOccupationClaim(
   claim.claim = claimOccupation.writeToBuffer();
 
   Protocol.Event event = Protocol.Event();
-  event.contentType = FixNum.Int64(12);
+  event.contentType = Models.ContentType.ContentTypeClaim;
   event.content = claim.writeToBuffer();
 
   final pointer = await saveEvent(db, processInfo, event);
@@ -680,7 +681,7 @@ Future<void> makeVouch(SQFLite.Database db, ProcessSecret processInfo,
   reference.reference = pointer.writeToBuffer();
 
   Protocol.Event event = Protocol.Event();
-  event.contentType = FixNum.Int64(13);
+  event.contentType = Models.ContentType.ContentTypeVouch;
   event.references.add(reference);
 
   await saveEvent(db, processInfo, event);
