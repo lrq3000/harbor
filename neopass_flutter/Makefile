@@ -12,3 +12,6 @@ lint:
 
 format:
 	dart format lib/main.dart lib/pages/* lib/api_methods.dart
+
+icons:
+	flutter pub run flutter_launcher_icons:main
