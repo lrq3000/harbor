@@ -77,12 +77,12 @@ Future<ProcessSecret> createNewIdentity(SQFLite.Database db) async {
   ]);
 
   final publicProto = Protocol.PublicKey();
-  publicProto.keyType = new FixNum.Int64(1);
+  publicProto.keyType = FixNum.Int64(1);
   publicProto.key = public.bytes;
   print("new identity");
   print(base64Url.encode(publicProto.writeToBuffer()));
 
-  return new ProcessSecret(keyPair, process);
+  return ProcessSecret(keyPair, process);
 }
 
 Future<List<ProcessSecret>> loadIdentities(SQFLite.Database db) async {
@@ -90,7 +90,7 @@ Future<List<ProcessSecret>> loadIdentities(SQFLite.Database db) async {
         SELECT * FROM process_secrets;
     ''');
 
-  final result = new List<ProcessSecret>.empty(growable: true);
+  final result = List<ProcessSecret>.empty(growable: true);
 
   for (var row in rows) {
     final public = Cryptography.SimplePublicKey(
@@ -105,7 +105,7 @@ Future<List<ProcessSecret>> loadIdentities(SQFLite.Database db) async {
     );
 
     result.add(
-      new ProcessSecret(keyPair, row['process']),
+      ProcessSecret(keyPair, row['process']),
     );
   }
 
@@ -136,7 +136,7 @@ Future<void> ingest(
     type: Cryptography.KeyPairType.ed25519,
   );
 
-  final signature = new Cryptography.Signature(
+  final signature = Cryptography.Signature(
     signedEvent.signature,
     publicKey: public,
   );
@@ -195,7 +195,7 @@ Future<Protocol.Pointer> signedEventToPointer(
   final hash = await Cryptography.Sha256().hash(signedEvent.event);
 
   final Protocol.Digest digest = Protocol.Digest();
-  digest.digestType = new FixNum.Int64(1);
+  digest.digestType = FixNum.Int64(1);
   digest.digest = hash.bytes;
 
   final Protocol.Pointer pointer = Protocol.Pointer();
@@ -236,7 +236,7 @@ Future<List<ClaimInfo>> loadClaims(
     final pointer = await signedEventToPointer(signedEvent);
 
     result.add(
-        new ClaimInfo(claim.claimType, claimIdentifier.identifier, pointer));
+        ClaimInfo(claim.claimType, claimIdentifier.identifier, pointer));
   }
 
   return result;
@@ -355,7 +355,7 @@ Future<Protocol.SignedEvent?> loadEvent(
     logicalClock.toInt()
   ]);
 
-  if (rows.length > 0) {
+  if (rows.isEmpty) {
     return Protocol.SignedEvent.fromBuffer(
         rows.first["raw_event"] as List<int>);
   }
@@ -455,7 +455,7 @@ Future<Protocol.Pointer> saveEvent(SQFLite.Database db,
     ProcessSecret processInfo, Protocol.Event event) async {
   final public = await processInfo.system.extractPublicKey();
   final Protocol.PublicKey system = Protocol.PublicKey();
-  system.keyType = new FixNum.Int64(1);
+  system.keyType = FixNum.Int64(1);
   system.key = public.bytes;
 
   final Protocol.Process process = Protocol.Process();
@@ -622,7 +622,7 @@ Future<ClaimInfo> makePlatformClaim(SQFLite.Database db,
 
   final pointer = await saveEvent(db, processInfo, event);
 
-  return new ClaimInfo(claimType, account, pointer);
+  return ClaimInfo(claimType, account, pointer);
 }
 
 Future<ClaimInfo> makeOccupationClaim(
@@ -646,7 +646,7 @@ Future<ClaimInfo> makeOccupationClaim(
 
   final pointer = await saveEvent(db, processInfo, event);
 
-  return new ClaimInfo("Occupation", organization, pointer);
+  return ClaimInfo("Occupation", organization, pointer);
 }
 
 Future<void> makeVouch(SQFLite.Database db, ProcessSecret processInfo,
@@ -682,11 +682,11 @@ MaterialColor makeColor(Color color) {
   return MaterialColor(color.value, shades);
 }
 
-final MaterialColor buttonColor = makeColor(Color(0xFF1B1B1B));
-final MaterialColor blueButtonColor = makeColor(Color(0xFF2D63ED));
-final MaterialColor formColor = makeColor(Color(0xFF303030));
-final MaterialColor tokenColor = makeColor(Color(0xFF141414));
-final MaterialColor deleteColor = makeColor(Color(0xFF2F2F2F));
+final MaterialColor buttonColor = makeColor(const Color(0xFF1B1B1B));
+final MaterialColor blueButtonColor = makeColor(const Color(0xFF2D63ED));
+final MaterialColor formColor = makeColor(const Color(0xFF303030));
+final MaterialColor tokenColor = makeColor(const Color(0xFF141414));
+final MaterialColor deleteColor = makeColor(const Color(0xFF2F2F2F));
 
 class ClaimInfo {
   final String claimType;
@@ -719,29 +719,29 @@ class PolycentricModel extends ChangeNotifier {
   PolycentricModel(this.db);
 
   Future<void> mLoadIdentities() async {
-    final identities = await loadIdentities(this.db);
+    final identities = await loadIdentities(db);
     this.identities = [];
     for (final identity in identities) {
       final public = await identity.system.extractPublicKey();
       final username = await loadLatestUsername(
-        this.db,
+        db,
         public.bytes,
         identity.process,
       );
       final description = await loadLatestDescription(
-        this.db,
+        db,
         public.bytes,
         identity.process,
       );
       final avatar = await loadLatestAvatar(
-        this.db,
+        db,
         public.bytes,
         identity.process,
       );
-      final claims = await loadClaims(this.db, public.bytes);
+      final claims = await loadClaims(db, public.bytes);
 
       this.identities.add(
-            new ProcessInfo(identity, username, claims, avatar, description),
+            ProcessInfo(identity, username, claims, avatar, description),
           );
     }
 
