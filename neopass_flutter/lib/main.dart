@@ -487,6 +487,8 @@ Future<Protocol.Pointer> saveEvent(SQFLite.Database db,
 
   await ingest(db, signedEvent);
 
+  sendAllEventsToServer(db, public.bytes);
+
   return await signedEventToPointer(signedEvent);
 }
 
@@ -517,9 +519,6 @@ Future<void> deleteEvent(
     deleteEvent.content = deleteBody.writeToBuffer();
 
     await saveEvent(db, processInfo, deleteEvent);
-
-    final public = await processInfo.system.extractPublicKey();
-    sendAllEventsToServer(db, public.bytes);
   }
 }
 
@@ -545,9 +544,6 @@ Future<Protocol.Pointer> publishBlob(SQFLite.Database db,
 
   await saveEvent(db, processInfo, blobSectionEvent);
 
-  final public = await processInfo.system.extractPublicKey();
-  await sendAllEventsToServer(db, public.bytes);
-
   return blobMetaPointer;
 }
 
@@ -563,9 +559,6 @@ Future<void> setCRDT(SQFLite.Database db, ProcessSecret processInfo,
   event.lwwElement = element;
 
   await saveEvent(db, processInfo, event);
-
-  final public = await processInfo.system.extractPublicKey();
-  await sendAllEventsToServer(db, public.bytes);
 }
 
 Future<void> setAvatar(SQFLite.Database db, ProcessSecret processInfo,
@@ -612,9 +605,6 @@ Future<void> makeClaim(
   event.content = claim.writeToBuffer();
 
   await saveEvent(db, processInfo, event);
-
-  final public = await processInfo.system.extractPublicKey();
-  await sendAllEventsToServer(db, public.bytes);
 }
 
 Future<ClaimInfo> makePlatformClaim(SQFLite.Database db,
@@ -631,9 +621,6 @@ Future<ClaimInfo> makePlatformClaim(SQFLite.Database db,
   event.content = claim.writeToBuffer();
 
   final pointer = await saveEvent(db, processInfo, event);
-
-  final public = await processInfo.system.extractPublicKey();
-  await sendAllEventsToServer(db, public.bytes);
 
   return new ClaimInfo(claimType, account, pointer);
 }
@@ -659,9 +646,6 @@ Future<ClaimInfo> makeOccupationClaim(
 
   final pointer = await saveEvent(db, processInfo, event);
 
-  final public = await processInfo.system.extractPublicKey();
-  await sendAllEventsToServer(db, public.bytes);
-
   return new ClaimInfo("Occupation", organization, pointer);
 }
 
@@ -676,9 +660,6 @@ Future<void> makeVouch(SQFLite.Database db, ProcessSecret processInfo,
   event.references.add(reference);
 
   await saveEvent(db, processInfo, event);
-
-  final public = await processInfo.system.extractPublicKey();
-  await sendAllEventsToServer(db, public.bytes);
 }
 
 Future<void> main() async {
