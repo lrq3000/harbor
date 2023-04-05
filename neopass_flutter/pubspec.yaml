@@ -22,6 +22,8 @@ dependencies:
   protobuf: ^2.1.0
   http:
   file_picker: ^5.2.6
+  fixnum: ^1.1.0
+  path: ^1.8.2
 
 dev_dependencies:
   flutter_test:
