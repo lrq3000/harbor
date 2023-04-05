@@ -23,32 +23,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  List<StatelessWidget> _renderClaims(List<Main.ClaimInfo> claims) {
-    List<StatelessWidget> result = [];
-
-    for (var i = 0; i < claims.length; i++) {
-      result.add(Main.StandardButtonGeneric(
-        actionText: claims[i].claimType,
-        actionDescription: claims[i].text,
-        left: Container(
-          margin: const EdgeInsets.only(top: 5, bottom: 5),
-          child: Main.claimTypeToVisual(claims[i].claimType),
-        ),
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return ClaimPage(
-              identityIndex: widget.identityIndex,
-              claimIndex: i,
-            );
-          }));
-        },
-        onDelete: () {},
-      ));
-    }
-
-    return result;
-  }
-
   final TextEditingController usernameController = TextEditingController();
   String newUsername = "";
 
@@ -141,6 +115,39 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     final state2 = context.watch<Main.PolycentricModel>();
     final identity2 = state2.identities[widget.identityIndex];
+
+    List<StatelessWidget> _renderClaims(
+      List<Main.ClaimInfo> claims,
+    ) {
+      List<StatelessWidget> result = [];
+
+      for (var i = 0; i < claims.length; i++) {
+        result.add(Main.StandardButtonGeneric(
+          actionText: claims[i].claimType,
+          actionDescription: claims[i].text,
+          left: Container(
+            margin: const EdgeInsets.only(top: 5, bottom: 5),
+            child: Main.claimTypeToVisual(claims[i].claimType),
+          ),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return ClaimPage(
+                identityIndex: widget.identityIndex,
+                claimIndex: i,
+              );
+            }));
+          },
+          onDelete: () async {
+            await Main.deleteEvent(
+                state2.db, identity2.processSecret, claims[i].pointer);
+
+            await state2.mLoadIdentities();
+          },
+        ));
+      }
+
+      return result;
+    }
 
     List<StatelessWidget> listViewChildren = [
       Container(

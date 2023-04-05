@@ -36,6 +36,17 @@ CREATE TABLE IF NOT EXISTS process_secrets (
 );
 ''';
 
+const SCHEMA_TABLE_DELETIONS = '''
+CREATE TABLE IF NOT EXISTS deletions (
+    id              INTEGER PRIMARY KEY,
+    system_key_type INTEGER NOT NULL,
+    system_key      INTEGER NOT NULL,
+    process         BLOB    NOT NULL,
+    logical_clock   INTEGER NOT NULL,
+    event_id        INTEGER NOT NULL
+);
+''';
+
 class ProcessSecret {
   Cryptography.SimpleKeyPair system;
   List<int> process;
@@ -116,8 +127,73 @@ Future<void> deleteIdentity(
     ''', [Uint8List.fromList(system), Uint8List.fromList(process)]);
 }
 
+Future<bool> isEventDeleted(
+  SQFLite.Transaction transaction,
+  Protocol.Event event,
+) async {
+  const QUERY = '''
+      SELECT 1 FROM deletions
+      WHERE system_key_type = ?
+      AND system_key = ?
+      AND process = ?
+      AND logical_clock = ?
+      LIMIT 1;
+  ''';
+
+  final rows = await transaction.rawQuery(QUERY, [
+    event.system.keyType.toInt(),
+    Uint8List.fromList(event.system.key),
+    Uint8List.fromList(event.process.process),
+    event.logicalClock.toInt(),
+  ]);
+
+  return rows.isNotEmpty;
+}
+
+Future<void> deleteEventDB(
+  SQFLite.Transaction transaction,
+  int rowId,
+  Protocol.PublicKey system,
+  Protocol.Delete deleteBody,
+) async {
+  const QUERY_INSERT_DELETE = '''
+      INSERT INTO deletions
+      (
+          system_key_type,
+          system_key,
+          process,
+          logical_clock,
+          event_id
+      )
+      VALUES (?, ?, ?, ?, ?);
+  ''';
+
+  const QUERY_DELETE_EVENT = '''
+      DELETE FROM events
+      WHERE system_key_type = ?
+      AND system_key = ?
+      AND process = ?
+      AND logical_clock = ?;
+  ''';
+
+  await transaction.rawQuery(QUERY_INSERT_DELETE, [
+    system.keyType.toInt(),
+    Uint8List.fromList(system.key),
+    Uint8List.fromList(deleteBody.process.process),
+    deleteBody.logicalClock.toInt(),
+    rowId,
+  ]);
+
+  await transaction.rawDelete(QUERY_DELETE_EVENT, [
+    system.keyType.toInt(),
+    Uint8List.fromList(system.key),
+    Uint8List.fromList(deleteBody.process.process),
+    deleteBody.logicalClock.toInt(),
+  ]);
+}
+
 Future<void> ingest(
-  SQFLite.Database db,
+  SQFLite.Transaction transaction,
   Protocol.SignedEvent signedEvent,
 ) async {
   final Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
@@ -141,7 +217,12 @@ Future<void> ingest(
     throw 'invalid signature';
   }
 
-  await db.rawInsert('''
+  if (await isEventDeleted(transaction, event)) {
+    print("event already deleted");
+    return;
+  }
+
+  final eventId = await transaction.rawInsert('''
             INSERT INTO events (
                 system_key_type,
                 system_key,
@@ -151,13 +232,20 @@ Future<void> ingest(
                 raw_event
             ) VALUES(?, ?, ?, ?, ?, ?);
         ''', [
-    1,
+    event.system.keyType.toInt(),
     Uint8List.fromList(event.system.key),
     Uint8List.fromList(event.process.process),
     event.logicalClock.toInt(),
     event.contentType.toInt(),
     signedEvent.writeToBuffer(),
   ]);
+
+  if (event.contentType == Models.ContentType.ContentTypeDelete) {
+    final Protocol.Delete deleteBody =
+        Protocol.Delete.fromBuffer(event.content);
+
+    await deleteEventDB(transaction, eventId, event.system, deleteBody);
+  }
 }
 
 Future<int> loadLatestClock(
@@ -226,8 +314,7 @@ Future<List<ClaimInfo>> loadClaims(
 
     final pointer = await signedEventToPointer(signedEvent);
 
-    result.add(
-        ClaimInfo(claim.claimType, claimIdentifier.identifier, pointer));
+    result.add(ClaimInfo(claim.claimType, claimIdentifier.identifier, pointer));
   }
 
   return result;
@@ -346,7 +433,7 @@ Future<Protocol.SignedEvent?> loadEvent(
     logicalClock.toInt()
   ]);
 
-  if (rows.isEmpty) {
+  if (rows.isNotEmpty) {
     return Protocol.SignedEvent.fromBuffer(
         rows.first["raw_event"] as List<int>);
   }
@@ -476,7 +563,9 @@ Future<Protocol.Pointer> saveEvent(SQFLite.Database db,
   ))
       .bytes;
 
-  await ingest(db, signedEvent);
+  await db.transaction((transaction) async {
+    await ingest(transaction, signedEvent);
+  });
 
   sendAllEventsToServer(db, public.bytes);
 
@@ -496,6 +585,7 @@ Future<void> deleteEvent(
   );
 
   if (signedEvent == null) {
+    print("cannot delete event that does not exist");
     return;
   } else {
     final Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
@@ -742,10 +832,11 @@ class PolycentricModel extends ChangeNotifier {
 
 Future<PolycentricModel> setupModel() async {
   final db = await SQFLite.openDatabase(
-    Path.join(await SQFLite.getDatabasesPath(), 'harbor8.db'),
+    Path.join(await SQFLite.getDatabasesPath(), 'neopass10.db'),
     onCreate: (db, version) async {
       await db.execute(SCHEMA_TABLE_EVENTS);
       await db.execute(SCHEMA_TABLE_PROCESS_SECRETS);
+      await db.execute(SCHEMA_TABLE_DELETIONS);
     },
     version: 1,
   );
@@ -972,7 +1063,7 @@ class StandardButtonGeneric extends StatelessWidget {
                 ),
               ),
               child: const Text("Delete"),
-              onPressed: () {}),
+              onPressed: onDelete),
         ),
       );
     }
