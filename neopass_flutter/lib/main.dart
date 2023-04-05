@@ -11,15 +11,6 @@ import 'package:fixnum/fixnum.dart' as FixNum;
 
 import 'api_methods.dart';
 import 'pages/new_or_import_profile.dart';
-import 'pages/new_profile.dart';
-import 'pages/create_claim.dart';
-import 'pages/claim.dart';
-import 'pages/make_platform_claim.dart';
-import 'pages/add_token.dart';
-import 'pages/profile.dart';
-import 'pages/present.dart';
-import 'pages/backup.dart';
-import 'pages/automated_verification.dart';
 import 'models.dart' as Models;
 import 'protocol.pb.dart' as Protocol;
 
@@ -822,7 +813,7 @@ final StatelessWidget futoLogoAndText = Container(
 
 class ClaimButtonGeneric extends StatelessWidget {
   final String nameText;
-  final Function() onPressed;
+  final void Function() onPressed;
   final StatelessWidget top;
 
   const ClaimButtonGeneric({
@@ -866,7 +857,7 @@ class ClaimButtonGeneric extends StatelessWidget {
 class ClaimButtonIcon extends StatelessWidget {
   final String nameText;
   final IconData icon;
-  final Function() onPressed;
+  final void Function() onPressed;
 
   const ClaimButtonIcon({
     Key? key,
@@ -893,7 +884,7 @@ class ClaimButtonIcon extends StatelessWidget {
 class ClaimButtonImage extends StatelessWidget {
   final String nameText;
   final Image image;
-  final Function() onPressed;
+  final void Function() onPressed;
 
   const ClaimButtonImage({
     Key? key,
@@ -918,8 +909,8 @@ class StandardButtonGeneric extends StatelessWidget {
   final String actionText;
   final String actionDescription;
   final Widget left;
-  final Function() onPressed;
-  final Function()? onDelete;
+  final void Function() onPressed;
+  final void Function()? onDelete;
 
   const StandardButtonGeneric({
     Key? key,
@@ -1015,7 +1006,7 @@ class StandardButton extends StatelessWidget {
   final String actionText;
   final String actionDescription;
   final IconData icon;
-  final Function() onPressed;
+  final void Function() onPressed;
 
   const StandardButton({
     Key? key,
