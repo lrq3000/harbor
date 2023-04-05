@@ -281,9 +281,11 @@ Future<Protocol.SignedEvent?> loadLatestEventByContentType(
         ORDER BY
         logical_clock DESC
         LIMIT 1;
-    ''',
-      [Uint8List.fromList(system), Uint8List.fromList(process),
-      contentType.toInt()]);
+    ''', [
+    Uint8List.fromList(system),
+    Uint8List.fromList(process),
+    contentType.toInt()
+  ]);
 
   if (q.isEmpty) {
     return null;
@@ -493,32 +495,32 @@ Future<void> deleteEvent(
   ProcessSecret processInfo,
   Protocol.Pointer pointer,
 ) async {
-    final signedEvent = await loadEvent(
-      db,
-      pointer.system.key,
-      pointer.process.process,
-      pointer.logicalClock,
-    );
+  final signedEvent = await loadEvent(
+    db,
+    pointer.system.key,
+    pointer.process.process,
+    pointer.logicalClock,
+  );
 
-    if (signedEvent == null) {
-      return;
-    } else {
-      final Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
-      
-      final Protocol.Delete deleteBody = Protocol.Delete();
-      deleteBody.process = pointer.process;
-      deleteBody.logicalClock = pointer.logicalClock;
-      deleteBody.indices = event.indices;
+  if (signedEvent == null) {
+    return;
+  } else {
+    final Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
 
-      final Protocol.Event deleteEvent = Protocol.Event();
-      deleteEvent.contentType = Models.ContentType.ContentTypeDelete;
-      deleteEvent.content = deleteBody.writeToBuffer();
-  
-      await saveEvent(db, processInfo, deleteEvent);
+    final Protocol.Delete deleteBody = Protocol.Delete();
+    deleteBody.process = pointer.process;
+    deleteBody.logicalClock = pointer.logicalClock;
+    deleteBody.indices = event.indices;
 
-      final public = await processInfo.system.extractPublicKey();
-      sendAllEventsToServer(db, public.bytes);
-    }
+    final Protocol.Event deleteEvent = Protocol.Event();
+    deleteEvent.contentType = Models.ContentType.ContentTypeDelete;
+    deleteEvent.content = deleteBody.writeToBuffer();
+
+    await saveEvent(db, processInfo, deleteEvent);
+
+    final public = await processInfo.system.extractPublicKey();
+    sendAllEventsToServer(db, public.bytes);
+  }
 }
 
 Future<Protocol.Pointer> publishBlob(SQFLite.Database db,
@@ -549,55 +551,51 @@ Future<Protocol.Pointer> publishBlob(SQFLite.Database db,
   return blobMetaPointer;
 }
 
-Future<void> setAvatar(SQFLite.Database db, ProcessSecret processInfo,
-    Protocol.Pointer pointer) async {
+Future<void> setCRDT(SQFLite.Database db, ProcessSecret processInfo,
+    FixNum.Int64 contentType, Uint8List bytes) async {
   Protocol.LWWElement element = Protocol.LWWElement();
   element.unixMilliseconds =
       FixNum.Int64(DateTime.now().millisecondsSinceEpoch);
-  element.value = pointer.writeToBuffer();
+  element.value = bytes;
 
   Protocol.Event event = Protocol.Event();
-  event.contentType = Models.ContentType.ContentTypeAvatar;
+  event.contentType = contentType;
   event.lwwElement = element;
 
   await saveEvent(db, processInfo, event);
 
   final public = await processInfo.system.extractPublicKey();
   await sendAllEventsToServer(db, public.bytes);
+}
+
+Future<void> setAvatar(SQFLite.Database db, ProcessSecret processInfo,
+    Protocol.Pointer pointer) async {
+  await setCRDT(
+    db,
+    processInfo,
+    Models.ContentType.ContentTypeAvatar,
+    pointer.writeToBuffer(),
+  );
 }
 
 Future<void> setUsername(
     SQFLite.Database db, ProcessSecret processInfo, String username) async {
-  Protocol.LWWElement element = Protocol.LWWElement();
-  element.unixMilliseconds =
-      FixNum.Int64(DateTime.now().millisecondsSinceEpoch);
-  element.value = utf8.encode(username);
-
-  Protocol.Event event = Protocol.Event();
-  event.contentType = Models.ContentType.ContentTypeUsername;
-  event.lwwElement = element;
-
-  await saveEvent(db, processInfo, event);
-
-  final public = await processInfo.system.extractPublicKey();
-  await sendAllEventsToServer(db, public.bytes);
+  await setCRDT(
+    db,
+    processInfo,
+    Models.ContentType.ContentTypeUsername,
+    Uint8List.fromList(utf8.encode(username)),
+  );
 }
 
 Future<void> setDescription(
     SQFLite.Database db, ProcessSecret processInfo, String description) async {
-  Protocol.LWWElement element = Protocol.LWWElement();
-  element.unixMilliseconds =
-      FixNum.Int64(DateTime.now().millisecondsSinceEpoch);
-  element.value = utf8.encode(description);
-
-  Protocol.Event event = Protocol.Event();
-  event.contentType = Models.ContentType.ContentTypeDescription;
-  event.lwwElement = element;
-
-  await saveEvent(db, processInfo, event);
-
-  final public = await processInfo.system.extractPublicKey();
-  await sendAllEventsToServer(db, public.bytes);
+  await setCRDT(
+    db,
+    processInfo,
+    Models.ContentType.ContentTypeDescription,
+    Uint8List.fromList(utf8.encode(description)),
+  );
 }
 
 Future<void> makeClaim(
