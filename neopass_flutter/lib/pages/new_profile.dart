@@ -16,7 +16,7 @@ class _NewProfilePageState extends State<NewProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final state2 = context.watch<Main.PolycentricModel>();
+    final state = context.watch<Main.PolycentricModel>();
 
     return Scaffold(
       body: Column(
@@ -61,10 +61,13 @@ class _NewProfilePageState extends State<NewProfilePage> {
                 shape: const StadiumBorder(),
               ),
               onPressed: () async {
-                final identity = await Main.createNewIdentity(state2.db);
+                if (textController.text.length == 0) {
+                  return;
+                }
+                final identity = await Main.createNewIdentity(state.db);
                 await Main.setUsername(
-                    state2.db, identity, textController.text);
-                await state2.mLoadIdentities();
+                    state.db, identity, textController.text);
+                await state.mLoadIdentities();
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return NewOrImportProfilePage();
                 }));
