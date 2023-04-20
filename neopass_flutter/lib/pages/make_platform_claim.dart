@@ -21,8 +21,8 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
 
   @override
   Widget build(BuildContext context) {
-    final state2 = context.watch<Main.PolycentricModel>();
-    final identity2 = state2.identities[widget.identityIndex];
+    final state = context.watch<Main.PolycentricModel>();
+    final identity = state.identities[widget.identityIndex];
 
     return Scaffold(
       appBar: AppBar(
@@ -87,11 +87,11 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
                       return;
                     }
                     final claim = await Main.makePlatformClaim(
-                        state2.db,
-                        identity2.processSecret,
+                        state.db,
+                        identity.processSecret,
                         widget.claimType,
                         textController.text);
-                    await state2.mLoadIdentities();
+                    await state.mLoadIdentities();
 
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {

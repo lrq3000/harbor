@@ -21,8 +21,8 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
 
   @override
   Widget build(BuildContext context) {
-    var state2 = context.watch<Main.PolycentricModel>();
-    var identity2 = state2.identities[widget.identityIndex];
+    final state = context.watch<Main.PolycentricModel>();
+    final identity = state.identities[widget.identityIndex];
 
     StatelessWidget makePlatformButton(String claimType) {
       return Main.ClaimButtonImage(
@@ -101,8 +101,8 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
                     return;
                   }
                   await Main.makeClaim(
-                      state2.db, identity2.processSecret, textController.text);
-                  await state2.mLoadIdentities();
+                      state.db, identity.processSecret, textController.text);
+                  await state.mLoadIdentities();
                   Navigator.pop(context);
                 }),
           ),

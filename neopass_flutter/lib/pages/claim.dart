@@ -33,9 +33,9 @@ class _ClaimPageState extends State<ClaimPage> {
 
   @override
   Widget build(BuildContext context) {
-    var state2 = context.watch<Main.PolycentricModel>();
-    var identity2 = state2.identities[widget.identityIndex];
-    var claim2 = identity2.claims[widget.claimIndex];
+    final state = context.watch<Main.PolycentricModel>();
+    final identity = state.identities[widget.identityIndex];
+    final claim = identity.claims[widget.claimIndex];
 
     return Scaffold(
       appBar: AppBar(
@@ -50,13 +50,13 @@ class _ClaimPageState extends State<ClaimPage> {
               backgroundColor: Colors.white,
               radius: 50,
               foregroundImage:
-                  identity2.avatar != null ? identity2.avatar!.image : null,
+                  identity.avatar != null ? identity.avatar!.image : null,
             ),
           ),
           Container(
               margin: const EdgeInsets.only(bottom: 10, top: 10),
               child: Text(
-                identity2.username,
+                identity.username,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontFamily: 'inter',
@@ -76,7 +76,7 @@ class _ClaimPageState extends State<ClaimPage> {
           ),
           const SizedBox(height: 15),
           Text(
-            claim2.claimType,
+            claim.claimType,
             style: const TextStyle(
               fontFamily: 'inter',
               fontWeight: FontWeight.w200,
@@ -86,7 +86,7 @@ class _ClaimPageState extends State<ClaimPage> {
           ),
           const SizedBox(height: 10),
           Text(
-            claim2.text,
+            claim.text,
             style: const TextStyle(
               fontFamily: 'inter',
               fontWeight: FontWeight.w200,
@@ -116,7 +116,7 @@ class _ClaimPageState extends State<ClaimPage> {
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return AddTokenPage(
-                  claim: claim2,
+                  claim: claim,
                 );
               }));
             },

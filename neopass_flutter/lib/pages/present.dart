@@ -16,9 +16,9 @@ class PresentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state2 = context.watch<Main.PolycentricModel>();
-    final identity2 = state2.identities[identityIndex];
-    final claim2 = identity2.claims[claimIndex];
+    final state = context.watch<Main.PolycentricModel>();
+    final identity = state.identities[identityIndex];
+    final claim = identity.claims[claimIndex];
 
     return Scaffold(
       appBar: AppBar(
@@ -32,13 +32,13 @@ class PresentPage extends StatelessWidget {
               backgroundColor: Colors.white,
               radius: 50,
               foregroundImage:
-                  identity2.avatar != null ? identity2.avatar!.image : null,
+                  identity.avatar != null ? identity.avatar!.image : null,
             ),
           ),
           Container(
               margin: const EdgeInsets.only(bottom: 10, top: 10),
               child: Text(
-                identity2.username,
+                identity.username,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontFamily: 'inter',
@@ -58,7 +58,7 @@ class PresentPage extends StatelessWidget {
           ),
           const SizedBox(height: 15),
           Text(
-            claim2.claimType,
+            claim.claimType,
             style: const TextStyle(
               fontFamily: 'inter',
               fontWeight: FontWeight.w200,
@@ -68,7 +68,7 @@ class PresentPage extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            claim2.text,
+            claim.text,
             style: const TextStyle(
               fontFamily: 'inter',
               fontWeight: FontWeight.w200,
@@ -79,7 +79,7 @@ class PresentPage extends StatelessWidget {
           Center(
             child: QrImage(
               backgroundColor: Colors.white,
-              data: base64.encode(claim2.pointer.writeToBuffer()),
+              data: base64.encode(claim.pointer.writeToBuffer()),
               version: QrVersions.auto,
               size: 200.0,
             ),

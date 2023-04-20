@@ -47,9 +47,9 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final state2 = context.watch<Main.PolycentricModel>();
+    final state = context.watch<Main.PolycentricModel>();
 
-    final listViewChildren = _renderProfiles(state2.identities);
+    final listViewChildren = _renderProfiles(state.identities);
 
     listViewChildren.addAll([
       Main.StandardButton(

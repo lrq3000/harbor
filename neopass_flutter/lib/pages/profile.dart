@@ -121,8 +121,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final state2 = context.watch<Main.PolycentricModel>();
-    final identity2 = state2.identities[widget.identityIndex];
+    final state = context.watch<Main.PolycentricModel>();
+    final identity = state.identities[widget.identityIndex];
 
     List<StatelessWidget> _renderClaims(
       List<Main.ClaimInfo> claims,
@@ -147,9 +147,9 @@ class _ProfilePageState extends State<ProfilePage> {
           },
           onDelete: () async {
             await Main.deleteEvent(
-                state2.db, identity2.processSecret, claims[i].pointer);
+                state.db, identity.processSecret, claims[i].pointer);
 
-            await state2.mLoadIdentities();
+            await state.mLoadIdentities();
           },
         ));
       }
@@ -173,7 +173,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     ];
 
-    listViewChildren.addAll(_renderClaims(identity2.claims));
+    listViewChildren.addAll(_renderClaims(identity.claims));
 
     listViewChildren.addAll([
       Container(
@@ -211,7 +211,7 @@ class _ProfilePageState extends State<ProfilePage> {
             final Protocol.Pointer pointer =
                 Protocol.Pointer.fromBuffer(buffer);
 
-            await Main.makeVouch(state2.db, identity2.processSecret, pointer);
+            await Main.makeVouch(state.db, identity.processSecret, pointer);
           } catch (err) {
             print(err);
           }
@@ -243,16 +243,16 @@ class _ProfilePageState extends State<ProfilePage> {
         icon: Icons.delete,
         onPressed: () async {
           final public =
-              await identity2.processSecret.system.extractPublicKey();
+              await identity.processSecret.system.extractPublicKey();
 
           await Main.deleteIdentity(
-              state2.db, public.bytes, identity2.processSecret.process);
+              state.db, public.bytes, identity.processSecret.process);
 
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return const NewOrImportProfilePage();
           }));
 
-          await state2.mLoadIdentities();
+          await state.mLoadIdentities();
         },
       ),
     ]);
@@ -269,7 +269,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 backgroundColor: Colors.white,
                 radius: 50,
                 foregroundImage:
-                    identity2.avatar != null ? identity2.avatar!.image : null,
+                    identity.avatar != null ? identity.avatar!.image : null,
               ),
             ),
             onTap: () async {
@@ -284,15 +284,15 @@ class _ProfilePageState extends State<ProfilePage> {
                     await File(result.files.single.path!).readAsBytes();
 
                 final pointer = await Main.publishBlob(
-                  state2.db,
-                  identity2.processSecret,
+                  state.db,
+                  identity.processSecret,
                   "image/jpeg",
                   bytes,
                 );
 
                 await Main.setAvatar(
-                  state2.db,
-                  identity2.processSecret,
+                  state.db,
+                  identity.processSecret,
                   pointer,
                 );
 
@@ -306,7 +306,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               const SizedBox(width: 30),
               Text(
-                identity2.username,
+                identity.username,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontFamily: 'inter',
@@ -323,7 +323,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  editUsername(context, state2, identity2.processSecret);
+                  editUsername(context, state, identity.processSecret);
                 },
               ),
             ],
@@ -357,7 +357,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 5),
                   Align(
                     alignment: AlignmentDirectional.centerStart,
-                    child: Text(identity2.description,
+                    child: Text(identity.description,
                         style: const TextStyle(
                           fontFamily: 'inter',
                           fontSize: 14,
@@ -379,7 +379,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
               onPressed: () {
-                editDescription(context, state2, identity2.processSecret);
+                editDescription(context, state, identity.processSecret);
               },
             ),
           ),
