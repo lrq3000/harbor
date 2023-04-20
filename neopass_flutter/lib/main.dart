@@ -47,6 +47,19 @@ CREATE TABLE IF NOT EXISTS deletions (
 );
 ''';
 
+const SCHEMA_TABLE_CRDTS = '''
+CREATE TABLE IF NOT EXISTS crdts (
+    id                INTEGER PRIMARY KEY,
+    unix_milliseconds INTEGER NOT NULL,
+    value             BLOB    NOT NULL,
+    event_id          INTEGER NOT NULL,
+
+    FOREIGN KEY (event_id)
+      REFERENCES events (id)
+      ON DELETE CASCADE
+);
+''';
+
 class ProcessSecret {
   Cryptography.SimpleKeyPair system;
   List<int> process;
@@ -192,6 +205,28 @@ Future<void> deleteEventDB(
   ]);
 }
 
+Future<void> insertLWWElement(
+  SQFLite.Transaction transaction,
+  int rowId,
+  Protocol.LWWElement element,
+) async {
+  const QUERY = '''
+    INSERT INTO crdts
+    (
+      unix_milliseconds,
+      value,
+      event_id
+    )
+    VALUES (?, ?, ?);
+  ''';
+
+  await transaction.rawQuery(QUERY, [
+    element.unixMilliseconds.toInt(),
+    Uint8List.fromList(element.value),
+    rowId,
+  ]);
+}
+
 Future<void> ingest(
   SQFLite.Transaction transaction,
   Protocol.SignedEvent signedEvent,
@@ -245,6 +280,11 @@ Future<void> ingest(
         Protocol.Delete.fromBuffer(event.content);
 
     await deleteEventDB(transaction, eventId, event.system, deleteBody);
+  }
+
+  if (event.lwwElement != null) {
+    await insertLWWElement(
+      transaction, eventId, event.lwwElement);
   }
 }
 
@@ -372,15 +412,47 @@ Future<Protocol.SignedEvent?> loadLatestEventByContentType(
   }
 }
 
+Future<Protocol.SignedEvent?> loadLatestCRDTByContentType(
+  SQFLite.Database db,
+  List<int> system,
+  FixNum.Int64 contentType,
+) async {
+  final q = await db.rawQuery('''
+            SELECT events.raw_event
+            FROM
+              crdts
+            JOIN
+              events
+            ON
+              crdts.event_id = events.id
+            WHERE
+              events.content_type = ?
+            AND
+              events.system_key_type = 1
+            AND
+              events.system_key = ?
+            ORDER BY
+              crdts.unix_milliseconds DESC
+            LIMIT 1
+    ''', [
+    contentType.toInt(),
+    Uint8List.fromList(system)
+  ]);
+
+  if (q.isEmpty) {
+    return null;
+  } else {
+    return Protocol.SignedEvent.fromBuffer(q[0]['raw_event'] as List<int>);
+  }
+}
+
 Future<String> loadLatestUsername(
   SQFLite.Database db,
   List<int> system,
-  List<int> process,
 ) async {
-  final signedEvent = await loadLatestEventByContentType(
+  final signedEvent = await loadLatestCRDTByContentType(
     db,
     system,
-    process,
     Models.ContentType.ContentTypeUsername,
   );
 
@@ -396,12 +468,10 @@ Future<String> loadLatestUsername(
 Future<String> loadLatestDescription(
   SQFLite.Database db,
   List<int> system,
-  List<int> process,
 ) async {
-  final signedEvent = await loadLatestEventByContentType(
+  final signedEvent = await loadLatestCRDTByContentType(
     db,
     system,
-    process,
     Models.ContentType.ContentTypeDescription,
   );
 
@@ -494,25 +564,16 @@ Future<Image?> loadImage(
 Future<Image?> loadLatestAvatar(
   SQFLite.Database db,
   List<int> system,
-  List<int> process,
 ) async {
-  final q = await db.rawQuery('''
-        SELECT raw_event FROM events
-        WHERE system_key_type = 1
-        AND system_key = ?
-        AND process = ?
-        AND content_type = 9
-        ORDER BY
-        logical_clock DESC
-        LIMIT 1;
-    ''', [Uint8List.fromList(system), Uint8List.fromList(process)]);
+  final signedEvent = await loadLatestCRDTByContentType(
+    db,
+    system,
+    Models.ContentType.ContentTypeAvatar,
+  );
 
-  if (q.isEmpty) {
+  if (signedEvent == null) {
     return null;
   } else {
-    final Protocol.SignedEvent signedEvent =
-        Protocol.SignedEvent.fromBuffer(q.first['raw_event'] as List<int>);
-
     final Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
 
     if (event.contentType != Models.ContentType.ContentTypeAvatar) {
@@ -807,17 +868,14 @@ class PolycentricModel extends ChangeNotifier {
       final username = await loadLatestUsername(
         db,
         public.bytes,
-        identity.process,
       );
       final description = await loadLatestDescription(
         db,
         public.bytes,
-        identity.process,
       );
       final avatar = await loadLatestAvatar(
         db,
         public.bytes,
-        identity.process,
       );
       final claims = await loadClaims(db, public.bytes);
 
@@ -832,11 +890,12 @@ class PolycentricModel extends ChangeNotifier {
 
 Future<PolycentricModel> setupModel() async {
   final db = await SQFLite.openDatabase(
-    Path.join(await SQFLite.getDatabasesPath(), 'neopass10.db'),
+    Path.join(await SQFLite.getDatabasesPath(), 'neopass13.db'),
     onCreate: (db, version) async {
       await db.execute(SCHEMA_TABLE_EVENTS);
       await db.execute(SCHEMA_TABLE_PROCESS_SECRETS);
       await db.execute(SCHEMA_TABLE_DELETIONS);
+      await db.execute(SCHEMA_TABLE_CRDTS);
     },
     version: 1,
   );
