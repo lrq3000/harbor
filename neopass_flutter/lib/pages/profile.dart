@@ -54,6 +54,10 @@ class _ProfilePageState extends State<ProfilePage> {
               TextButton(
                 child: const Text("submit"),
                 onPressed: () async {
+                  if (usernameController.text.length == 0) {
+                    return;
+                  }
+
                   await Main.setUsername(
                       state.db, identity, usernameController.text);
 
@@ -98,6 +102,10 @@ class _ProfilePageState extends State<ProfilePage> {
               TextButton(
                 child: const Text("submit"),
                 onPressed: () async {
+                  if (descriptionController.text.length == 0) {
+                    return;
+                  }
+
                   await Main.setDescription(
                       state.db, identity, descriptionController.text);
 

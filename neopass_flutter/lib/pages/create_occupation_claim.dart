@@ -71,7 +71,7 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
           const SizedBox(height: 5),
           TextField(
             controller: textControllerOrganization,
-            maxLines: null,
+            maxLines: 1,
             cursorColor: Colors.white,
             style: const TextStyle(color: Colors.white, fontSize: 12),
             decoration: InputDecoration(
@@ -100,7 +100,7 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
           const SizedBox(height: 5),
           TextField(
             controller: textControllerRole,
-            maxLines: null,
+            maxLines: 1,
             cursorColor: Colors.white,
             style: const TextStyle(color: Colors.white, fontSize: 12),
             decoration: InputDecoration(
@@ -129,7 +129,7 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
           const SizedBox(height: 5),
           TextField(
             controller: textControllerLocation,
-            maxLines: null,
+            maxLines: 1,
             cursorColor: Colors.white,
             style: const TextStyle(color: Colors.white, fontSize: 12),
             decoration: InputDecoration(

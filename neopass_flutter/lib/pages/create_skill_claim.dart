@@ -33,6 +33,10 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
             ),
             child: const Text("Save"),
             onPressed: () async {
+              if (textController.text.length == 0) {
+                return;
+              }
+
               await Main.makePlatformClaim(
                 state.db,
                 identity.processSecret,
@@ -67,7 +71,7 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
           const SizedBox(height: 5),
           TextField(
             controller: textController,
-            maxLines: null,
+            maxLines: 1,
             cursorColor: Colors.white,
             style: const TextStyle(color: Colors.white, fontSize: 12),
             decoration: InputDecoration(

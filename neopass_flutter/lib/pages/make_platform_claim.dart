@@ -57,7 +57,7 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
             const SizedBox(height: 5),
             TextField(
               controller: textController,
-              maxLines: null,
+              maxLines: 1,
               cursorColor: Colors.white,
               style: const TextStyle(color: Colors.white, fontSize: 12),
               decoration: InputDecoration(
@@ -83,6 +83,9 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
                   ),
                   child: const Text('Next step'),
                   onPressed: () async {
+                    if (textController.text.length == 0) {
+                      return;
+                    }
                     final claim = await Main.makePlatformClaim(
                         state2.db,
                         identity2.processSecret,

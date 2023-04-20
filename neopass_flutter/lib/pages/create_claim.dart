@@ -59,7 +59,7 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
           const SizedBox(height: 5),
           TextField(
             controller: textController,
-            maxLines: null,
+            maxLines: 1,
             cursorColor: Colors.white,
             style: const TextStyle(
               fontFamily: 'inter',
@@ -97,6 +97,9 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
                   ),
                 ),
                 onPressed: () async {
+                  if (textController.text.length == 0) {
+                    return;
+                  }
                   await Main.makeClaim(
                       state2.db, identity2.processSecret, textController.text);
                   await state2.mLoadIdentities();
