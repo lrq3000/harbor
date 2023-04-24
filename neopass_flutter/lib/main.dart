@@ -70,6 +70,13 @@ class ProcessSecret {
 Future<ProcessSecret> createNewIdentity(SQFLite.Database db) async {
   final algorithm = Cryptography.Ed25519();
   final keyPair = await algorithm.newKeyPair();
+  return await importIdentity(db, keyPair);
+}
+
+Future<ProcessSecret> importIdentity(
+  SQFLite.Database db,
+  Cryptography.SimpleKeyPair keyPair,
+) async {
   final public = await keyPair.extractPublicKey();
 
   final privateBytes = await keyPair.extractPrivateKeyBytes();
@@ -131,21 +138,45 @@ Future<Protocol.ExportBundle> makeExportBundle(
   SQFLite.Database db,
   ProcessSecret processSecret,
 ) async {
-    final privateKey = await processSecret.system.extractPrivateKeyBytes();
-    final publicKey = (await processSecret.system.extractPublicKey()).bytes;
+  final privateKey = await processSecret.system.extractPrivateKeyBytes();
+  final publicKey = (await processSecret.system.extractPublicKey()).bytes;
 
-    final events = Protocol.Events();
+  final events = Protocol.Events();
 
-    final keyPair = Protocol.KeyPair();
-    keyPair.keyType = FixNum.Int64(1);
-    keyPair.privateKey = privateKey;
-    keyPair.publicKey = publicKey;
+  final keyPair = Protocol.KeyPair();
+  keyPair.keyType = FixNum.Int64(1);
+  keyPair.privateKey = privateKey;
+  keyPair.publicKey = publicKey;
 
-    final exportBundle = Protocol.ExportBundle();
-    exportBundle.keyPair = keyPair;
-    exportBundle.events = events;
+  final exportBundle = Protocol.ExportBundle();
+  exportBundle.keyPair = keyPair;
+  exportBundle.events = events;
 
-    return exportBundle;
+  return exportBundle;
+}
+
+Future<void> importExportBundle(
+  SQFLite.Database db,
+  Protocol.ExportBundle exportBundle,
+) async {
+  final public = Cryptography.SimplePublicKey(
+    exportBundle.keyPair.publicKey,
+    type: Cryptography.KeyPairType.ed25519,
+  );
+
+  final keyPair = Cryptography.SimpleKeyPairData(
+    exportBundle.keyPair.privateKey,
+    publicKey: public,
+    type: Cryptography.KeyPairType.ed25519,
+  );
+
+  await importIdentity(db, keyPair);
+
+  await db.transaction((transaction) async {
+    exportBundle.events.events.forEach((Protocol.SignedEvent event) async {
+      await ingest(transaction, event);
+    });
+  });
 }
 
 Future<void> deleteIdentity(
