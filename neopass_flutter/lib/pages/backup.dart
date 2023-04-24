@@ -1,12 +1,29 @@
+import 'dart:convert';
+
+import 'package:flutter/services.dart' as Services;
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
+import '../protocol.pb.dart' as Protocol;
 import '../main.dart' as Main;
 
+Future<void> handleShareClipboard(
+  Main.PolycentricModel state,
+  Main.ProcessSecret processSecret,
+) async {
+  final exportBundle = await Main.makeExportBundle(state.db, processSecret);
+  final encoded = base64Url.encode(exportBundle.writeToBuffer());
+  await Services.Clipboard.setData(Services.ClipboardData(text: encoded));
+}
+
 class BackupPage extends StatelessWidget {
-  const BackupPage({Key? key}) : super(key: key);
+  final Main.ProcessSecret processSecret;
+
+  const BackupPage({Key? key, required this.processSecret}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<Main.PolycentricModel>();
     return Scaffold(
       appBar: AppBar(
         title: Main.makeAppBarTitleText("Backup"),
@@ -34,19 +51,25 @@ class BackupPage extends StatelessWidget {
             actionText: 'Share',
             actionDescription: 'Send your identity to another app',
             icon: Icons.share,
-            onPressed: () {},
+            onPressed: () async {
+              handleShareClipboard(state, processSecret);
+            },
           ),
           Main.StandardButton(
             actionText: 'Copy',
             actionDescription: 'Copy your identity to clipboard',
             icon: Icons.content_copy,
-            onPressed: () {},
+            onPressed: () async {
+              handleShareClipboard(state, processSecret);
+            }
           ),
           Main.StandardButton(
             actionText: 'QR Code',
             actionDescription: 'Backup to another phone',
             icon: Icons.qr_code,
-            onPressed: () {},
+            onPressed: () async {
+              handleShareClipboard(state, processSecret);
+            },
           ),
         ],
       ),

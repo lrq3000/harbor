@@ -233,7 +233,7 @@ class _ProfilePageState extends State<ProfilePage> {
         icon: Icons.save,
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const BackupPage();
+            return BackupPage(processSecret: identity.processSecret);
           }));
         },
       ),
