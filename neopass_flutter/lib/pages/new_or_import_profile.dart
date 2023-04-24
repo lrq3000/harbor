@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'profile.dart';
 import 'new_profile.dart';
+import 'import.dart';
 import '../main.dart' as Main;
 
 class NewOrImportProfilePage extends StatefulWidget {
@@ -66,7 +67,11 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
         actionText: 'Import Existing Profile',
         actionDescription: 'Use an existing Polycentric Identity',
         icon: Icons.arrow_downward,
-        onPressed: () async {},
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return const ImportPage();
+          }));
+        },
       ),
     ]);
 
