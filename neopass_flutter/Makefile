@@ -15,3 +15,10 @@ format:
 
 icons:
 	flutter pub run flutter_launcher_icons:main
+
+proto:
+	protoc \
+		--proto_path=../../polycentric/proto \
+		--dart_out=./lib \
+		--experimental_allow_proto3_optional \
+		../../polycentric/proto/protocol.proto
