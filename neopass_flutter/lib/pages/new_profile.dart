@@ -65,8 +65,7 @@ class _NewProfilePageState extends State<NewProfilePage> {
                   return;
                 }
                 final identity = await Main.createNewIdentity(state.db);
-                await Main.setUsername(
-                    state.db, identity, textController.text);
+                await Main.setUsername(state.db, identity, textController.text);
                 await state.mLoadIdentities();
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return NewOrImportProfilePage();

@@ -56,13 +56,12 @@ class BackupPage extends StatelessWidget {
             },
           ),
           Main.StandardButton(
-            actionText: 'Copy',
-            actionDescription: 'Copy your identity to clipboard',
-            icon: Icons.content_copy,
-            onPressed: () async {
-              handleShareClipboard(state, processSecret);
-            }
-          ),
+              actionText: 'Copy',
+              actionDescription: 'Copy your identity to clipboard',
+              icon: Icons.content_copy,
+              onPressed: () async {
+                handleShareClipboard(state, processSecret);
+              }),
           Main.StandardButton(
             actionText: 'QR Code',
             actionDescription: 'Backup to another phone',

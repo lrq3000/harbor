@@ -242,8 +242,7 @@ class _ProfilePageState extends State<ProfilePage> {
         actionDescription: 'Permanently account from this device',
         icon: Icons.delete,
         onPressed: () async {
-          final public =
-              await identity.processSecret.system.extractPublicKey();
+          final public = await identity.processSecret.system.extractPublicKey();
 
           await Main.deleteIdentity(
               state.db, public.bytes, identity.processSecret.process);

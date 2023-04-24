@@ -335,8 +335,7 @@ Future<void> ingest(
   }
 
   if (event.lwwElement != null) {
-    await insertLWWElement(
-      transaction, eventId, event.lwwElement);
+    await insertLWWElement(transaction, eventId, event.lwwElement);
   }
 }
 
@@ -486,10 +485,7 @@ Future<Protocol.SignedEvent?> loadLatestCRDTByContentType(
             ORDER BY
               crdts.unix_milliseconds DESC
             LIMIT 1
-    ''', [
-    contentType.toInt(),
-    Uint8List.fromList(system)
-  ]);
+    ''', [contentType.toInt(), Uint8List.fromList(system)]);
 
   if (q.isEmpty) {
     return null;
