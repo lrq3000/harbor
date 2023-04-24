@@ -3,10 +3,30 @@ import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' as Services;
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import '../protocol.pb.dart' as Protocol;
 import '../main.dart' as Main;
 import 'new_or_import_profile.dart';
+
+Future<void> importFromBase64(
+  BuildContext context,
+  Main.PolycentricModel state,
+  String text,
+) async {
+  try {
+    final decoded = Protocol.ExportBundle.fromBuffer(
+      base64.decode(text),
+    );
+    await Main.importExportBundle(state.db, decoded);
+    await state.mLoadIdentities();
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return const NewOrImportProfilePage();
+    }));
+  } catch (err) {
+    print(err);
+  }
+}
 
 class ImportPage extends StatelessWidget {
   const ImportPage({Key? key}): super (key: key);
@@ -32,14 +52,7 @@ class ImportPage extends StatelessWidget {
               final clip =
                 (await Services.Clipboard.getData('text/plain'))?.text;
               if (clip != null) {
-                final decoded = Protocol.ExportBundle.fromBuffer(
-                  base64.decode(clip),
-                );
-                await Main.importExportBundle(state.db, decoded);
-                await state.mLoadIdentities();
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const NewOrImportProfilePage();
-                }));
+                await importFromBase64(context, state, clip);
               }
             }
           ),
@@ -48,6 +61,15 @@ class ImportPage extends StatelessWidget {
             actionDescription: 'Backup from another phone',
             icon: Icons.qr_code,
             onPressed: () async {
+              try {
+                final rawScan = await FlutterBarcodeScanner.scanBarcode(
+                  "#ff6666", 'cancel', false, ScanMode.QR);
+                if (rawScan != "") {
+                  await importFromBase64(context, state, rawScan);
+                }
+              } catch (err) {
+                print(err);
+              }
             },
           ),
         ],
