@@ -1393,21 +1393,96 @@ class PrivateKey extends $pb.GeneratedMessage {
   void clearKey() => clearField(2);
 }
 
+class KeyPair extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'KeyPair', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'userpackage'), createEmptyInstance: create)
+    ..a<$fixnum.Int64>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'keyType', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'privateKey', $pb.PbFieldType.OY)
+    ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey', $pb.PbFieldType.OY)
+    ..hasRequiredFields = false
+  ;
+
+  KeyPair._() : super();
+  factory KeyPair({
+    $fixnum.Int64? keyType,
+    $core.List<$core.int>? privateKey,
+    $core.List<$core.int>? publicKey,
+  }) {
+    final _result = create();
+    if (keyType != null) {
+      _result.keyType = keyType;
+    }
+    if (privateKey != null) {
+      _result.privateKey = privateKey;
+    }
+    if (publicKey != null) {
+      _result.publicKey = publicKey;
+    }
+    return _result;
+  }
+  factory KeyPair.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory KeyPair.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  KeyPair clone() => KeyPair()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  KeyPair copyWith(void Function(KeyPair) updates) => super.copyWith((message) => updates(message as KeyPair)) as KeyPair; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static KeyPair create() => KeyPair._();
+  KeyPair createEmptyInstance() => create();
+  static $pb.PbList<KeyPair> createRepeated() => $pb.PbList<KeyPair>();
+  @$core.pragma('dart2js:noInline')
+  static KeyPair getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<KeyPair>(create);
+  static KeyPair? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $fixnum.Int64 get keyType => $_getI64(0);
+  @$pb.TagNumber(1)
+  set keyType($fixnum.Int64 v) { $_setInt64(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasKeyType() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearKeyType() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.List<$core.int> get privateKey => $_getN(1);
+  @$pb.TagNumber(2)
+  set privateKey($core.List<$core.int> v) { $_setBytes(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasPrivateKey() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearPrivateKey() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.List<$core.int> get publicKey => $_getN(2);
+  @$pb.TagNumber(3)
+  set publicKey($core.List<$core.int> v) { $_setBytes(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasPublicKey() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearPublicKey() => clearField(3);
+}
+
 class ExportBundle extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ExportBundle', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'userpackage'), createEmptyInstance: create)
-    ..aOM<PrivateKey>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'systemPrivateKey', subBuilder: PrivateKey.create)
+    ..aOM<KeyPair>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'keyPair', subBuilder: KeyPair.create)
     ..aOM<Events>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'events', subBuilder: Events.create)
     ..hasRequiredFields = false
   ;
 
   ExportBundle._() : super();
   factory ExportBundle({
-    PrivateKey? systemPrivateKey,
+    KeyPair? keyPair,
     Events? events,
   }) {
     final _result = create();
-    if (systemPrivateKey != null) {
-      _result.systemPrivateKey = systemPrivateKey;
+    if (keyPair != null) {
+      _result.keyPair = keyPair;
     }
     if (events != null) {
       _result.events = events;
@@ -1436,15 +1511,15 @@ class ExportBundle extends $pb.GeneratedMessage {
   static ExportBundle? _defaultInstance;
 
   @$pb.TagNumber(1)
-  PrivateKey get systemPrivateKey => $_getN(0);
+  KeyPair get keyPair => $_getN(0);
   @$pb.TagNumber(1)
-  set systemPrivateKey(PrivateKey v) { setField(1, v); }
+  set keyPair(KeyPair v) { setField(1, v); }
   @$pb.TagNumber(1)
-  $core.bool hasSystemPrivateKey() => $_has(0);
+  $core.bool hasKeyPair() => $_has(0);
   @$pb.TagNumber(1)
-  void clearSystemPrivateKey() => clearField(1);
+  void clearKeyPair() => clearField(1);
   @$pb.TagNumber(1)
-  PrivateKey ensureSystemPrivateKey() => $_ensure(0);
+  KeyPair ensureKeyPair() => $_ensure(0);
 
   @$pb.TagNumber(2)
   Events get events => $_getN(1);

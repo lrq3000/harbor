@@ -127,6 +127,27 @@ Future<List<ProcessSecret>> loadIdentities(SQFLite.Database db) async {
   return result;
 }
 
+Future<Protocol.ExportBundle> makeExportBundle(
+  SQFLite.Database db,
+  ProcessSecret processSecret,
+) async {
+    final privateKey = await processSecret.system.extractPrivateKeyBytes();
+    final publicKey = (await processSecret.system.extractPublicKey()).bytes;
+
+    final events = Protocol.Events();
+
+    final keyPair = Protocol.KeyPair();
+    keyPair.keyType = FixNum.Int64(1);
+    keyPair.privateKey = privateKey;
+    keyPair.publicKey = publicKey;
+
+    final exportBundle = Protocol.ExportBundle();
+    exportBundle.keyPair = keyPair;
+    exportBundle.events = events;
+
+    return exportBundle;
+}
+
 Future<void> deleteIdentity(
   SQFLite.Database db,
   List<int> system,

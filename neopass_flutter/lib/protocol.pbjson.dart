@@ -265,17 +265,29 @@ const PrivateKey$json = const {
 
 /// Descriptor for `PrivateKey`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List privateKeyDescriptor = $convert.base64Decode('CgpQcml2YXRlS2V5EhkKCGtleV90eXBlGAEgASgEUgdrZXlUeXBlEhAKA2tleRgCIAEoDFIDa2V5');
+@$core.Deprecated('Use keyPairDescriptor instead')
+const KeyPair$json = const {
+  '1': 'KeyPair',
+  '2': const [
+    const {'1': 'key_type', '3': 1, '4': 1, '5': 4, '10': 'keyType'},
+    const {'1': 'private_key', '3': 2, '4': 1, '5': 12, '10': 'privateKey'},
+    const {'1': 'public_key', '3': 3, '4': 1, '5': 12, '10': 'publicKey'},
+  ],
+};
+
+/// Descriptor for `KeyPair`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List keyPairDescriptor = $convert.base64Decode('CgdLZXlQYWlyEhkKCGtleV90eXBlGAEgASgEUgdrZXlUeXBlEh8KC3ByaXZhdGVfa2V5GAIgASgMUgpwcml2YXRlS2V5Eh0KCnB1YmxpY19rZXkYAyABKAxSCXB1YmxpY0tleQ==');
 @$core.Deprecated('Use exportBundleDescriptor instead')
 const ExportBundle$json = const {
   '1': 'ExportBundle',
   '2': const [
-    const {'1': 'system_private_key', '3': 1, '4': 1, '5': 11, '6': '.userpackage.PrivateKey', '10': 'systemPrivateKey'},
+    const {'1': 'key_pair', '3': 1, '4': 1, '5': 11, '6': '.userpackage.KeyPair', '10': 'keyPair'},
     const {'1': 'events', '3': 2, '4': 1, '5': 11, '6': '.userpackage.Events', '10': 'events'},
   ],
 };
 
 /// Descriptor for `ExportBundle`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List exportBundleDescriptor = $convert.base64Decode('CgxFeHBvcnRCdW5kbGUSRQoSc3lzdGVtX3ByaXZhdGVfa2V5GAEgASgLMhcudXNlcnBhY2thZ2UuUHJpdmF0ZUtleVIQc3lzdGVtUHJpdmF0ZUtleRIrCgZldmVudHMYAiABKAsyEy51c2VycGFja2FnZS5FdmVudHNSBmV2ZW50cw==');
+final $typed_data.Uint8List exportBundleDescriptor = $convert.base64Decode('CgxFeHBvcnRCdW5kbGUSLwoIa2V5X3BhaXIYASABKAsyFC51c2VycGFja2FnZS5LZXlQYWlyUgdrZXlQYWlyEisKBmV2ZW50cxgCIAEoCzITLnVzZXJwYWNrYWdlLkV2ZW50c1IGZXZlbnRz');
 @$core.Deprecated('Use resultEventsAndRelatedEventsAndCursorDescriptor instead')
 const ResultEventsAndRelatedEventsAndCursor$json = const {
   '1': 'ResultEventsAndRelatedEventsAndCursor',
