@@ -8,6 +8,9 @@ class BackupPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Main.makeAppBarTitleText("Backup"),
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
