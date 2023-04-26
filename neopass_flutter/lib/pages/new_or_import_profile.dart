@@ -30,6 +30,12 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
               foregroundImage: identities[i].avatar != null
                   ? identities[i].avatar!.image
                   : null,
+              child: SizedBox.expand(
+                child: FittedBox(
+                  fit: BoxFit.fill,
+                  child: Icon(Icons.person),
+                ),
+              ),
             ),
           ),
         ),

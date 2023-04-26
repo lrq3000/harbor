@@ -53,6 +53,12 @@ class _ClaimPageState extends State<ClaimPage> {
                 radius: 50,
                 foregroundImage:
                     identity.avatar != null ? identity.avatar!.image : null,
+                child: SizedBox.expand(
+                  child: FittedBox(
+                    fit: BoxFit.fill,
+                    child: Icon(Icons.person),
+                  ),
+                ),
               ),
             ),
             Container(
