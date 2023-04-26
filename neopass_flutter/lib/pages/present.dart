@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:provider/provider.dart';
 
-import '../main.dart' as Main;
+import '../main.dart' as main;
 
 class PresentPage extends StatelessWidget {
   final int identityIndex;
@@ -16,16 +16,16 @@ class PresentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<Main.PolycentricModel>();
+    final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[identityIndex];
     final claim = identity.claims[claimIndex];
 
     return Scaffold(
       appBar: AppBar(
-        title: Main.makeAppBarTitleText('Request Verification'),
+        title: main.makeAppBarTitleText('Request Verification'),
       ),
       body: Container(
-        padding: Main.scaffoldPadding,
+        padding: main.scaffoldPadding,
         child: Column(
           children: [
             Container(
@@ -96,13 +96,13 @@ class PresentPage extends StatelessWidget {
                 color: Colors.grey,
               ),
             ),
-            Main.StandardButton(
+            main.StandardButton(
               actionText: 'Copy',
               actionDescription: 'Share this unique code with others to verify',
               icon: Icons.content_copy,
               onPressed: () async {},
             ),
-            Main.StandardButton(
+            main.StandardButton(
               actionText: 'Share',
               actionDescription: 'Share code for verification',
               icon: Icons.share,

@@ -1,54 +1,53 @@
 import 'dart:convert';
 
-import 'package:flutter/services.dart' as Services;
+import 'package:flutter/services.dart' as services;
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
-import '../protocol.pb.dart' as Protocol;
-import '../main.dart' as Main;
+import '../main.dart' as main;
 
 Future<void> handleShareClipboard(
-  Main.PolycentricModel state,
-  Main.ProcessSecret processSecret,
+  main.PolycentricModel state,
+  main.ProcessSecret processSecret,
 ) async {
-  final exportBundle = await Main.makeExportBundle(state.db, processSecret);
+  final exportBundle = await main.makeExportBundle(state.db, processSecret);
   final encoded = base64Url.encode(exportBundle.writeToBuffer());
-  await Services.Clipboard.setData(Services.ClipboardData(text: encoded));
+  await services.Clipboard.setData(services.ClipboardData(text: encoded));
 }
 
 class BackupPage extends StatelessWidget {
-  final Main.ProcessSecret processSecret;
+  final main.ProcessSecret processSecret;
 
   const BackupPage({Key? key, required this.processSecret}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<Main.PolycentricModel>();
+    final state = context.watch<main.PolycentricModel>();
     return Scaffold(
         appBar: AppBar(
-          title: Main.makeAppBarTitleText("Backup"),
+          title: main.makeAppBarTitleText("Backup"),
         ),
         body: Container(
-          padding: Main.scaffoldPadding,
+          padding: main.scaffoldPadding,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 150),
-              Main.neopassLogoAndText,
+              main.neopassLogoAndText,
               const SizedBox(height: 120),
               Container(
                 alignment: AlignmentDirectional.centerStart,
                 child: const Text(
-                  "If you lose this backup you will lose your identity. " +
-                      "You will be able to backup your identity at any time. " +
-                      "Do not share your identity over an insecure channel.",
+                  "If you lose this backup you will lose your identity. "
+                  "You will be able to backup your identity at any time. "
+                  "Do not share your identity over an insecure channel.",
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.white,
                   ),
                 ),
               ),
-              Main.StandardButton(
+              main.StandardButton(
                 actionText: 'Share',
                 actionDescription: 'Send your identity to another app',
                 icon: Icons.share,
@@ -56,14 +55,14 @@ class BackupPage extends StatelessWidget {
                   handleShareClipboard(state, processSecret);
                 },
               ),
-              Main.StandardButton(
+              main.StandardButton(
                   actionText: 'Copy',
                   actionDescription: 'Copy your identity to clipboard',
                   icon: Icons.content_copy,
                   onPressed: () async {
                     handleShareClipboard(state, processSecret);
                   }),
-              Main.StandardButton(
+              main.StandardButton(
                 actionText: 'QR Code',
                 actionDescription: 'Backup to another phone',
                 icon: Icons.qr_code,

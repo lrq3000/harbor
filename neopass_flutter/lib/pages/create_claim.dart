@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'make_platform_claim.dart';
 import 'create_skill_claim.dart';
 import 'create_occupation_claim.dart';
-import '../main.dart' as Main;
+import '../main.dart' as main;
 
 class CreateClaimPage extends StatefulWidget {
   final int identityIndex;
@@ -21,15 +21,16 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<Main.PolycentricModel>();
+    final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[widget.identityIndex];
 
     StatelessWidget makePlatformButton(String claimType) {
-      return Main.ClaimButtonImage(
+      return main.ClaimButtonImage(
         nameText: claimType,
-        image: Main.claimTypeToImage(claimType),
+        image: main.claimTypeToImage(claimType),
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
+          Navigator.push(context,
+              MaterialPageRoute<MakePlatformClaimPage>(builder: (context) {
             return MakePlatformClaimPage(
               identityIndex: widget.identityIndex,
               claimType: claimType,
@@ -41,10 +42,10 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Main.makeAppBarTitleText("Make Claim"),
+        title: main.makeAppBarTitleText("Make Claim"),
       ),
       body: Container(
-        padding: Main.scaffoldPadding,
+        padding: main.scaffoldPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -71,7 +72,7 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
               ),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Main.formColor,
+                fillColor: main.formColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(40.0),
                 ),
@@ -86,7 +87,7 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
               alignment: AlignmentDirectional.centerEnd,
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Main.blueButtonColor,
+                    backgroundColor: main.blueButtonColor,
                     shape: const StadiumBorder(),
                   ),
                   child: const Text(
@@ -99,13 +100,15 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
                     ),
                   ),
                   onPressed: () async {
-                    if (textController.text.length == 0) {
+                    if (textController.text.isEmpty) {
                       return;
                     }
-                    await Main.makeClaim(
+                    await main.makeClaim(
                         state.db, identity.processSecret, textController.text);
                     await state.mLoadIdentities();
-                    Navigator.pop(context);
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
                   }),
             ),
             const Text(
@@ -122,24 +125,26 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
               shrinkWrap: true,
               childAspectRatio: 123.0 / 106.0,
               children: [
-                Main.ClaimButtonIcon(
+                main.ClaimButtonIcon(
                   nameText: "Occupation",
                   icon: Icons.work,
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
+                        MaterialPageRoute<CreateOccupationClaimPage>(
+                            builder: (context) {
                       return CreateOccupationClaimPage(
                         identityIndex: widget.identityIndex,
                       );
                     }));
                   },
                 ),
-                Main.ClaimButtonIcon(
+                main.ClaimButtonIcon(
                   nameText: "Skill",
                   icon: Icons.build,
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
+                        MaterialPageRoute<CreateSkillClaimPage>(
+                            builder: (context) {
                       return CreateSkillClaimPage(
                         identityIndex: widget.identityIndex,
                       );

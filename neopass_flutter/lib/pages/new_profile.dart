@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../main.dart' as Main;
+import '../main.dart' as main;
 import 'new_or_import_profile.dart';
 
 class NewProfilePage extends StatefulWidget {
@@ -16,13 +16,13 @@ class _NewProfilePageState extends State<NewProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<Main.PolycentricModel>();
+    final state = context.watch<main.PolycentricModel>();
 
     return Scaffold(
       body: Column(
         children: [
           const SizedBox(height: 150),
-          Main.neopassLogoAndText,
+          main.neopassLogoAndText,
           Container(
             margin: const EdgeInsets.only(left: 40, right: 40, top: 100),
             child:
@@ -44,7 +44,7 @@ class _NewProfilePageState extends State<NewProfilePage> {
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Main.formColor,
+                  fillColor: main.formColor,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(40.0),
                   ),
@@ -57,19 +57,23 @@ class _NewProfilePageState extends State<NewProfilePage> {
             alignment: Alignment.center,
             child: TextButton(
               style: TextButton.styleFrom(
-                backgroundColor: Main.blueButtonColor,
+                backgroundColor: main.blueButtonColor,
                 shape: const StadiumBorder(),
               ),
               onPressed: () async {
-                if (textController.text.length == 0) {
+                if (textController.text.isEmpty) {
                   return;
                 }
-                final identity = await Main.createNewIdentity(state.db);
-                await Main.setUsername(state.db, identity, textController.text);
+                final identity = await main.createNewIdentity(state.db);
+                await main.setUsername(state.db, identity, textController.text);
                 await state.mLoadIdentities();
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return NewOrImportProfilePage();
-                }));
+                if (context.mounted) {
+                  Navigator.push(context,
+                      MaterialPageRoute<NewOrImportProfilePage>(
+                          builder: (context) {
+                    return const NewOrImportProfilePage();
+                  }));
+                }
               },
               child: const Text(
                 "Create Profile",
@@ -83,7 +87,7 @@ class _NewProfilePageState extends State<NewProfilePage> {
             ),
           ),
           Expanded(flex: 1, child: Container()),
-          Main.futoLogoAndText,
+          main.futoLogoAndText,
           const SizedBox(height: 50),
         ],
       ),

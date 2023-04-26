@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 import 'new_or_import_profile.dart';
-import '../main.dart' as Main;
-import '../api_methods.dart' as APIMethods;
+import '../main.dart' as main;
+import '../api_methods.dart' as api_methods;
 
 class AutomatedVerificationPage extends StatefulWidget {
-  final Main.ClaimInfo claim;
+  final main.ClaimInfo claim;
 
-  AutomatedVerificationPage({Key? key, required this.claim}) : super(key: key);
+  const AutomatedVerificationPage({Key? key, required this.claim})
+      : super(key: key);
 
   @override
   State<AutomatedVerificationPage> createState() =>
@@ -19,6 +20,8 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
 
   @override
   void initState() {
+    super.initState();
+
     doVerification();
   }
 
@@ -27,7 +30,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
       page = 0;
     });
 
-    final success = await APIMethods.requestVerification(
+    final success = await api_methods.requestVerification(
       widget.claim.pointer,
       widget.claim.claimType,
     );
@@ -45,7 +48,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
   Widget build(BuildContext context) {
     List<Widget> columnChildren = [
       const SizedBox(height: 100),
-      Main.neopassLogoAndText,
+      main.neopassLogoAndText,
       const SizedBox(height: 150),
     ];
 
@@ -87,7 +90,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
           alignment: AlignmentDirectional.center,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Main.blueButtonColor,
+              backgroundColor: main.blueButtonColor,
               shape: const StadiumBorder(),
             ),
             child: const Text(
@@ -100,7 +103,8 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
               ),
             ),
             onPressed: () async {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
+              Navigator.push(context,
+                  MaterialPageRoute<NewOrImportProfilePage>(builder: (context) {
                 return const NewOrImportProfilePage();
               }));
             },
@@ -129,7 +133,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
           alignment: AlignmentDirectional.center,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Main.blueButtonColor,
+              backgroundColor: main.blueButtonColor,
               shape: const StadiumBorder(),
             ),
             child: const Text(
@@ -151,10 +155,10 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Main.makeAppBarTitleText('Verifying Claim'),
+        title: main.makeAppBarTitleText('Verifying Claim'),
       ),
       body: Container(
-        width: MediaQuery.of(context).size.width,
+        padding: main.scaffoldPadding,
         child: Column(
           children: columnChildren,
         ),

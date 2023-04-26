@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../main.dart' as Main;
+import '../main.dart' as main;
 import 'profile.dart';
 
 class CreateOccupationClaimPage extends StatefulWidget {
@@ -22,12 +22,12 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<Main.PolycentricModel>();
+    final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[widget.identityIndex];
 
     return Scaffold(
       appBar: AppBar(
-        title: Main.makeAppBarTitleText('Occupation'),
+        title: main.makeAppBarTitleText('Occupation'),
         actions: [
           TextButton(
             style: TextButton.styleFrom(
@@ -36,7 +36,7 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
             ),
             child: const Text("Save"),
             onPressed: () async {
-              await Main.makeOccupationClaim(
+              await main.makeOccupationClaim(
                 state.db,
                 identity.processSecret,
                 textControllerOrganization.text,
@@ -46,17 +46,20 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
 
               await state.mLoadIdentities();
 
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return ProfilePage(
-                  identityIndex: widget.identityIndex,
-                );
-              }));
+              if (context.mounted) {
+                Navigator.push(context,
+                    MaterialPageRoute<ProfilePage>(builder: (context) {
+                  return ProfilePage(
+                    identityIndex: widget.identityIndex,
+                  );
+                }));
+              }
             },
           ),
         ],
       ),
       body: Container(
-        padding: Main.scaffoldPadding,
+        padding: main.scaffoldPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -78,7 +81,7 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
               style: const TextStyle(color: Colors.white, fontSize: 12),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Main.formColor,
+                fillColor: main.formColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(40.0),
                 ),
@@ -107,7 +110,7 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
               style: const TextStyle(color: Colors.white, fontSize: 12),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Main.formColor,
+                fillColor: main.formColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(40.0),
                 ),
@@ -136,7 +139,7 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
               style: const TextStyle(color: Colors.white, fontSize: 12),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Main.formColor,
+                fillColor: main.formColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(40.0),
                 ),

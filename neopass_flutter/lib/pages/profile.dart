@@ -31,7 +31,7 @@ class _ProfilePageState extends State<ProfilePage> {
     main.PolycentricModel state,
     main.ProcessSecret identity,
   ) async {
-    await showDialog<dynamic>(
+    await showDialog<AlertDialog>(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -63,7 +63,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   await state.mLoadIdentities();
 
-                  Navigator.of(context).pop();
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
                 },
               ),
             ],
@@ -79,7 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
     main.PolycentricModel state,
     main.ProcessSecret identity,
   ) async {
-    await showDialog(
+    await showDialog<AlertDialog>(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -111,7 +113,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   await state.mLoadIdentities();
 
-                  Navigator.of(context).pop();
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
                 },
               ),
             ],
@@ -139,7 +143,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           onPressed: () {
             Navigator.push(context,
-                MaterialPageRoute<dynamic>(builder: (context) {
+                MaterialPageRoute<ClaimPage>(builder: (context) {
               return ClaimPage(
                 identityIndex: widget.identityIndex,
                 claimIndex: i,
@@ -193,7 +197,7 @@ class _ProfilePageState extends State<ProfilePage> {
         icon: Icons.person_add,
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute<dynamic>(builder: (context) {
+              MaterialPageRoute<CreateClaimPage>(builder: (context) {
             return CreateClaimPage(identityIndex: widget.identityIndex);
           }));
         },
@@ -222,7 +226,7 @@ class _ProfilePageState extends State<ProfilePage> {
         icon: Icons.switch_account,
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute<dynamic>(builder: (context) {
+              MaterialPageRoute<NewOrImportProfilePage>(builder: (context) {
             return const NewOrImportProfilePage();
           }));
         },
@@ -233,7 +237,7 @@ class _ProfilePageState extends State<ProfilePage> {
         icon: Icons.save,
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute<dynamic>(builder: (context) {
+              MaterialPageRoute<BackupPage>(builder: (context) {
             return BackupPage(processSecret: identity.processSecret);
           }));
         },
@@ -248,10 +252,12 @@ class _ProfilePageState extends State<ProfilePage> {
           await main.deleteIdentity(
               state.db, public.bytes, identity.processSecret.process);
 
-          Navigator.push(context,
-              MaterialPageRoute<dynamic>(builder: (context) {
-            return const NewOrImportProfilePage();
-          }));
+          if (context.mounted) {
+            Navigator.push(context,
+                MaterialPageRoute<NewOrImportProfilePage>(builder: (context) {
+              return const NewOrImportProfilePage();
+            }));
+          }
 
           await state.mLoadIdentities();
         },

@@ -2,27 +2,31 @@ import 'dart:convert';
 
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' as Services;
+import 'package:flutter/services.dart' as services;
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
-import '../protocol.pb.dart' as Protocol;
-import '../main.dart' as Main;
+import '../protocol.pb.dart' as protocol;
+import '../main.dart' as main;
 import 'new_or_import_profile.dart';
 
 Future<void> importFromBase64(
   BuildContext context,
-  Main.PolycentricModel state,
+  main.PolycentricModel state,
   String text,
 ) async {
   try {
-    final decoded = Protocol.ExportBundle.fromBuffer(
+    final decoded = protocol.ExportBundle.fromBuffer(
       base64.decode(text),
     );
-    await Main.importExportBundle(state.db, decoded);
+    await main.importExportBundle(state.db, decoded);
     await state.mLoadIdentities();
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return const NewOrImportProfilePage();
-    }));
+
+    if (context.mounted) {
+      Navigator.push(context,
+          MaterialPageRoute<NewOrImportProfilePage>(builder: (context) {
+        return const NewOrImportProfilePage();
+      }));
+    }
   } catch (err) {
     print(err);
   }
@@ -33,31 +37,31 @@ class ImportPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<Main.PolycentricModel>();
+    final state = context.watch<main.PolycentricModel>();
     return Scaffold(
       appBar: AppBar(
-        title: Main.makeAppBarTitleText("Import"),
+        title: main.makeAppBarTitleText("Import"),
       ),
       body: Container(
-        padding: Main.scaffoldPadding,
+        padding: main.scaffoldPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 150),
-            Main.neopassLogoAndText,
+            main.neopassLogoAndText,
             const SizedBox(height: 120),
-            Main.StandardButton(
+            main.StandardButton(
                 actionText: 'Text',
                 actionDescription: 'Paste an exported identity',
                 icon: Icons.content_copy,
                 onPressed: () async {
                   final clip =
-                      (await Services.Clipboard.getData('text/plain'))?.text;
-                  if (clip != null) {
+                      (await services.Clipboard.getData('text/plain'))?.text;
+                  if (clip != null && context.mounted) {
                     await importFromBase64(context, state, clip);
                   }
                 }),
-            Main.StandardButton(
+            main.StandardButton(
               actionText: 'QR Code',
               actionDescription: 'Backup from another phone',
               icon: Icons.qr_code,
@@ -65,7 +69,7 @@ class ImportPage extends StatelessWidget {
                 try {
                   final rawScan = await FlutterBarcodeScanner.scanBarcode(
                       "#ff6666", 'cancel', false, ScanMode.QR);
-                  if (rawScan != "") {
+                  if (rawScan != "" && context.mounted) {
                     await importFromBase64(context, state, rawScan);
                   }
                 } catch (err) {

@@ -72,12 +72,10 @@ class AddTokenPage extends StatelessWidget {
                 await services.Clipboard.setData(
                     services.ClipboardData(text: token));
 
-                if (!context.mounted) {
-                  return;
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(const SnackBar(content: Text('Copied')));
                 }
-
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(const SnackBar(content: Text('Copied')));
               },
             ),
             const SizedBox(height: 450),
@@ -98,8 +96,9 @@ class AddTokenPage extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute<dynamic>(
-                        builder: (BuildContext context) {
+                    Navigator.push(context,
+                        MaterialPageRoute<AutomatedVerificationPage>(
+                            builder: (BuildContext context) {
                       return AutomatedVerificationPage(
                         claim: claim,
                       );

@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'present.dart';
 import 'add_token.dart';
-import '../main.dart' as Main;
+import '../main.dart' as main;
 
 class ClaimPage extends StatefulWidget {
   final int identityIndex;
@@ -18,31 +18,18 @@ class ClaimPage extends StatefulWidget {
 }
 
 class _ClaimPageState extends State<ClaimPage> {
-  Widget _renderVouches(List<String> vouches) {
-    return ListView.separated(
-      itemCount: vouches.length,
-      padding: const EdgeInsets.all(8),
-      itemBuilder: (BuildContext context, int index) {
-        return const Text('');
-      },
-      separatorBuilder: (BuildContext context, int index) => const Divider(
-        thickness: 1,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<Main.PolycentricModel>();
+    final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[widget.identityIndex];
     final claim = identity.claims[widget.claimIndex];
 
     return Scaffold(
       appBar: AppBar(
-        title: Main.makeAppBarTitleText('Claim'),
+        title: main.makeAppBarTitleText('Claim'),
       ),
       body: Container(
-        padding: Main.scaffoldPadding,
+        padding: main.scaffoldPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -53,7 +40,7 @@ class _ClaimPageState extends State<ClaimPage> {
                 radius: 50,
                 foregroundImage:
                     identity.avatar != null ? identity.avatar!.image : null,
-                child: SizedBox.expand(
+                child: const SizedBox.expand(
                   child: FittedBox(
                     fit: BoxFit.fill,
                     child: Icon(Icons.person),
@@ -115,26 +102,28 @@ class _ClaimPageState extends State<ClaimPage> {
                 ),
               ),
             ),
-            Main.StandardButton(
+            main.StandardButton(
               actionText: 'Automated',
               actionDescription:
                   'Get an automated authority to vouch for this claim',
               icon: Icons.refresh,
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                Navigator.push(context,
+                    MaterialPageRoute<AddTokenPage>(builder: (context) {
                   return AddTokenPage(
                     claim: claim,
                   );
                 }));
               },
             ),
-            Main.StandardButton(
+            main.StandardButton(
               actionText: 'Manual',
               actionDescription:
                   'Get a manual authority to vouch for this claim',
               icon: Icons.refresh,
               onPressed: () async {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                Navigator.push(context,
+                    MaterialPageRoute<PresentPage>(builder: (context) {
                   return PresentPage(
                     identityIndex: widget.identityIndex,
                     claimIndex: widget.claimIndex,

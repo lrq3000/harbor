@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../main.dart' as Main;
+import '../main.dart' as main;
 import 'profile.dart';
 
 class CreateSkillClaimPage extends StatefulWidget {
@@ -19,12 +19,12 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<Main.PolycentricModel>();
+    final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[widget.identityIndex];
 
     return Scaffold(
       appBar: AppBar(
-        title: Main.makeAppBarTitleText('Skill'),
+        title: main.makeAppBarTitleText('Skill'),
         actions: [
           TextButton(
             style: TextButton.styleFrom(
@@ -33,11 +33,11 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
             ),
             child: const Text("Save"),
             onPressed: () async {
-              if (textController.text.length == 0) {
+              if (textController.text.isEmpty) {
                 return;
               }
 
-              await Main.makePlatformClaim(
+              await main.makePlatformClaim(
                 state.db,
                 identity.processSecret,
                 'Skill',
@@ -46,17 +46,20 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
 
               await state.mLoadIdentities();
 
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return ProfilePage(
-                  identityIndex: widget.identityIndex,
-                );
-              }));
+              if (context.mounted) {
+                Navigator.push(context,
+                    MaterialPageRoute<ProfilePage>(builder: (context) {
+                  return ProfilePage(
+                    identityIndex: widget.identityIndex,
+                  );
+                }));
+              }
             },
           ),
         ],
       ),
       body: Container(
-        padding: Main.scaffoldPadding,
+        padding: main.scaffoldPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -78,7 +81,7 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
               style: const TextStyle(color: Colors.white, fontSize: 12),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Main.formColor,
+                fillColor: main.formColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(40.0),
                 ),

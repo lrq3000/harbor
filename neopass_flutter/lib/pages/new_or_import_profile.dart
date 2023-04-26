@@ -39,7 +39,7 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
         ),
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute<dynamic>(builder: (context) {
+              MaterialPageRoute<ProfilePage>(builder: (context) {
             return ProfilePage(
               identityIndex: i,
             );
@@ -64,7 +64,7 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
         icon: Icons.person_add,
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute<dynamic>(builder: (context) {
+              MaterialPageRoute<NewProfilePage>(builder: (context) {
             return const NewProfilePage();
           }));
         },
@@ -75,7 +75,7 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
         icon: Icons.arrow_downward,
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute<dynamic>(builder: (context) {
+              MaterialPageRoute<ImportPage>(builder: (context) {
             return const ImportPage();
           }));
         },
