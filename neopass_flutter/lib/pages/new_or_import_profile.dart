@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'profile.dart';
 import 'new_profile.dart';
 import 'import.dart';
-import '../main.dart' as Main;
+import '../main.dart' as main;
 
 class NewOrImportProfilePage extends StatefulWidget {
   const NewOrImportProfilePage({Key? key}) : super(key: key);
@@ -14,33 +14,32 @@ class NewOrImportProfilePage extends StatefulWidget {
 }
 
 class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
-  List<StatelessWidget> _renderProfiles(List<Main.ProcessInfo> identities) {
+  List<StatelessWidget> _renderProfiles(List<main.ProcessInfo> identities) {
     List<StatelessWidget> result = [];
 
     for (var i = 0; i < identities.length; i++) {
-      result.add(Main.StandardButtonGeneric(
+      result.add(main.StandardButtonGeneric(
         actionText: identities[i].username,
         actionDescription: 'Sign in to this identity',
-        left: Container(
-          child: Padding(
-            padding: const EdgeInsets.all(7),
-            child: CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 14,
-              foregroundImage: identities[i].avatar != null
-                  ? identities[i].avatar!.image
-                  : null,
-              child: SizedBox.expand(
-                child: FittedBox(
-                  fit: BoxFit.fill,
-                  child: Icon(Icons.person),
-                ),
+        left: Padding(
+          padding: const EdgeInsets.all(7),
+          child: CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: 14,
+            foregroundImage: identities[i].avatar != null
+                ? identities[i].avatar!.image
+                : null,
+            child: const SizedBox.expand(
+              child: FittedBox(
+                fit: BoxFit.fill,
+                child: Icon(Icons.person),
               ),
             ),
           ),
         ),
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
+          Navigator.push(context,
+              MaterialPageRoute<dynamic>(builder: (context) {
             return ProfilePage(
               identityIndex: i,
             );
@@ -54,27 +53,29 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<Main.PolycentricModel>();
+    final state = context.watch<main.PolycentricModel>();
 
     final listViewChildren = _renderProfiles(state.identities);
 
     listViewChildren.addAll([
-      Main.StandardButton(
+      main.StandardButton(
         actionText: 'New Profile',
         actionDescription: 'Generate a new Polycentric Identity',
         icon: Icons.person_add,
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
+          Navigator.push(context,
+              MaterialPageRoute<dynamic>(builder: (context) {
             return const NewProfilePage();
           }));
         },
       ),
-      Main.StandardButton(
+      main.StandardButton(
         actionText: 'Import Existing Profile',
         actionDescription: 'Use an existing Polycentric Identity',
         icon: Icons.arrow_downward,
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
+          Navigator.push(context,
+              MaterialPageRoute<dynamic>(builder: (context) {
             return const ImportPage();
           }));
         },
@@ -83,11 +84,11 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
 
     return Scaffold(
       body: Container(
-        padding: Main.scaffoldPadding,
+        padding: main.scaffoldPadding,
         child: Column(
           children: [
             const SizedBox(height: 150),
-            Main.neopassLogoAndText,
+            main.neopassLogoAndText,
             const SizedBox(height: 50),
             Expanded(
               child: ListView(
@@ -96,7 +97,7 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
               ),
             ),
             const SizedBox(height: 50),
-            Main.futoLogoAndText,
+            main.futoLogoAndText,
             const SizedBox(height: 50),
           ],
         ),
