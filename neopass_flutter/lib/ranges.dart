@@ -1,22 +1,26 @@
 library ranges;
 
-import 'package:fixnum/fixnum.dart' as FixNum;
+import 'package:fixnum/fixnum.dart' as fixnum;
 
 class Range {
   Range({required this.low, required this.high});
 
-  FixNum.Int64 low;
-  FixNum.Int64 high;
+  fixnum.Int64 low;
+  fixnum.Int64 high;
 
+  @override
+  int get hashCode => Object.hash(low, high);
+
+  @override
   bool operator ==(Object other) {
     if (other is! Range) {
       return false;
     }
-    return this.low == other.low && this.high == other.high;
+    return low == other.low && high == other.high;
   }
 }
 
-void insert(List<Range> ranges, FixNum.Int64 item) {
+void insert(List<Range> ranges, fixnum.Int64 item) {
   for (var i = 0; i < ranges.length; i++) {
     // within existing range
     if (item >= ranges[i].low && item <= ranges[i].high) {
@@ -92,12 +96,12 @@ List<Range> subtractRange(List<Range> left, List<Range> right) {
   return result;
 }
 
-List<Range> takeRangesMaxItems(List<Range> ranges, FixNum.Int64 limit) {
+List<Range> takeRangesMaxItems(List<Range> ranges, fixnum.Int64 limit) {
   if (limit == 0) {
     return [];
   }
 
-  var sum = FixNum.Int64(0);
+  var sum = fixnum.Int64(0);
   final List<Range> result = [];
 
   for (final range in ranges) {
