@@ -1,10 +1,17 @@
-import 'package:http/http.dart' as HTTP;
+import 'package:http/http.dart' as http;
 
-import 'protocol.pb.dart' as Protocol;
+import 'protocol.pb.dart' as protocol;
 
-Future<void> postEvents(Protocol.Events payload) async {
+void checkResponse(String name, http.Response response) {
+  if (response.statusCode != 200) {
+    final err = "$name, ${response.statusCode}, ${response.body}";
+    throw Exception(err);
+  }
+}
+
+Future<void> postEvents(protocol.Events payload) async {
   try {
-    final response = await HTTP.post(
+    final response = await http.post(
       Uri.parse('https://srv1-stg.polycentric.io/events'),
       headers: <String, String>{
         'Content-Type': 'application/octet-stream',
@@ -12,26 +19,22 @@ Future<void> postEvents(Protocol.Events payload) async {
       body: payload.writeToBuffer(),
     );
 
-    if (response.statusCode != 200) {
-      print('post events failed');
-      print(response.statusCode);
-      print(response.body);
-    }
+    checkResponse('postEvents', response);
   } catch (err) {
     print(err);
   }
 }
 
 Future<bool> requestVerification(
-  Protocol.Pointer pointer,
+  protocol.Pointer pointer,
   String claimType,
 ) async {
-  final url = "https://autoupdate.unkto.com/verifiers/" +
-      claimType.toLowerCase() +
+  final url = "https://autoupdate.unkto.com/verifiers/"
+      "${claimType.toLowerCase}"
       "/api/v1/vouch";
 
   try {
-    final response = await HTTP.post(
+    final response = await http.post(
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/octet-stream',
@@ -39,15 +42,9 @@ Future<bool> requestVerification(
       body: pointer.writeToBuffer(),
     );
 
-    if (response.statusCode != 200) {
-      print('request verification failed');
-      print(response.statusCode);
-      print(response.body);
+    checkResponse('postEvents', response);
 
-      return false;
-    } else {
-      return true;
-    }
+    return true;
   } catch (err) {
     print(err);
   }
