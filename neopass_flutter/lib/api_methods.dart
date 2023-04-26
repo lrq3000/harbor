@@ -1,3 +1,5 @@
+import 'dart:convert' as convert;
+
 import 'package:http/http.dart' as http;
 
 import 'protocol.pb.dart' as protocol;
@@ -25,6 +27,49 @@ Future<void> postEvents(protocol.Events payload) async {
   }
 }
 
+Future<protocol.RangesForSystem> getRanges(
+  String server,
+  protocol.PublicKey system,
+) async {
+  final systemQuery = convert.base64Url.encode(system.writeToBuffer());
+
+  final url = "$server/ranges?system=$systemQuery";
+
+  final response = await http.get(
+    Uri.parse(url),
+    headers: <String, String>{
+      'Content-Type': 'application/octet-stream',
+    },
+  );
+
+  checkResponse('getRanges', response);
+
+  return protocol.RangesForSystem.fromBuffer(response.bodyBytes);
+}
+
+Future<protocol.Events> getEvents(
+  String server,
+  protocol.PublicKey system,
+  protocol.RangesForSystem ranges,
+) async {
+  final systemQuery = convert.base64Url.encode(system.writeToBuffer());
+
+  final rangesQuery = convert.base64Url.encode(ranges.writeToBuffer());
+
+  final url = "$server/events?system=$systemQuery&ranges=$rangesQuery";
+
+  final response = await http.get(
+    Uri.parse(url),
+    headers: <String, String>{
+      'Content-Type': 'application/octet-stream',
+    },
+  );
+
+  checkResponse('getEvents', response);
+
+  return protocol.Events.fromBuffer(response.bodyBytes);
+}
+
 Future<bool> requestVerification(
   protocol.Pointer pointer,
   String claimType,
@@ -42,7 +87,7 @@ Future<bool> requestVerification(
       body: pointer.writeToBuffer(),
     );
 
-    checkResponse('postEvents', response);
+    checkResponse('requestVerification', response);
 
     return true;
   } catch (err) {
