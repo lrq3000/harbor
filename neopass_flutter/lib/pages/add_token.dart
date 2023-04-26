@@ -20,7 +20,7 @@ class AddTokenPage extends StatelessWidget {
         title: main.makeAppBarTitleText('Add Token'),
       ),
       body: Container(
-        padding: const EdgeInsets.only(left: 5.0, right: 5.0),
+        padding: main.scaffoldPadding,
         child: Column(
           children: [
             const SizedBox(height: 20),
