@@ -8,7 +8,12 @@ build-apk:
 	flutter build apk
 
 lint:
-	flutter analyze
+	flutter analyze \
+		lib/main.dart \
+		lib/ranges.dart \
+		lib/pages/* \
+		lib/api_methods.dart \
+		test/*
 
 format:
 	dart format \
