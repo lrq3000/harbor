@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:cryptography_flutter/cryptography_flutter.dart';
-import 'package:cryptography/cryptography.dart' as Cryptography;
-import 'package:sqflite/sqflite.dart' as SQFLite;
+import 'package:cryptography/cryptography.dart' as cryptography;
+import 'package:sqflite/sqflite.dart' as sqflite;
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'dart:math';
-import 'package:path/path.dart' as Path;
-import 'package:fixnum/fixnum.dart' as FixNum;
+import 'package:path/path.dart' as path;
+import 'package:fixnum/fixnum.dart' as fixnum;
 
 import 'api_methods.dart';
 import 'pages/new_or_import_profile.dart';
-import 'models.dart' as Models;
-import 'protocol.pb.dart' as Protocol;
+import 'models.dart' as models;
+import 'protocol.pb.dart' as protocol;
 
 const schemaTableEvents = '''
 CREATE TABLE IF NOT EXISTS events (
@@ -61,21 +61,21 @@ CREATE TABLE IF NOT EXISTS crdts (
 ''';
 
 class ProcessSecret {
-  Cryptography.SimpleKeyPair system;
+  cryptography.SimpleKeyPair system;
   List<int> process;
 
   ProcessSecret(this.system, this.process);
 }
 
-Future<ProcessSecret> createNewIdentity(SQFLite.Database db) async {
-  final algorithm = Cryptography.Ed25519();
+Future<ProcessSecret> createNewIdentity(sqflite.Database db) async {
+  final algorithm = cryptography.Ed25519();
   final keyPair = await algorithm.newKeyPair();
   return await importIdentity(db, keyPair);
 }
 
 Future<ProcessSecret> importIdentity(
-  SQFLite.Database db,
-  Cryptography.SimpleKeyPair keyPair,
+  sqflite.Database db,
+  cryptography.SimpleKeyPair keyPair,
 ) async {
   final public = await keyPair.extractPublicKey();
 
@@ -98,8 +98,8 @@ Future<ProcessSecret> importIdentity(
     process,
   ]);
 
-  final publicProto = Protocol.PublicKey();
-  publicProto.keyType = FixNum.Int64(1);
+  final publicProto = protocol.PublicKey();
+  publicProto.keyType = fixnum.Int64(1);
   publicProto.key = public.bytes;
   print("new identity");
   print(base64Url.encode(publicProto.writeToBuffer()));
@@ -107,7 +107,7 @@ Future<ProcessSecret> importIdentity(
   return ProcessSecret(keyPair, process);
 }
 
-Future<List<ProcessSecret>> loadIdentities(SQFLite.Database db) async {
+Future<List<ProcessSecret>> loadIdentities(sqflite.Database db) async {
   final List<Map> rows = await db.rawQuery('''
         SELECT * FROM process_secrets;
     ''');
@@ -115,15 +115,15 @@ Future<List<ProcessSecret>> loadIdentities(SQFLite.Database db) async {
   final result = List<ProcessSecret>.empty(growable: true);
 
   for (var row in rows) {
-    final public = Cryptography.SimplePublicKey(
+    final public = cryptography.SimplePublicKey(
       row['system_key_pub'] as List<int>,
-      type: Cryptography.KeyPairType.ed25519,
+      type: cryptography.KeyPairType.ed25519,
     );
 
-    final keyPair = Cryptography.SimpleKeyPairData(
+    final keyPair = cryptography.SimpleKeyPairData(
       row['system_key'] as List<int>,
       publicKey: public,
-      type: Cryptography.KeyPairType.ed25519,
+      type: cryptography.KeyPairType.ed25519,
     );
 
     result.add(
@@ -134,21 +134,21 @@ Future<List<ProcessSecret>> loadIdentities(SQFLite.Database db) async {
   return result;
 }
 
-Future<Protocol.ExportBundle> makeExportBundle(
-  SQFLite.Database db,
+Future<protocol.ExportBundle> makeExportBundle(
+  sqflite.Database db,
   ProcessSecret processSecret,
 ) async {
   final privateKey = await processSecret.system.extractPrivateKeyBytes();
   final publicKey = (await processSecret.system.extractPublicKey()).bytes;
 
-  final events = Protocol.Events();
+  final events = protocol.Events();
 
-  final keyPair = Protocol.KeyPair();
-  keyPair.keyType = FixNum.Int64(1);
+  final keyPair = protocol.KeyPair();
+  keyPair.keyType = fixnum.Int64(1);
   keyPair.privateKey = privateKey;
   keyPair.publicKey = publicKey;
 
-  final exportBundle = Protocol.ExportBundle();
+  final exportBundle = protocol.ExportBundle();
   exportBundle.keyPair = keyPair;
   exportBundle.events = events;
 
@@ -156,31 +156,31 @@ Future<Protocol.ExportBundle> makeExportBundle(
 }
 
 Future<void> importExportBundle(
-  SQFLite.Database db,
-  Protocol.ExportBundle exportBundle,
+  sqflite.Database db,
+  protocol.ExportBundle exportBundle,
 ) async {
-  final public = Cryptography.SimplePublicKey(
+  final public = cryptography.SimplePublicKey(
     exportBundle.keyPair.publicKey,
-    type: Cryptography.KeyPairType.ed25519,
+    type: cryptography.KeyPairType.ed25519,
   );
 
-  final keyPair = Cryptography.SimpleKeyPairData(
+  final keyPair = cryptography.SimpleKeyPairData(
     exportBundle.keyPair.privateKey,
     publicKey: public,
-    type: Cryptography.KeyPairType.ed25519,
+    type: cryptography.KeyPairType.ed25519,
   );
 
   await importIdentity(db, keyPair);
 
   await db.transaction((transaction) async {
-    exportBundle.events.events.forEach((Protocol.SignedEvent event) async {
+    exportBundle.events.events.forEach((protocol.SignedEvent event) async {
       await ingest(transaction, event);
     });
   });
 }
 
 Future<void> deleteIdentity(
-  SQFLite.Database db,
+  sqflite.Database db,
   List<int> system,
   List<int> process,
 ) async {
@@ -196,8 +196,8 @@ Future<void> deleteIdentity(
 }
 
 Future<bool> isEventDeleted(
-  SQFLite.Transaction transaction,
-  Protocol.Event event,
+  sqflite.Transaction transaction,
+  protocol.Event event,
 ) async {
   const query = '''
       SELECT 1 FROM deletions
@@ -219,10 +219,10 @@ Future<bool> isEventDeleted(
 }
 
 Future<void> deleteEventDB(
-  SQFLite.Transaction transaction,
+  sqflite.Transaction transaction,
   int rowId,
-  Protocol.PublicKey system,
-  Protocol.Delete deleteBody,
+  protocol.PublicKey system,
+  protocol.Delete deleteBody,
 ) async {
   const queryInsertDelete = '''
       INSERT INTO deletions
@@ -261,9 +261,9 @@ Future<void> deleteEventDB(
 }
 
 Future<void> insertLWWElement(
-  SQFLite.Transaction transaction,
+  sqflite.Transaction transaction,
   int rowId,
-  Protocol.LWWElement element,
+  protocol.LWWElement element,
 ) async {
   const query = '''
     INSERT INTO crdts
@@ -283,22 +283,22 @@ Future<void> insertLWWElement(
 }
 
 Future<void> ingest(
-  SQFLite.Transaction transaction,
-  Protocol.SignedEvent signedEvent,
+  sqflite.Transaction transaction,
+  protocol.SignedEvent signedEvent,
 ) async {
-  final Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
+  final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
 
-  final public = Cryptography.SimplePublicKey(
+  final public = cryptography.SimplePublicKey(
     event.system.key,
-    type: Cryptography.KeyPairType.ed25519,
+    type: cryptography.KeyPairType.ed25519,
   );
 
-  final signature = Cryptography.Signature(
+  final signature = cryptography.Signature(
     signedEvent.signature,
     publicKey: public,
   );
 
-  final validSignature = await Cryptography.Ed25519().verify(
+  final validSignature = await cryptography.Ed25519().verify(
     signedEvent.event,
     signature: signature,
   );
@@ -330,9 +330,9 @@ Future<void> ingest(
     signedEvent.writeToBuffer(),
   ]);
 
-  if (event.contentType == Models.ContentType.contentTypeDelete) {
-    final Protocol.Delete deleteBody =
-        Protocol.Delete.fromBuffer(event.content);
+  if (event.contentType == models.ContentType.contentTypeDelete) {
+    final protocol.Delete deleteBody =
+        protocol.Delete.fromBuffer(event.content);
 
     await deleteEventDB(transaction, eventId, event.system, deleteBody);
   }
@@ -343,11 +343,11 @@ Future<void> ingest(
 }
 
 Future<int> loadLatestClock(
-  SQFLite.Database db,
+  sqflite.Database db,
   List<int> system,
   List<int> process,
 ) async {
-  final f = SQFLite.Sqflite.firstIntValue(await db.rawQuery('''
+  final f = sqflite.Sqflite.firstIntValue(await db.rawQuery('''
         SELECT MAX(logical_clock) as x FROM events
         WHERE system_key_type = 1
         AND system_key = ?
@@ -361,17 +361,17 @@ Future<int> loadLatestClock(
   }
 }
 
-Future<Protocol.Pointer> signedEventToPointer(
-    Protocol.SignedEvent signedEvent) async {
-  final Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
+Future<protocol.Pointer> signedEventToPointer(
+    protocol.SignedEvent signedEvent) async {
+  final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
 
-  final hash = await Cryptography.Sha256().hash(signedEvent.event);
+  final hash = await cryptography.Sha256().hash(signedEvent.event);
 
-  final Protocol.Digest digest = Protocol.Digest();
-  digest.digestType = FixNum.Int64(1);
+  final protocol.Digest digest = protocol.Digest();
+  digest.digestType = fixnum.Int64(1);
   digest.digest = hash.bytes;
 
-  final Protocol.Pointer pointer = Protocol.Pointer();
+  final protocol.Pointer pointer = protocol.Pointer();
   pointer.system = event.system;
   pointer.process = event.process;
   pointer.logicalClock = event.logicalClock;
@@ -381,7 +381,7 @@ Future<Protocol.Pointer> signedEventToPointer(
 }
 
 Future<List<ClaimInfo>> loadClaims(
-  SQFLite.Database db,
+  sqflite.Database db,
   List<int> system,
 ) async {
   final rows = await db.rawQuery('''
@@ -396,15 +396,15 @@ Future<List<ClaimInfo>> loadClaims(
   for (final row in rows) {
     final rawEvent = row['raw_event'];
 
-    Protocol.SignedEvent signedEvent =
-        Protocol.SignedEvent.fromBuffer(rawEvent as List<int>);
+    protocol.SignedEvent signedEvent =
+        protocol.SignedEvent.fromBuffer(rawEvent as List<int>);
 
-    Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
+    protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
 
-    Protocol.Claim claim = Protocol.Claim.fromBuffer(event.content);
+    protocol.Claim claim = protocol.Claim.fromBuffer(event.content);
 
-    Protocol.ClaimIdentifier claimIdentifier =
-        Protocol.ClaimIdentifier.fromBuffer(claim.claim);
+    protocol.ClaimIdentifier claimIdentifier =
+        protocol.ClaimIdentifier.fromBuffer(claim.claim);
 
     final pointer = await signedEventToPointer(signedEvent);
 
@@ -415,7 +415,7 @@ Future<List<ClaimInfo>> loadClaims(
 }
 
 Future<void> sendAllEventsToServer(
-  SQFLite.Database db,
+  sqflite.Database db,
   List<int> system,
 ) async {
   final rows = await db.rawQuery('''
@@ -424,13 +424,13 @@ Future<void> sendAllEventsToServer(
         AND system_key = ?;
     ''', [Uint8List.fromList(system)]);
 
-  final Protocol.Events payload = Protocol.Events();
+  final protocol.Events payload = protocol.Events();
 
   for (final row in rows) {
     final rawEvent = row['raw_event'];
 
-    final Protocol.SignedEvent signedEvent =
-        Protocol.SignedEvent.fromBuffer(rawEvent as List<int>);
+    final protocol.SignedEvent signedEvent =
+        protocol.SignedEvent.fromBuffer(rawEvent as List<int>);
 
     payload.events.add(signedEvent);
   }
@@ -438,11 +438,11 @@ Future<void> sendAllEventsToServer(
   await postEvents(payload);
 }
 
-Future<Protocol.SignedEvent?> loadLatestEventByContentType(
-  SQFLite.Database db,
+Future<protocol.SignedEvent?> loadLatestEventByContentType(
+  sqflite.Database db,
   List<int> system,
   List<int> process,
-  FixNum.Int64 contentType,
+  fixnum.Int64 contentType,
 ) async {
   final q = await db.rawQuery('''
         SELECT raw_event FROM events
@@ -462,14 +462,14 @@ Future<Protocol.SignedEvent?> loadLatestEventByContentType(
   if (q.isEmpty) {
     return null;
   } else {
-    return Protocol.SignedEvent.fromBuffer(q[0]['raw_event'] as List<int>);
+    return protocol.SignedEvent.fromBuffer(q[0]['raw_event'] as List<int>);
   }
 }
 
-Future<Protocol.SignedEvent?> loadLatestCRDTByContentType(
-  SQFLite.Database db,
+Future<protocol.SignedEvent?> loadLatestCRDTByContentType(
+  sqflite.Database db,
   List<int> system,
-  FixNum.Int64 contentType,
+  fixnum.Int64 contentType,
 ) async {
   final q = await db.rawQuery('''
             SELECT events.raw_event
@@ -493,53 +493,53 @@ Future<Protocol.SignedEvent?> loadLatestCRDTByContentType(
   if (q.isEmpty) {
     return null;
   } else {
-    return Protocol.SignedEvent.fromBuffer(q[0]['raw_event'] as List<int>);
+    return protocol.SignedEvent.fromBuffer(q[0]['raw_event'] as List<int>);
   }
 }
 
 Future<String> loadLatestUsername(
-  SQFLite.Database db,
+  sqflite.Database db,
   List<int> system,
 ) async {
   final signedEvent = await loadLatestCRDTByContentType(
     db,
     system,
-    Models.ContentType.contentTypeUsername,
+    models.ContentType.contentTypeUsername,
   );
 
   if (signedEvent == null) {
     return 'unknown';
   } else {
-    final Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
+    final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
 
     return utf8.decode(event.lwwElement.value);
   }
 }
 
 Future<String> loadLatestDescription(
-  SQFLite.Database db,
+  sqflite.Database db,
   List<int> system,
 ) async {
   final signedEvent = await loadLatestCRDTByContentType(
     db,
     system,
-    Models.ContentType.contentTypeDescription,
+    models.ContentType.contentTypeDescription,
   );
 
   if (signedEvent == null) {
     return '';
   } else {
-    final Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
+    final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
 
     return utf8.decode(event.lwwElement.value);
   }
 }
 
-Future<Protocol.SignedEvent?> loadEvent(
-  SQFLite.Database db,
+Future<protocol.SignedEvent?> loadEvent(
+  sqflite.Database db,
   List<int> system,
   List<int> process,
-  FixNum.Int64 logicalClock,
+  fixnum.Int64 logicalClock,
 ) async {
   final rows = await db.rawQuery('''
     SELECT raw_event FROM events
@@ -555,7 +555,7 @@ Future<Protocol.SignedEvent?> loadEvent(
   ]);
 
   if (rows.isNotEmpty) {
-    return Protocol.SignedEvent.fromBuffer(
+    return protocol.SignedEvent.fromBuffer(
         rows.first["raw_event"] as List<int>);
   }
 
@@ -563,8 +563,8 @@ Future<Protocol.SignedEvent?> loadEvent(
 }
 
 Future<Image?> loadImage(
-  SQFLite.Database db,
-  Protocol.Pointer pointer,
+  sqflite.Database db,
+  protocol.Pointer pointer,
 ) async {
   final metaSignedEvent = await loadEvent(
     db,
@@ -577,9 +577,9 @@ Future<Image?> loadImage(
     return null;
   }
 
-  final metaEvent = Protocol.Event.fromBuffer(metaSignedEvent.event);
+  final metaEvent = protocol.Event.fromBuffer(metaSignedEvent.event);
 
-  if (metaEvent.contentType != Models.ContentType.contentTypeBlobMeta) {
+  if (metaEvent.contentType != models.ContentType.contentTypeBlobMeta) {
     print("expected blob meta event");
     print(metaEvent.contentType);
 
@@ -599,41 +599,41 @@ Future<Image?> loadImage(
     return null;
   }
 
-  final contentEvent = Protocol.Event.fromBuffer(contentSignedEvent.event);
+  final contentEvent = protocol.Event.fromBuffer(contentSignedEvent.event);
 
-  if (contentEvent.contentType != Models.ContentType.contentTypeBlobSection) {
+  if (contentEvent.contentType != models.ContentType.contentTypeBlobSection) {
     print("expected blob section event");
 
     return null;
   }
 
-  final blobSection = Protocol.BlobSection.fromBuffer(contentEvent.content);
+  final blobSection = protocol.BlobSection.fromBuffer(contentEvent.content);
 
   return Image.memory(Uint8List.fromList(blobSection.content));
 }
 
 Future<Image?> loadLatestAvatar(
-  SQFLite.Database db,
+  sqflite.Database db,
   List<int> system,
 ) async {
   final signedEvent = await loadLatestCRDTByContentType(
     db,
     system,
-    Models.ContentType.contentTypeAvatar,
+    models.ContentType.contentTypeAvatar,
   );
 
   if (signedEvent == null) {
     return null;
   } else {
-    final Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
+    final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
 
-    if (event.contentType != Models.ContentType.contentTypeAvatar) {
+    if (event.contentType != models.ContentType.contentTypeAvatar) {
       print("expected content type avatar");
 
       return null;
     }
 
-    final Protocol.Pointer pointer = Protocol.Pointer.fromBuffer(
+    final protocol.Pointer pointer = protocol.Pointer.fromBuffer(
       event.lwwElement.value,
     );
 
@@ -641,14 +641,14 @@ Future<Image?> loadLatestAvatar(
   }
 }
 
-Future<Protocol.Pointer> saveEvent(SQFLite.Database db,
-    ProcessSecret processInfo, Protocol.Event event) async {
+Future<protocol.Pointer> saveEvent(sqflite.Database db,
+    ProcessSecret processInfo, protocol.Event event) async {
   final public = await processInfo.system.extractPublicKey();
-  final Protocol.PublicKey system = Protocol.PublicKey();
-  system.keyType = FixNum.Int64(1);
+  final protocol.PublicKey system = protocol.PublicKey();
+  system.keyType = fixnum.Int64(1);
   system.key = public.bytes;
 
-  final Protocol.Process process = Protocol.Process();
+  final protocol.Process process = protocol.Process();
   process.process = processInfo.process;
 
   final clock = await loadLatestClock(
@@ -661,15 +661,15 @@ Future<Protocol.Pointer> saveEvent(SQFLite.Database db,
 
   event.system = system;
   event.process = process;
-  event.logicalClock = FixNum.Int64(clock);
-  event.vectorClock = Protocol.VectorClock();
-  event.indices = Protocol.Indices();
+  event.logicalClock = fixnum.Int64(clock);
+  event.vectorClock = protocol.VectorClock();
+  event.indices = protocol.Indices();
 
   final encoded = event.writeToBuffer();
 
-  final Protocol.SignedEvent signedEvent = Protocol.SignedEvent();
+  final protocol.SignedEvent signedEvent = protocol.SignedEvent();
   signedEvent.event = encoded;
-  signedEvent.signature = (await Cryptography.Ed25519().sign(
+  signedEvent.signature = (await cryptography.Ed25519().sign(
     encoded,
     keyPair: processInfo.system,
   ))
@@ -685,9 +685,9 @@ Future<Protocol.Pointer> saveEvent(SQFLite.Database db,
 }
 
 Future<void> deleteEvent(
-  SQFLite.Database db,
+  sqflite.Database db,
   ProcessSecret processInfo,
-  Protocol.Pointer pointer,
+  protocol.Pointer pointer,
 ) async {
   final signedEvent = await loadEvent(
     db,
@@ -700,39 +700,39 @@ Future<void> deleteEvent(
     print("cannot delete event that does not exist");
     return;
   } else {
-    final Protocol.Event event = Protocol.Event.fromBuffer(signedEvent.event);
+    final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
 
-    final Protocol.Delete deleteBody = Protocol.Delete();
+    final protocol.Delete deleteBody = protocol.Delete();
     deleteBody.process = pointer.process;
     deleteBody.logicalClock = pointer.logicalClock;
     deleteBody.indices = event.indices;
 
-    final Protocol.Event deleteEvent = Protocol.Event();
-    deleteEvent.contentType = Models.ContentType.contentTypeDelete;
+    final protocol.Event deleteEvent = protocol.Event();
+    deleteEvent.contentType = models.ContentType.contentTypeDelete;
     deleteEvent.content = deleteBody.writeToBuffer();
 
     await saveEvent(db, processInfo, deleteEvent);
   }
 }
 
-Future<Protocol.Pointer> publishBlob(SQFLite.Database db,
+Future<protocol.Pointer> publishBlob(sqflite.Database db,
     ProcessSecret processInfo, String mime, List<int> bytes) async {
-  final Protocol.BlobMeta blobMeta = Protocol.BlobMeta();
-  blobMeta.sectionCount = FixNum.Int64(1);
+  final protocol.BlobMeta blobMeta = protocol.BlobMeta();
+  blobMeta.sectionCount = fixnum.Int64(1);
   blobMeta.mime = mime;
 
-  final Protocol.Event blobMetaEvent = Protocol.Event();
-  blobMetaEvent.contentType = Models.ContentType.contentTypeBlobMeta;
+  final protocol.Event blobMetaEvent = protocol.Event();
+  blobMetaEvent.contentType = models.ContentType.contentTypeBlobMeta;
   blobMetaEvent.content = blobMeta.writeToBuffer();
 
   final blobMetaPointer = await saveEvent(db, processInfo, blobMetaEvent);
 
-  final Protocol.BlobSection blobSection = Protocol.BlobSection();
+  final protocol.BlobSection blobSection = protocol.BlobSection();
   blobSection.metaPointer = blobMetaPointer.logicalClock;
   blobSection.content = bytes;
 
-  final Protocol.Event blobSectionEvent = Protocol.Event();
-  blobSectionEvent.contentType = Models.ContentType.contentTypeBlobSection;
+  final protocol.Event blobSectionEvent = protocol.Event();
+  blobSectionEvent.contentType = models.ContentType.contentTypeBlobSection;
   blobSectionEvent.content = blobSection.writeToBuffer();
 
   await saveEvent(db, processInfo, blobSectionEvent);
@@ -740,77 +740,77 @@ Future<Protocol.Pointer> publishBlob(SQFLite.Database db,
   return blobMetaPointer;
 }
 
-Future<void> setCRDT(SQFLite.Database db, ProcessSecret processInfo,
-    FixNum.Int64 contentType, Uint8List bytes) async {
-  final Protocol.LWWElement element = Protocol.LWWElement();
+Future<void> setCRDT(sqflite.Database db, ProcessSecret processInfo,
+    fixnum.Int64 contentType, Uint8List bytes) async {
+  final protocol.LWWElement element = protocol.LWWElement();
   element.unixMilliseconds =
-      FixNum.Int64(DateTime.now().millisecondsSinceEpoch);
+      fixnum.Int64(DateTime.now().millisecondsSinceEpoch);
   element.value = bytes;
 
-  final Protocol.Event event = Protocol.Event();
+  final protocol.Event event = protocol.Event();
   event.contentType = contentType;
   event.lwwElement = element;
 
   await saveEvent(db, processInfo, event);
 }
 
-Future<void> setAvatar(SQFLite.Database db, ProcessSecret processInfo,
-    Protocol.Pointer pointer) async {
+Future<void> setAvatar(sqflite.Database db, ProcessSecret processInfo,
+    protocol.Pointer pointer) async {
   await setCRDT(
     db,
     processInfo,
-    Models.ContentType.contentTypeAvatar,
+    models.ContentType.contentTypeAvatar,
     pointer.writeToBuffer(),
   );
 }
 
 Future<void> setUsername(
-    SQFLite.Database db, ProcessSecret processInfo, String username) async {
+    sqflite.Database db, ProcessSecret processInfo, String username) async {
   await setCRDT(
     db,
     processInfo,
-    Models.ContentType.contentTypeUsername,
+    models.ContentType.contentTypeUsername,
     Uint8List.fromList(utf8.encode(username)),
   );
 }
 
 Future<void> setDescription(
-    SQFLite.Database db, ProcessSecret processInfo, String description) async {
+    sqflite.Database db, ProcessSecret processInfo, String description) async {
   await setCRDT(
     db,
     processInfo,
-    Models.ContentType.contentTypeDescription,
+    models.ContentType.contentTypeDescription,
     Uint8List.fromList(utf8.encode(description)),
   );
 }
 
 Future<void> makeClaim(
-    SQFLite.Database db, ProcessSecret processInfo, String claimText) async {
-  final Protocol.ClaimIdentifier claimIdentifier = Protocol.ClaimIdentifier();
+    sqflite.Database db, ProcessSecret processInfo, String claimText) async {
+  final protocol.ClaimIdentifier claimIdentifier = protocol.ClaimIdentifier();
   claimIdentifier.identifier = claimText;
 
-  final Protocol.Claim claim = Protocol.Claim();
+  final protocol.Claim claim = protocol.Claim();
   claim.claimType = "Generic";
   claim.claim = claimIdentifier.writeToBuffer();
 
-  final Protocol.Event event = Protocol.Event();
-  event.contentType = Models.ContentType.contentTypeClaim;
+  final protocol.Event event = protocol.Event();
+  event.contentType = models.ContentType.contentTypeClaim;
   event.content = claim.writeToBuffer();
 
   await saveEvent(db, processInfo, event);
 }
 
-Future<ClaimInfo> makePlatformClaim(SQFLite.Database db,
+Future<ClaimInfo> makePlatformClaim(sqflite.Database db,
     ProcessSecret processInfo, String claimType, String account) async {
-  final Protocol.ClaimIdentifier claimIdentifier = Protocol.ClaimIdentifier();
+  final protocol.ClaimIdentifier claimIdentifier = protocol.ClaimIdentifier();
   claimIdentifier.identifier = account;
 
-  final Protocol.Claim claim = Protocol.Claim();
+  final protocol.Claim claim = protocol.Claim();
   claim.claimType = claimType;
   claim.claim = claimIdentifier.writeToBuffer();
 
-  final Protocol.Event event = Protocol.Event();
-  event.contentType = Models.ContentType.contentTypeClaim;
+  final protocol.Event event = protocol.Event();
+  event.contentType = models.ContentType.contentTypeClaim;
   event.content = claim.writeToBuffer();
 
   final pointer = await saveEvent(db, processInfo, event);
@@ -819,22 +819,22 @@ Future<ClaimInfo> makePlatformClaim(SQFLite.Database db,
 }
 
 Future<ClaimInfo> makeOccupationClaim(
-    SQFLite.Database db,
+    sqflite.Database db,
     ProcessSecret processInfo,
     String organization,
     String role,
     String location) async {
-  final Protocol.ClaimOccupation claimOccupation = Protocol.ClaimOccupation();
+  final protocol.ClaimOccupation claimOccupation = protocol.ClaimOccupation();
   claimOccupation.organization = organization;
   claimOccupation.role = role;
   claimOccupation.location = location;
 
-  final Protocol.Claim claim = Protocol.Claim();
+  final protocol.Claim claim = protocol.Claim();
   claim.claimType = "Occupation";
   claim.claim = claimOccupation.writeToBuffer();
 
-  final Protocol.Event event = Protocol.Event();
-  event.contentType = Models.ContentType.contentTypeClaim;
+  final protocol.Event event = protocol.Event();
+  event.contentType = models.ContentType.contentTypeClaim;
   event.content = claim.writeToBuffer();
 
   final pointer = await saveEvent(db, processInfo, event);
@@ -842,14 +842,14 @@ Future<ClaimInfo> makeOccupationClaim(
   return ClaimInfo("Occupation", organization, pointer);
 }
 
-Future<void> makeVouch(SQFLite.Database db, ProcessSecret processInfo,
-    Protocol.Pointer pointer) async {
-  final Protocol.Reference reference = Protocol.Reference();
-  reference.referenceType = FixNum.Int64(2);
+Future<void> makeVouch(sqflite.Database db, ProcessSecret processInfo,
+    protocol.Pointer pointer) async {
+  final protocol.Reference reference = protocol.Reference();
+  reference.referenceType = fixnum.Int64(2);
   reference.reference = pointer.writeToBuffer();
 
-  final Protocol.Event event = Protocol.Event();
-  event.contentType = Models.ContentType.contentTypeVouch;
+  final protocol.Event event = protocol.Event();
+  event.contentType = models.ContentType.contentTypeVouch;
   event.references.add(reference);
 
   await saveEvent(db, processInfo, event);
@@ -884,7 +884,7 @@ final MaterialColor deleteColor = makeColor(const Color(0xFF2F2F2F));
 class ClaimInfo {
   final String claimType;
   final String text;
-  final Protocol.Pointer pointer;
+  final protocol.Pointer pointer;
 
   ClaimInfo(this.claimType, this.text, this.pointer);
 }
@@ -906,7 +906,7 @@ class ProcessInfo {
 }
 
 class PolycentricModel extends ChangeNotifier {
-  final SQFLite.Database db;
+  final sqflite.Database db;
   List<ProcessInfo> identities = [];
 
   PolycentricModel(this.db);
@@ -940,8 +940,8 @@ class PolycentricModel extends ChangeNotifier {
 }
 
 Future<PolycentricModel> setupModel() async {
-  final db = await SQFLite.openDatabase(
-    Path.join(await SQFLite.getDatabasesPath(), 'neopass13.db'),
+  final db = await sqflite.openDatabase(
+    path.join(await sqflite.getDatabasesPath(), 'neopass13.db'),
     onCreate: (db, version) async {
       await db.execute(schemaTableEvents);
       await db.execute(schemaTableProcessSecrets);
