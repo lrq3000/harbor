@@ -55,39 +55,42 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
           ),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 20),
-          const Text(
-            "Name",
-            style: TextStyle(
-              fontFamily: 'inter',
-              fontSize: 16,
-              fontWeight: FontWeight.w300,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 5),
-          TextField(
-            controller: textController,
-            maxLines: 1,
-            cursorColor: Colors.white,
-            style: const TextStyle(color: Colors.white, fontSize: 12),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Main.formColor,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(40.0),
-              ),
-              labelText: "Python programming, Web Marketing, ...",
-              labelStyle: const TextStyle(
+      body: Container(
+        padding: Main.scaffoldPadding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 20),
+            const Text(
+              "Name",
+              style: TextStyle(
+                fontFamily: 'inter',
+                fontSize: 16,
+                fontWeight: FontWeight.w300,
                 color: Colors.white,
               ),
-              floatingLabelBehavior: FloatingLabelBehavior.never,
             ),
-          ),
-        ],
+            const SizedBox(height: 5),
+            TextField(
+              controller: textController,
+              maxLines: 1,
+              cursorColor: Colors.white,
+              style: const TextStyle(color: Colors.white, fontSize: 12),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Main.formColor,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(40.0),
+                ),
+                labelText: "Python programming, Web Marketing, ...",
+                labelStyle: const TextStyle(
+                  color: Colors.white,
+                ),
+                floatingLabelBehavior: FloatingLabelBehavior.never,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

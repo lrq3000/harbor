@@ -76,21 +76,24 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
     ]);
 
     return Scaffold(
-      body: Column(
-        children: [
-          const SizedBox(height: 150),
-          Main.neopassLogoAndText,
-          const SizedBox(height: 50),
-          Expanded(
-            child: ListView(
-              shrinkWrap: true,
-              children: listViewChildren,
+      body: Container(
+        padding: Main.scaffoldPadding,
+        child: Column(
+          children: [
+            const SizedBox(height: 150),
+            Main.neopassLogoAndText,
+            const SizedBox(height: 50),
+            Expanded(
+              child: ListView(
+                shrinkWrap: true,
+                children: listViewChildren,
+              ),
             ),
-          ),
-          const SizedBox(height: 50),
-          Main.futoLogoAndText,
-          const SizedBox(height: 50),
-        ],
+            const SizedBox(height: 50),
+            Main.futoLogoAndText,
+            const SizedBox(height: 50),
+          ],
+        ),
       ),
     );
   }

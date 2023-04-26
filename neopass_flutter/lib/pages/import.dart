@@ -38,40 +38,43 @@ class ImportPage extends StatelessWidget {
       appBar: AppBar(
         title: Main.makeAppBarTitleText("Import"),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 150),
-          Main.neopassLogoAndText,
-          const SizedBox(height: 120),
-          Main.StandardButton(
-              actionText: 'Text',
-              actionDescription: 'Paste an exported identity',
-              icon: Icons.content_copy,
+      body: Container(
+        padding: Main.scaffoldPadding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 150),
+            Main.neopassLogoAndText,
+            const SizedBox(height: 120),
+            Main.StandardButton(
+                actionText: 'Text',
+                actionDescription: 'Paste an exported identity',
+                icon: Icons.content_copy,
+                onPressed: () async {
+                  final clip =
+                      (await Services.Clipboard.getData('text/plain'))?.text;
+                  if (clip != null) {
+                    await importFromBase64(context, state, clip);
+                  }
+                }),
+            Main.StandardButton(
+              actionText: 'QR Code',
+              actionDescription: 'Backup from another phone',
+              icon: Icons.qr_code,
               onPressed: () async {
-                final clip =
-                    (await Services.Clipboard.getData('text/plain'))?.text;
-                if (clip != null) {
-                  await importFromBase64(context, state, clip);
+                try {
+                  final rawScan = await FlutterBarcodeScanner.scanBarcode(
+                      "#ff6666", 'cancel', false, ScanMode.QR);
+                  if (rawScan != "") {
+                    await importFromBase64(context, state, rawScan);
+                  }
+                } catch (err) {
+                  print(err);
                 }
-              }),
-          Main.StandardButton(
-            actionText: 'QR Code',
-            actionDescription: 'Backup from another phone',
-            icon: Icons.qr_code,
-            onPressed: () async {
-              try {
-                final rawScan = await FlutterBarcodeScanner.scanBarcode(
-                    "#ff6666", 'cancel', false, ScanMode.QR);
-                if (rawScan != "") {
-                  await importFromBase64(context, state, rawScan);
-                }
-              } catch (err) {
-                print(err);
-              }
-            },
-          ),
-        ],
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

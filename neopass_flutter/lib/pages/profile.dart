@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:file_picker/file_picker.dart' as FilePicker;
+import 'package:file_picker/file_picker.dart' as file_picker;
 
-import '../main.dart' as Main;
-import '../protocol.pb.dart' as Protocol;
+import '../main.dart' as main;
+import '../protocol.pb.dart' as protocol;
 import 'backup.dart';
 import 'claim.dart';
 import 'create_claim.dart';
@@ -28,10 +28,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> editUsername(
     BuildContext context,
-    Main.PolycentricModel state,
-    Main.ProcessSecret identity,
+    main.PolycentricModel state,
+    main.ProcessSecret identity,
   ) async {
-    await showDialog(
+    await showDialog<dynamic>(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -54,11 +54,11 @@ class _ProfilePageState extends State<ProfilePage> {
               TextButton(
                 child: const Text("submit"),
                 onPressed: () async {
-                  if (usernameController.text.length == 0) {
+                  if (usernameController.text.isEmpty) {
                     return;
                   }
 
-                  await Main.setUsername(
+                  await main.setUsername(
                       state.db, identity, usernameController.text);
 
                   await state.mLoadIdentities();
@@ -76,8 +76,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> editDescription(
     BuildContext context,
-    Main.PolycentricModel state,
-    Main.ProcessSecret identity,
+    main.PolycentricModel state,
+    main.ProcessSecret identity,
   ) async {
     await showDialog(
         context: context,
@@ -102,11 +102,11 @@ class _ProfilePageState extends State<ProfilePage> {
               TextButton(
                 child: const Text("submit"),
                 onPressed: () async {
-                  if (descriptionController.text.length == 0) {
+                  if (descriptionController.text.isEmpty) {
                     return;
                   }
 
-                  await Main.setDescription(
+                  await main.setDescription(
                       state.db, identity, descriptionController.text);
 
                   await state.mLoadIdentities();
@@ -121,24 +121,25 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<Main.PolycentricModel>();
+    final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[widget.identityIndex];
 
-    List<StatelessWidget> _renderClaims(
-      List<Main.ClaimInfo> claims,
+    List<StatelessWidget> renderClaims(
+      List<main.ClaimInfo> claims,
     ) {
       List<StatelessWidget> result = [];
 
       for (var i = 0; i < claims.length; i++) {
-        result.add(Main.StandardButtonGeneric(
+        result.add(main.StandardButtonGeneric(
           actionText: claims[i].claimType,
           actionDescription: claims[i].text,
           left: Container(
             margin: const EdgeInsets.only(top: 5, bottom: 5),
-            child: Main.claimTypeToVisual(claims[i].claimType),
+            child: main.claimTypeToVisual(claims[i].claimType),
           ),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
+            Navigator.push(context,
+                MaterialPageRoute<dynamic>(builder: (context) {
               return ClaimPage(
                 identityIndex: widget.identityIndex,
                 claimIndex: i,
@@ -146,7 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
             }));
           },
           onDelete: () async {
-            await Main.deleteEvent(
+            await main.deleteEvent(
                 state.db, identity.processSecret, claims[i].pointer);
 
             await state.mLoadIdentities();
@@ -158,26 +159,23 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     List<StatelessWidget> listViewChildren = [
-      Container(
-        margin: const EdgeInsets.only(left: 20),
-        child: const Text(
-          'Claims',
-          textAlign: TextAlign.left,
-          style: TextStyle(
-            fontFamily: 'inter',
-            fontSize: 16,
-            fontWeight: FontWeight.w300,
-            color: Colors.white,
-          ),
+      const Text(
+        'Claims',
+        textAlign: TextAlign.left,
+        style: TextStyle(
+          fontFamily: 'inter',
+          fontSize: 16,
+          fontWeight: FontWeight.w300,
+          color: Colors.white,
         ),
       ),
     ];
 
-    listViewChildren.addAll(_renderClaims(identity.claims));
+    listViewChildren.addAll(renderClaims(identity.claims));
 
     listViewChildren.addAll([
       Container(
-        margin: const EdgeInsets.only(left: 20, top: 20),
+        margin: const EdgeInsets.only(top: 20),
         child: const Text(
           'Other',
           textAlign: TextAlign.left,
@@ -189,17 +187,18 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
       ),
-      Main.StandardButton(
+      main.StandardButton(
         actionText: 'Make a claim',
         actionDescription: 'Make a new claim for your profile',
         icon: Icons.person_add,
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
+          Navigator.push(context,
+              MaterialPageRoute<dynamic>(builder: (context) {
             return CreateClaimPage(identityIndex: widget.identityIndex);
           }));
         },
       ),
-      Main.StandardButton(
+      main.StandardButton(
         actionText: 'Vouch for a claim',
         actionDescription: 'Vouch for someone elses claim',
         icon: Icons.video_call,
@@ -208,46 +207,49 @@ class _ProfilePageState extends State<ProfilePage> {
             final String rawScan = await FlutterBarcodeScanner.scanBarcode(
                 "#ff6666", 'cancel', false, ScanMode.QR);
             final List<int> buffer = base64.decode(rawScan);
-            final Protocol.Pointer pointer =
-                Protocol.Pointer.fromBuffer(buffer);
+            final protocol.Pointer pointer =
+                protocol.Pointer.fromBuffer(buffer);
 
-            await Main.makeVouch(state.db, identity.processSecret, pointer);
+            await main.makeVouch(state.db, identity.processSecret, pointer);
           } catch (err) {
             print(err);
           }
         },
       ),
-      Main.StandardButton(
+      main.StandardButton(
         actionText: 'Change account',
         actionDescription: 'Switch to a different account',
         icon: Icons.switch_account,
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
+          Navigator.push(context,
+              MaterialPageRoute<dynamic>(builder: (context) {
             return const NewOrImportProfilePage();
           }));
         },
       ),
-      Main.StandardButton(
+      main.StandardButton(
         actionText: 'Backup',
         actionDescription: 'Make a backup of your identity',
         icon: Icons.save,
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
+          Navigator.push(context,
+              MaterialPageRoute<dynamic>(builder: (context) {
             return BackupPage(processSecret: identity.processSecret);
           }));
         },
       ),
-      Main.StandardButton(
+      main.StandardButton(
         actionText: 'Delete account',
         actionDescription: 'Permanently account from this device',
         icon: Icons.delete,
         onPressed: () async {
           final public = await identity.processSecret.system.extractPublicKey();
 
-          await Main.deleteIdentity(
+          await main.deleteIdentity(
               state.db, public.bytes, identity.processSecret.process);
 
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
+          Navigator.push(context,
+              MaterialPageRoute<dynamic>(builder: (context) {
             return const NewOrImportProfilePage();
           }));
 
@@ -258,7 +260,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
         body: Container(
-      width: MediaQuery.of(context).size.width,
+      padding: main.scaffoldPadding,
       child: Column(
         children: [
           InkWell(
@@ -272,9 +274,9 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             onTap: () async {
-              FilePicker.FilePickerResult? result =
-                  await FilePicker.FilePicker.platform.pickFiles(
-                type: FilePicker.FileType.custom,
+              file_picker.FilePickerResult? result =
+                  await file_picker.FilePicker.platform.pickFiles(
+                type: file_picker.FileType.custom,
                 allowedExtensions: ['png', 'jpg'],
               );
 
@@ -282,14 +284,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 final bytes =
                     await File(result.files.single.path!).readAsBytes();
 
-                final pointer = await Main.publishBlob(
+                final pointer = await main.publishBlob(
                   state.db,
                   identity.processSecret,
                   "image/jpeg",
                   bytes,
                 );
 
-                await Main.setAvatar(
+                await main.setAvatar(
                   state.db,
                   identity.processSecret,
                   pointer,
@@ -328,59 +330,53 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
           const SizedBox(height: 10),
-          Align(
+          const Align(
             alignment: AlignmentDirectional.centerStart,
-            child: Container(
-              margin: const EdgeInsets.only(left: 20.0),
-              child: const Text(
-                "About",
-                style: TextStyle(
-                  fontFamily: 'inter',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w300,
-                  color: Colors.white,
-                ),
+            child: Text(
+              "About",
+              style: TextStyle(
+                fontFamily: 'inter',
+                fontSize: 16,
+                fontWeight: FontWeight.w300,
+                color: Colors.white,
               ),
             ),
           ),
           const SizedBox(height: 10),
-          Container(
-            margin: const EdgeInsets.only(left: 20.0, right: 20.0),
-            child: OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                backgroundColor: Main.tokenColor,
-                foregroundColor: Colors.black,
-              ),
-              child: Column(
-                children: [
-                  const SizedBox(height: 5),
-                  Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: Text(identity.description,
-                        style: const TextStyle(
-                          fontFamily: 'inter',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white,
-                        )),
-                  ),
-                  const SizedBox(height: 10),
-                  const Align(
-                    alignment: AlignmentDirectional.centerEnd,
-                    child: Icon(
-                      Icons.edit_outlined,
-                      size: 15,
-                      semanticLabel: "edit",
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                ],
-              ),
-              onPressed: () {
-                editDescription(context, state, identity.processSecret);
-              },
+          OutlinedButton(
+            style: OutlinedButton.styleFrom(
+              backgroundColor: main.tokenColor,
+              foregroundColor: Colors.black,
             ),
+            child: Column(
+              children: [
+                const SizedBox(height: 5),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(identity.description,
+                      style: const TextStyle(
+                        fontFamily: 'inter',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
+                      )),
+                ),
+                const SizedBox(height: 10),
+                const Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: Icon(
+                    Icons.edit_outlined,
+                    size: 15,
+                    semanticLabel: "edit",
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 5),
+              ],
+            ),
+            onPressed: () {
+              editDescription(context, state, identity.processSecret);
+            },
           ),
           Expanded(
             child: ListView(

@@ -1177,7 +1177,7 @@ class StandardButtonGeneric extends StatelessWidget {
 
     return Container(
       width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+      margin: const EdgeInsets.only(top: 10),
       child: Row(
         children: [
           Expanded(
@@ -1373,3 +1373,5 @@ Text makeAppBarTitleText(String text) {
     ),
   );
 }
+
+const scaffoldPadding = const EdgeInsets.only(left: 10.0, right: 10.0);

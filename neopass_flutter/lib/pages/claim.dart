@@ -41,100 +41,103 @@ class _ClaimPageState extends State<ClaimPage> {
       appBar: AppBar(
         title: Main.makeAppBarTitleText('Claim'),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(top: 50),
-            child: CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 50,
-              foregroundImage:
-                  identity.avatar != null ? identity.avatar!.image : null,
+      body: Container(
+        padding: Main.scaffoldPadding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 50),
+              child: CircleAvatar(
+                backgroundColor: Colors.white,
+                radius: 50,
+                foregroundImage:
+                    identity.avatar != null ? identity.avatar!.image : null,
+              ),
             ),
-          ),
-          Container(
-              margin: const EdgeInsets.only(bottom: 10, top: 10),
-              child: Text(
-                identity.username,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontFamily: 'inter',
-                  fontWeight: FontWeight.w300,
-                  fontSize: 32,
-                  color: Colors.white,
-                ),
-              )),
-          const Text(
-            "Claims",
-            style: TextStyle(
-              fontFamily: 'inter',
-              fontWeight: FontWeight.w300,
-              fontSize: 20,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: 15),
-          Text(
-            claim.claimType,
-            style: const TextStyle(
-              fontFamily: 'inter',
-              fontWeight: FontWeight.w200,
-              fontSize: 24,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            claim.text,
-            style: const TextStyle(
-              fontFamily: 'inter',
-              fontWeight: FontWeight.w200,
-              fontSize: 20,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: 30),
-          Container(
-            margin: const EdgeInsets.only(left: 20),
-            alignment: AlignmentDirectional.centerStart,
-            child: const Text(
-              "Request Verification",
+            Container(
+                margin: const EdgeInsets.only(bottom: 10, top: 10),
+                child: Text(
+                  identity.username,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontFamily: 'inter',
+                    fontWeight: FontWeight.w300,
+                    fontSize: 32,
+                    color: Colors.white,
+                  ),
+                )),
+            const Text(
+              "Claims",
               style: TextStyle(
                 fontFamily: 'inter',
                 fontWeight: FontWeight.w300,
-                fontSize: 16,
+                fontSize: 20,
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 15),
+            Text(
+              claim.claimType,
+              style: const TextStyle(
+                fontFamily: 'inter',
+                fontWeight: FontWeight.w200,
+                fontSize: 24,
                 color: Colors.white,
               ),
             ),
-          ),
-          Main.StandardButton(
-            actionText: 'Automated',
-            actionDescription:
-                'Get an automated authority to vouch for this claim',
-            icon: Icons.refresh,
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return AddTokenPage(
-                  claim: claim,
-                );
-              }));
-            },
-          ),
-          Main.StandardButton(
-            actionText: 'Manual',
-            actionDescription: 'Get a manual authority to vouch for this claim',
-            icon: Icons.refresh,
-            onPressed: () async {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return PresentPage(
-                  identityIndex: widget.identityIndex,
-                  claimIndex: widget.claimIndex,
-                );
-              }));
-            },
-          ),
-        ],
+            const SizedBox(height: 10),
+            Text(
+              claim.text,
+              style: const TextStyle(
+                fontFamily: 'inter',
+                fontWeight: FontWeight.w200,
+                fontSize: 20,
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 30),
+            Container(
+              alignment: AlignmentDirectional.centerStart,
+              child: const Text(
+                "Request Verification",
+                style: TextStyle(
+                  fontFamily: 'inter',
+                  fontWeight: FontWeight.w300,
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            Main.StandardButton(
+              actionText: 'Automated',
+              actionDescription:
+                  'Get an automated authority to vouch for this claim',
+              icon: Icons.refresh,
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return AddTokenPage(
+                    claim: claim,
+                  );
+                }));
+              },
+            ),
+            Main.StandardButton(
+              actionText: 'Manual',
+              actionDescription:
+                  'Get a manual authority to vouch for this claim',
+              icon: Icons.refresh,
+              onPressed: () async {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return PresentPage(
+                    identityIndex: widget.identityIndex,
+                    claimIndex: widget.claimIndex,
+                  );
+                }));
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

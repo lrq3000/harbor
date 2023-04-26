@@ -24,89 +24,92 @@ class PresentPage extends StatelessWidget {
       appBar: AppBar(
         title: Main.makeAppBarTitleText('Request Verification'),
       ),
-      body: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.only(top: 50),
-            child: CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 50,
-              foregroundImage:
-                  identity.avatar != null ? identity.avatar!.image : null,
+      body: Container(
+        padding: Main.scaffoldPadding,
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 50),
+              child: CircleAvatar(
+                backgroundColor: Colors.white,
+                radius: 50,
+                foregroundImage:
+                    identity.avatar != null ? identity.avatar!.image : null,
+              ),
             ),
-          ),
-          Container(
-              margin: const EdgeInsets.only(bottom: 10, top: 10),
-              child: Text(
-                identity.username,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontFamily: 'inter',
-                  fontWeight: FontWeight.w300,
-                  fontSize: 32,
-                  color: Colors.white,
-                ),
-              )),
-          const Text(
-            "Requests you to verify their claim",
-            style: TextStyle(
-              fontFamily: 'inter',
-              fontWeight: FontWeight.w300,
-              fontSize: 20,
-              color: Colors.grey,
+            Container(
+                margin: const EdgeInsets.only(bottom: 10, top: 10),
+                child: Text(
+                  identity.username,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontFamily: 'inter',
+                    fontWeight: FontWeight.w300,
+                    fontSize: 32,
+                    color: Colors.white,
+                  ),
+                )),
+            const Text(
+              "Requests you to verify their claim",
+              style: TextStyle(
+                fontFamily: 'inter',
+                fontWeight: FontWeight.w300,
+                fontSize: 20,
+                color: Colors.grey,
+              ),
             ),
-          ),
-          const SizedBox(height: 15),
-          Text(
-            claim.claimType,
-            style: const TextStyle(
-              fontFamily: 'inter',
-              fontWeight: FontWeight.w200,
-              fontSize: 24,
-              color: Colors.white,
+            const SizedBox(height: 15),
+            Text(
+              claim.claimType,
+              style: const TextStyle(
+                fontFamily: 'inter',
+                fontWeight: FontWeight.w200,
+                fontSize: 24,
+                color: Colors.white,
+              ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            claim.text,
-            style: const TextStyle(
-              fontFamily: 'inter',
-              fontWeight: FontWeight.w200,
-              fontSize: 20,
-              color: Colors.grey,
+            const SizedBox(height: 10),
+            Text(
+              claim.text,
+              style: const TextStyle(
+                fontFamily: 'inter',
+                fontWeight: FontWeight.w200,
+                fontSize: 20,
+                color: Colors.grey,
+              ),
             ),
-          ),
-          Center(
-            child: QrImage(
-              backgroundColor: Colors.white,
-              data: base64.encode(claim.pointer.writeToBuffer()),
-              version: QrVersions.auto,
-              size: 200.0,
+            Center(
+              child: QrImage(
+                backgroundColor: Colors.white,
+                data: base64.encode(claim.pointer.writeToBuffer()),
+                version: QrVersions.auto,
+                size: 200.0,
+              ),
             ),
-          ),
-          const SizedBox(height: 15),
-          const Text(
-            "Scan to Verify",
-            style: TextStyle(
-              fontFamily: 'inter',
-              fontWeight: FontWeight.w200,
-              fontSize: 20,
-              color: Colors.grey,
+            const SizedBox(height: 15),
+            const Text(
+              "Scan to Verify",
+              style: TextStyle(
+                fontFamily: 'inter',
+                fontWeight: FontWeight.w200,
+                fontSize: 20,
+                color: Colors.grey,
+              ),
             ),
-          ),
-          Main.StandardButton(
-            actionText: 'Copy',
-            actionDescription: 'Share this unique code with others to verify',
-            icon: Icons.content_copy,
-            onPressed: () async {},
-          ),
-          Main.StandardButton(
-            actionText: 'Share',
-            actionDescription: 'Share code for verification',
-            icon: Icons.share,
-            onPressed: () async {},
-          ),
-        ],
+            Main.StandardButton(
+              actionText: 'Copy',
+              actionDescription: 'Share this unique code with others to verify',
+              icon: Icons.content_copy,
+              onPressed: () async {},
+            ),
+            Main.StandardButton(
+              actionText: 'Share',
+              actionDescription: 'Share code for verification',
+              icon: Icons.share,
+              onPressed: () async {},
+            ),
+          ],
+        ),
       ),
     );
   }
