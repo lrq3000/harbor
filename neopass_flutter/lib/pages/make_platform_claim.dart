@@ -29,7 +29,7 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
         title: Main.makeAppBarTitleText('Make Claim'),
       ),
       body: Container(
-        width: MediaQuery.of(context).size.width,
+        padding: Main.scaffoldPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
