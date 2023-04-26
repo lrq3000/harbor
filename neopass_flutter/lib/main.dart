@@ -14,7 +14,7 @@ import 'pages/new_or_import_profile.dart';
 import 'models.dart' as Models;
 import 'protocol.pb.dart' as Protocol;
 
-const SCHEMA_TABLE_EVENTS = '''
+const schemaTableEvents = '''
 CREATE TABLE IF NOT EXISTS events (
     id              INTEGER PRIMARY KEY,
     system_key_type INTEGER NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS events (
 );
 ''';
 
-const SCHEMA_TABLE_PROCESS_SECRETS = '''
+const schemaTableProcessSecrets = '''
 CREATE TABLE IF NOT EXISTS process_secrets (
     id              INTEGER PRIMARY KEY,
     system_key_type INTEGER NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS process_secrets (
 );
 ''';
 
-const SCHEMA_TABLE_DELETIONS = '''
+const schemaTableDeletions = '''
 CREATE TABLE IF NOT EXISTS deletions (
     id              INTEGER PRIMARY KEY,
     system_key_type INTEGER NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS deletions (
 );
 ''';
 
-const SCHEMA_TABLE_CRDTS = '''
+const schemaTableCRDTs = '''
 CREATE TABLE IF NOT EXISTS crdts (
     id                INTEGER PRIMARY KEY,
     unix_milliseconds INTEGER NOT NULL,
@@ -116,18 +116,18 @@ Future<List<ProcessSecret>> loadIdentities(SQFLite.Database db) async {
 
   for (var row in rows) {
     final public = Cryptography.SimplePublicKey(
-      row['system_key_pub'],
+      row['system_key_pub'] as List<int>,
       type: Cryptography.KeyPairType.ed25519,
     );
 
     final keyPair = Cryptography.SimpleKeyPairData(
-      row['system_key'],
+      row['system_key'] as List<int>,
       publicKey: public,
       type: Cryptography.KeyPairType.ed25519,
     );
 
     result.add(
-      ProcessSecret(keyPair, row['process']),
+      ProcessSecret(keyPair, row['process'] as List<int>),
     );
   }
 
@@ -184,19 +184,22 @@ Future<void> deleteIdentity(
   List<int> system,
   List<int> process,
 ) async {
-  await db.rawDelete('''
-        DELETE FROM process_secrets
-        WHERE system_key_type = 1
-        AND system_key_pub = ?
-        AND process = ?;
-    ''', [Uint8List.fromList(system), Uint8List.fromList(process)]);
+  const query = '''
+      DELETE FROM process_secrets
+      WHERE system_key_type = 1
+      AND system_key_pub = ?
+      AND process = ?;
+  ''';
+
+  await db.rawDelete(
+      query, [Uint8List.fromList(system), Uint8List.fromList(process)]);
 }
 
 Future<bool> isEventDeleted(
   SQFLite.Transaction transaction,
   Protocol.Event event,
 ) async {
-  const QUERY = '''
+  const query = '''
       SELECT 1 FROM deletions
       WHERE system_key_type = ?
       AND system_key = ?
@@ -205,7 +208,7 @@ Future<bool> isEventDeleted(
       LIMIT 1;
   ''';
 
-  final rows = await transaction.rawQuery(QUERY, [
+  final rows = await transaction.rawQuery(query, [
     event.system.keyType.toInt(),
     Uint8List.fromList(event.system.key),
     Uint8List.fromList(event.process.process),
@@ -221,7 +224,7 @@ Future<void> deleteEventDB(
   Protocol.PublicKey system,
   Protocol.Delete deleteBody,
 ) async {
-  const QUERY_INSERT_DELETE = '''
+  const queryInsertDelete = '''
       INSERT INTO deletions
       (
           system_key_type,
@@ -233,7 +236,7 @@ Future<void> deleteEventDB(
       VALUES (?, ?, ?, ?, ?);
   ''';
 
-  const QUERY_DELETE_EVENT = '''
+  const queryDeleteEvent = '''
       DELETE FROM events
       WHERE system_key_type = ?
       AND system_key = ?
@@ -241,7 +244,7 @@ Future<void> deleteEventDB(
       AND logical_clock = ?;
   ''';
 
-  await transaction.rawQuery(QUERY_INSERT_DELETE, [
+  await transaction.rawQuery(queryInsertDelete, [
     system.keyType.toInt(),
     Uint8List.fromList(system.key),
     Uint8List.fromList(deleteBody.process.process),
@@ -249,7 +252,7 @@ Future<void> deleteEventDB(
     rowId,
   ]);
 
-  await transaction.rawDelete(QUERY_DELETE_EVENT, [
+  await transaction.rawDelete(queryDeleteEvent, [
     system.keyType.toInt(),
     Uint8List.fromList(system.key),
     Uint8List.fromList(deleteBody.process.process),
@@ -262,7 +265,7 @@ Future<void> insertLWWElement(
   int rowId,
   Protocol.LWWElement element,
 ) async {
-  const QUERY = '''
+  const query = '''
     INSERT INTO crdts
     (
       unix_milliseconds,
@@ -272,7 +275,7 @@ Future<void> insertLWWElement(
     VALUES (?, ?, ?);
   ''';
 
-  await transaction.rawQuery(QUERY, [
+  await transaction.rawQuery(query, [
     element.unixMilliseconds.toInt(),
     Uint8List.fromList(element.value),
     rowId,
@@ -583,7 +586,7 @@ Future<Image?> loadImage(
     return null;
   }
 
-  final blobMeta = Protocol.BlobMeta.fromBuffer(metaEvent.content);
+  // final blobMeta = Protocol.BlobMeta.fromBuffer(metaEvent.content);
 
   final contentSignedEvent = await loadEvent(
     db,
@@ -940,10 +943,10 @@ Future<PolycentricModel> setupModel() async {
   final db = await SQFLite.openDatabase(
     Path.join(await SQFLite.getDatabasesPath(), 'neopass13.db'),
     onCreate: (db, version) async {
-      await db.execute(SCHEMA_TABLE_EVENTS);
-      await db.execute(SCHEMA_TABLE_PROCESS_SECRETS);
-      await db.execute(SCHEMA_TABLE_DELETIONS);
-      await db.execute(SCHEMA_TABLE_CRDTS);
+      await db.execute(schemaTableEvents);
+      await db.execute(schemaTableProcessSecrets);
+      await db.execute(schemaTableDeletions);
+      await db.execute(schemaTableCRDTs);
     },
     version: 1,
   );
@@ -980,34 +983,31 @@ class NeopassApp extends StatelessWidget {
   }
 }
 
-final StatelessWidget neopassLogoAndText = Container(
-  child: Column(
-    children: [
-      Image.asset('assets/logo.png'),
-      const SizedBox(height: 20),
-      const Text(
-        'NeoPass',
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: 'inter',
-          fontWeight: FontWeight.w300,
-          fontSize: 32,
-          color: Colors.white,
-        ),
+final Widget neopassLogoAndText = Column(
+  children: [
+    Image.asset('assets/logo.png'),
+    const SizedBox(height: 20),
+    const Text(
+      'NeoPass',
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontFamily: 'inter',
+        fontWeight: FontWeight.w300,
+        fontSize: 32,
+        color: Colors.white,
       ),
-    ],
-  ),
+    ),
+  ],
 );
 
-final StatelessWidget futoLogoAndText = Container(
-    child: Row(
+final Widget futoLogoAndText = Row(
   mainAxisAlignment: MainAxisAlignment.center,
   children: [
     Image.asset('assets/futo-logo.png'),
     const SizedBox(width: 10),
     Image.asset('assets/futo-text.png'),
   ],
-));
+);
 
 class ClaimButtonGeneric extends StatelessWidget {
   final String nameText;
@@ -1169,8 +1169,8 @@ class StandardButtonGeneric extends StatelessWidget {
                   fontWeight: FontWeight.w300,
                 ),
               ),
-              child: const Text("Delete"),
-              onPressed: onDelete),
+              onPressed: onDelete,
+              child: const Text("Delete")),
         ),
       );
     }
@@ -1249,62 +1249,50 @@ Widget claimTypeToVisual(String claimType) {
       {
         return makeButtonIcon(Icons.format_quote, claimType);
       }
-      break;
     case "Skill":
       {
         return makeButtonIcon(Icons.build, claimType);
       }
-      break;
     case "Occupation":
       {
         return makeButtonIcon(Icons.work, claimType);
       }
-      break;
     case "YouTube":
       {
         return makeButtonImage('assets/youtube.png');
       }
-      break;
     case "Odysee":
       {
         return makeButtonImage('assets/odysee.png');
       }
-      break;
     case "Rumble":
       {
         return makeButtonImage('assets/rumble.png');
       }
-      break;
     case "Twitch":
       {
         return makeButtonImage('assets/twitch.png');
       }
-      break;
     case "Instagram":
       {
         return makeButtonImage('assets/instagram.png');
       }
-      break;
     case "Minds":
       {
         return makeButtonImage('assets/Minds.png');
       }
-      break;
     case "Twitter":
       {
         return makeButtonImage('assets/twitter.png');
       }
-      break;
     case "Discord":
       {
         return makeButtonImage('assets/discord.png');
       }
-      break;
     case "Patreon":
       {
         return makeButtonImage('assets/patreon.png');
       }
-      break;
   }
 
   throw Exception("unknown claim type");
@@ -1316,47 +1304,38 @@ Image claimTypeToImage(String claimType) {
       {
         return Image.asset('assets/youtube.png');
       }
-      break;
     case "Odysee":
       {
         return Image.asset('assets/odysee.png');
       }
-      break;
     case "Rumble":
       {
         return Image.asset('assets/rumble.png');
       }
-      break;
     case "Twitch":
       {
         return Image.asset('assets/twitch.png');
       }
-      break;
     case "Instagram":
       {
         return Image.asset('assets/instagram.png');
       }
-      break;
     case "Minds":
       {
         return Image.asset('assets/minds.png');
       }
-      break;
     case "Twitter":
       {
         return Image.asset('assets/twitter.png');
       }
-      break;
     case "Discord":
       {
         return Image.asset('assets/discord.png');
       }
-      break;
     case "Patreon":
       {
         return Image.asset('assets/patreon.png');
       }
-      break;
   }
 
   throw Exception("unknown claim type");
@@ -1374,4 +1353,4 @@ Text makeAppBarTitleText(String text) {
   );
 }
 
-const scaffoldPadding = const EdgeInsets.only(left: 10.0, right: 10.0);
+const scaffoldPadding = EdgeInsets.only(left: 10.0, right: 10.0);
