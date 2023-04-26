@@ -173,9 +173,9 @@ Future<void> importExportBundle(
   await importIdentity(db, keyPair);
 
   await db.transaction((transaction) async {
-    exportBundle.events.events.forEach((protocol.SignedEvent event) async {
+    for (final event in exportBundle.events.events) {
       await ingest(transaction, event);
-    });
+    }
   });
 }
 
@@ -337,7 +337,7 @@ Future<void> ingest(
     await deleteEventDB(transaction, eventId, event.system, deleteBody);
   }
 
-  if (event.lwwElement != null) {
+  if (event.hasLwwElement()) {
     await insertLWWElement(transaction, eventId, event.lwwElement);
   }
 }
