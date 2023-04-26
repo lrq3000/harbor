@@ -53,6 +53,61 @@ void main() {
     });
   });
 
+  group("subtractRange", () {
+    test('both empty are empty', () {
+      expect(Ranges.subtractRange([], []), []);
+    });
+
+    test('left empty result empty', () {
+      expect(Ranges.subtractRange([], [makeRange(5, 10)]), []);
+    });
+
+    test('right empty is identity', () {
+      expect(
+        Ranges.subtractRange([makeRange(5, 10)], []),
+        [makeRange(5, 10)],
+      );
+    });
+
+    test('right totally subtracts left', () {
+      expect(
+        Ranges.subtractRange([makeRange(5, 10)], [makeRange(5, 10)]),
+        [],
+      );
+    });
+
+    test('right subtracts lower portion of left', () {
+      expect(
+        Ranges.subtractRange([makeRange(5, 10)], [makeRange(3, 7)]),
+        [makeRange(8, 10)],
+      );
+    });
+
+    test('right subtracts higher portion of left', () {
+      expect(
+        Ranges.subtractRange([makeRange(5, 10)], [makeRange(7, 15)]),
+        [makeRange(5, 6)],
+      );
+    });
+
+    test('right splits middle of left', () {
+      expect(
+        Ranges.subtractRange([makeRange(1, 10)], [makeRange(3, 6)]),
+        [makeRange(1, 2), makeRange(7, 10)],
+      );
+    });
+
+    test('complex', () {
+      expect(
+        Ranges.subtractRange(
+          [makeRange(1, 10), makeRange(20, 30), makeRange(50, 50)],
+          [makeRange(0, 5), makeRange(8, 12), makeRange(31, 60)]
+        ),
+        [makeRange(6, 7), makeRange(20, 30)],
+      );
+    });
+  });
+
   group("takeRangeMaxItems", () {
     test('empty returns empty', () {
       expect(Ranges.takeRangesMaxItems([], FixNum.Int64(10)), []);

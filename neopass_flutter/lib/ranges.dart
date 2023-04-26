@@ -62,6 +62,52 @@ void insert(List<Range> ranges, FixNum.Int64 item) {
   ranges.add(Range(low: item, high: item));
 }
 
+List<Range> subtractRange(List<Range> left, List<Range> right) {
+  final List<Range> result = [];
+
+  for (final range in left) {
+    result.add(Range(low: range.low, high: range.high));
+  }
+
+  for (final range in right) {
+    for (var i = result.length - 1; i >= 0; i--) {
+      if (
+        range.high < result[i].low ||
+        range.low > result[i].high
+      ) {
+        continue;
+      } else if (
+        range.low <= result[i].low &&
+        range.high >= result[i].high
+      ) {
+        result.removeAt(i);
+      } else if (range.low <= result[i].low) {
+        result[i].low = range.high + 1;
+      } else if (range.high >= result[i].high) {
+        result[i].high = range.low - 1;
+      } else if (
+        range.low > result[i].low &&
+        range.high < result[i].high
+      ) {
+        final current = result[i];
+        result.removeAt(i);
+        result.add(Range(
+          low: current.low,
+          high: range.low - 1,
+        ));
+        result.add(Range(
+          low: range.high + 1,
+          high: current.high,
+        ));
+      } else {
+        throw Exception("impossible");
+      }
+    }
+  }
+
+  return result;
+}
+
 List<Range> takeRangesMaxItems(List<Range> ranges, FixNum.Int64 limit) {
   if (limit == 0) {
     return [];
