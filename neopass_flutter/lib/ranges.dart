@@ -17,21 +17,16 @@ class Range {
 }
 
 void insert(List<Range> ranges, FixNum.Int64 item) {
-  for(var i = 0; i < ranges.length; i++) {
+  for (var i = 0; i < ranges.length; i++) {
     // within existing range
-    if (
-      item >= ranges[i].low &&
-      item <= ranges[i].high
-    ) {
+    if (item >= ranges[i].low && item <= ranges[i].high) {
       return;
     }
 
     // merging range
-    if (
-      i < (ranges.length - 1) &&
-      item == (ranges[i].high + 1) &&
-      item == (ranges[i + 1].low - 1)
-    ) {
+    if (i < (ranges.length - 1) &&
+        item == (ranges[i].high + 1) &&
+        item == (ranges[i + 1].low - 1)) {
       ranges[i].high = ranges[i + 1].high;
       ranges.removeAt(i + 1);
       return;
@@ -49,11 +44,9 @@ void insert(List<Range> ranges, FixNum.Int64 item) {
       return;
     }
 
-    if (
-      item > ranges[i].high &&
-      i < (ranges.length - 1) &&
-      item < ranges[i + 1].low
-    ) {
+    if (item > ranges[i].high &&
+        i < (ranges.length - 1) &&
+        item < ranges[i + 1].low) {
       ranges.insert(i + 1, Range(low: item, high: item));
       return;
     }
@@ -71,24 +64,15 @@ List<Range> subtractRange(List<Range> left, List<Range> right) {
 
   for (final range in right) {
     for (var i = result.length - 1; i >= 0; i--) {
-      if (
-        range.high < result[i].low ||
-        range.low > result[i].high
-      ) {
+      if (range.high < result[i].low || range.low > result[i].high) {
         continue;
-      } else if (
-        range.low <= result[i].low &&
-        range.high >= result[i].high
-      ) {
+      } else if (range.low <= result[i].low && range.high >= result[i].high) {
         result.removeAt(i);
       } else if (range.low <= result[i].low) {
         result[i].low = range.high + 1;
       } else if (range.high >= result[i].high) {
         result[i].high = range.low - 1;
-      } else if (
-        range.low > result[i].low &&
-        range.high < result[i].high
-      ) {
+      } else if (range.low > result[i].low && range.high < result[i].high) {
         final current = result[i];
         result.removeAt(i);
         result.add(Range(

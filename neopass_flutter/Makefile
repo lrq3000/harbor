@@ -11,7 +11,12 @@ lint:
 	flutter analyze
 
 format:
-	dart format lib/main.dart lib/pages/* lib/api_methods.dart
+	dart format \
+		lib/main.dart \
+		lib/ranges.dart \
+		lib/pages/* \
+		lib/api_methods.dart \
+		test/*
 
 icons:
 	flutter pub run flutter_launcher_icons:main

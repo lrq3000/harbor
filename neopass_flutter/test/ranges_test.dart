@@ -100,9 +100,8 @@ void main() {
     test('complex', () {
       expect(
         Ranges.subtractRange(
-          [makeRange(1, 10), makeRange(20, 30), makeRange(50, 50)],
-          [makeRange(0, 5), makeRange(8, 12), makeRange(31, 60)]
-        ),
+            [makeRange(1, 10), makeRange(20, 30), makeRange(50, 50)],
+            [makeRange(0, 5), makeRange(8, 12), makeRange(31, 60)]),
         [makeRange(6, 7), makeRange(20, 30)],
       );
     });
@@ -144,4 +143,3 @@ void main() {
     });
   });
 }
-
