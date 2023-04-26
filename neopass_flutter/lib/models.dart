@@ -1,12 +1,12 @@
-import 'package:fixnum/fixnum.dart' as FixNum;
+import 'package:fixnum/fixnum.dart' as fixnum;
 
 class ContentType {
-  static final ContentTypeDelete = new FixNum.Int64(1);
-  static final ContentTypeUsername = new FixNum.Int64(5);
-  static final ContentTypeDescription = new FixNum.Int64(6);
-  static final ContentTypeBlobMeta = new FixNum.Int64(7);
-  static final ContentTypeBlobSection = new FixNum.Int64(8);
-  static final ContentTypeAvatar = new FixNum.Int64(9);
-  static final ContentTypeClaim = new FixNum.Int64(12);
-  static final ContentTypeVouch = new FixNum.Int64(13);
+  static final contentTypeDelete = fixnum.Int64(1);
+  static final contentTypeUsername = fixnum.Int64(5);
+  static final contentTypeDescription = fixnum.Int64(6);
+  static final contentTypeBlobMeta = fixnum.Int64(7);
+  static final contentTypeBlobSection = fixnum.Int64(8);
+  static final contentTypeAvatar = fixnum.Int64(9);
+  static final contentTypeClaim = fixnum.Int64(12);
+  static final contentTypeVouch = fixnum.Int64(13);
 }
