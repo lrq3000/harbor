@@ -61,3 +61,28 @@ void insert(List<Range> ranges, FixNum.Int64 item) {
 
   ranges.add(Range(low: item, high: item));
 }
+
+List<Range> takeRangesMaxItems(List<Range> ranges, FixNum.Int64 limit) {
+  if (limit == 0) {
+    return [];
+  }
+
+  var sum = FixNum.Int64(0);
+  final List<Range> result = [];
+
+  for (final range in ranges) {
+    final count = range.high - range.low + 1;
+
+    final maxItems = limit - sum;
+
+    if (count <= maxItems) {
+      result.add(range);
+      sum += count;
+    } else {
+      result.add(Range(high: range.low + maxItems, low: range.low));
+      break;
+    }
+  }
+
+  return result;
+}
