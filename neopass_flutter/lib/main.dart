@@ -13,6 +13,7 @@ import 'api_methods.dart';
 import 'pages/new_or_import_profile.dart';
 import 'models.dart' as models;
 import 'protocol.pb.dart' as protocol;
+import 'logger.dart';
 
 const schemaTableEvents = '''
 CREATE TABLE IF NOT EXISTS events (
@@ -101,8 +102,8 @@ Future<ProcessSecret> importIdentity(
   final publicProto = protocol.PublicKey();
   publicProto.keyType = fixnum.Int64(1);
   publicProto.key = public.bytes;
-  print("new identity");
-  print(base64Url.encode(publicProto.writeToBuffer()));
+
+  logger.i("imported: ${base64Url.encode(publicProto.writeToBuffer())}");
 
   return ProcessSecret(keyPair, process);
 }
@@ -308,7 +309,7 @@ Future<void> ingest(
   }
 
   if (await isEventDeleted(transaction, event)) {
-    print("event already deleted");
+    logger.d("event already deleted");
     return;
   }
 
@@ -580,8 +581,9 @@ Future<Image?> loadImage(
   final metaEvent = protocol.Event.fromBuffer(metaSignedEvent.event);
 
   if (metaEvent.contentType != models.ContentType.contentTypeBlobMeta) {
-    print("expected blob meta event");
-    print(metaEvent.contentType);
+    logger.d(
+      "expected blob meta event but got: ${metaEvent.contentType.toString()}"
+    );
 
     return null;
   }
@@ -602,7 +604,10 @@ Future<Image?> loadImage(
   final contentEvent = protocol.Event.fromBuffer(contentSignedEvent.event);
 
   if (contentEvent.contentType != models.ContentType.contentTypeBlobSection) {
-    print("expected blob section event");
+    logger.d(
+      "expected blob section event but got: "
+      "${contentEvent.contentType.toString()}"
+    );
 
     return null;
   }
@@ -628,7 +633,10 @@ Future<Image?> loadLatestAvatar(
     final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
 
     if (event.contentType != models.ContentType.contentTypeAvatar) {
-      print("expected content type avatar");
+        logger.d(
+          "expected blob section event but got: "
+          "${event.contentType.toString()}"
+        );
 
       return null;
     }
@@ -657,7 +665,7 @@ Future<protocol.Pointer> saveEvent(sqflite.Database db,
     processInfo.process,
   );
 
-  print(clock);
+  logger.d(clock);
 
   event.system = system;
   event.process = process;
@@ -697,7 +705,7 @@ Future<void> deleteEvent(
   );
 
   if (signedEvent == null) {
-    print("cannot delete event that does not exist");
+    logger.d("cannot delete event that does not exist");
     return;
   } else {
     final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);

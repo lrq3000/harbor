@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:file_picker/file_picker.dart' as file_picker;
 
+import '../logger.dart';
 import '../main.dart' as main;
 import '../protocol.pb.dart' as protocol;
 import 'backup.dart';
@@ -216,7 +217,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
             await main.makeVouch(state.db, identity.processSecret, pointer);
           } catch (err) {
-            print(err);
+            logger.e(err);
           }
         },
       ),
@@ -306,8 +307,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   identity.processSecret,
                   pointer,
                 );
-
-                print("set avatar");
               }
             },
           ),

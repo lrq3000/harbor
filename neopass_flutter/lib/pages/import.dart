@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' as services;
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
+import '../logger.dart';
 import '../protocol.pb.dart' as protocol;
 import '../main.dart' as main;
 import 'new_or_import_profile.dart';
@@ -28,7 +29,7 @@ Future<void> importFromBase64(
       }));
     }
   } catch (err) {
-    print(err);
+    logger.e(err);
   }
 }
 
@@ -73,7 +74,7 @@ class ImportPage extends StatelessWidget {
                     await importFromBase64(context, state, rawScan);
                   }
                 } catch (err) {
-                  print(err);
+                  logger.e(err);
                 }
               },
             ),

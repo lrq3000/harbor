@@ -3,6 +3,7 @@ import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
 
 import 'protocol.pb.dart' as protocol;
+import 'logger.dart';
 
 void checkResponse(String name, http.Response response) {
   if (response.statusCode != 200) {
@@ -23,7 +24,7 @@ Future<void> postEvents(protocol.Events payload) async {
 
     checkResponse('postEvents', response);
   } catch (err) {
-    print(err);
+    logger.w(err);
   }
 }
 
@@ -91,7 +92,7 @@ Future<bool> requestVerification(
 
     return true;
   } catch (err) {
-    print(err);
+    logger.w(err);
   }
 
   return false;
