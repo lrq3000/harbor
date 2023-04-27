@@ -582,8 +582,7 @@ Future<Image?> loadImage(
 
   if (metaEvent.contentType != models.ContentType.contentTypeBlobMeta) {
     logger.d(
-      "expected blob meta event but got: ${metaEvent.contentType.toString()}"
-    );
+        "expected blob meta event but got: ${metaEvent.contentType.toString()}");
 
     return null;
   }
@@ -604,10 +603,8 @@ Future<Image?> loadImage(
   final contentEvent = protocol.Event.fromBuffer(contentSignedEvent.event);
 
   if (contentEvent.contentType != models.ContentType.contentTypeBlobSection) {
-    logger.d(
-      "expected blob section event but got: "
-      "${contentEvent.contentType.toString()}"
-    );
+    logger.d("expected blob section event but got: "
+        "${contentEvent.contentType.toString()}");
 
     return null;
   }
@@ -633,10 +630,8 @@ Future<Image?> loadLatestAvatar(
     final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
 
     if (event.contentType != models.ContentType.contentTypeAvatar) {
-        logger.d(
-          "expected blob section event but got: "
-          "${event.contentType.toString()}"
-        );
+      logger.d("expected blob section event but got: "
+          "${event.contentType.toString()}");
 
       return null;
     }
