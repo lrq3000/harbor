@@ -1,0 +1,28 @@
+image: ghcr.io/cirruslabs/flutter:3.7.11
+
+stages:
+  - build
+  - test
+  - format
+  - lint
+
+build:
+  stage: build
+  script:
+    - cd neopass_flutter && make build-apk
+
+test:
+  stage: test
+  script:
+    - cd neopass_flutter && make test
+
+format:
+  stage: format
+  script:
+    - cd neopass_flutter && make format
+
+lint:
+  stage: lint
+  script:
+    - cd neopass_flutter && make lint
+

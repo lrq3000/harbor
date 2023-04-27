@@ -1,3 +1,5 @@
+.PHONY: run clean build-apk test lint format icons proto
+
 run:
 	flutter run
 
@@ -6,6 +8,9 @@ clean:
 
 build-apk:
 	flutter build apk
+
+test:
+	flutter test
 
 lint:
 	flutter analyze \
@@ -16,7 +21,7 @@ lint:
 		test/*
 
 format:
-	dart format \
+	dart format --set-exit-if-changed \
 		lib/main.dart \
 		lib/ranges.dart \
 		lib/pages/* \
