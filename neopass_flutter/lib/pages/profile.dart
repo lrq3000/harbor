@@ -168,6 +168,43 @@ class _ProfilePageState extends State<ProfilePage> {
         });
   }
 
+  Future<void> deleteClaimDialog(
+    BuildContext context,
+    main.PolycentricModel state,
+    main.ProcessInfo identity,
+    protocol.Pointer pointer,
+  ) async {
+    await showDialog<AlertDialog>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Delete Claim"),
+            content: const Text("Are you sure you want to delete this claim? "
+                "This action cannot be undone."),
+            actions: [
+              TextButton(
+                child: const Text("Cancel"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                  child: const Text("Delete"),
+                  onPressed: () async {
+                    await main.deleteEvent(
+                        state.db, identity.processSecret, pointer);
+
+                    await state.mLoadIdentities();
+
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
+                  }),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
@@ -196,10 +233,7 @@ class _ProfilePageState extends State<ProfilePage> {
             }));
           },
           onDelete: () async {
-            await main.deleteEvent(
-                state.db, identity.processSecret, claims[i].pointer);
-
-            await state.mLoadIdentities();
+            deleteClaimDialog(context, state, identity, claims[i].pointer);
           },
         ));
       }
