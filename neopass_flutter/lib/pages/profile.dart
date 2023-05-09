@@ -330,32 +330,34 @@ class _ProfilePageState extends State<ProfilePage> {
           backgroundColor: main.tokenColor,
           foregroundColor: Colors.black,
         ),
-        child: Column(
-          children: [
-            const SizedBox(height: 5),
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: Text(identity.description,
-                  style: const TextStyle(
-                    fontFamily: 'inter',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white,
-                  )),
-            ),
-            const SizedBox(height: 10),
-            const Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: Icon(
-                Icons.edit_outlined,
-                size: 15,
-                semanticLabel: "edit",
-                color: Colors.white,
+        child: Stack(children: [
+          Column(
+            children: [
+              const SizedBox(height: 10),
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(identity.description,
+                    style: const TextStyle(
+                      fontFamily: 'inter',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white,
+                    )),
               ),
+              const SizedBox(height: 10),
+            ],
+          ),
+          const Positioned(
+            right: 0,
+            bottom: 10,
+            child: Icon(
+              Icons.edit_outlined,
+              size: 15,
+              semanticLabel: "edit",
+              color: Colors.white,
             ),
-            const SizedBox(height: 5),
-          ],
-        ),
+          ),
+        ]),
         onPressed: () {
           editDescription(context, state, identity.processSecret);
         },
