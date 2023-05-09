@@ -1171,6 +1171,14 @@ class StandardButtonGeneric extends StatelessWidget {
                   fontSize: 10,
                   fontWeight: FontWeight.w300,
                 ),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.zero,
+                    bottomLeft: Radius.zero,
+                    topRight: Radius.circular(2),
+                    bottomRight: Radius.circular(2),
+                  ),
+                ),
               ),
               onPressed: onDelete,
               child: const Text("Delete")),
