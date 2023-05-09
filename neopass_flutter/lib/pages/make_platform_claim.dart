@@ -66,7 +66,7 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(40.0),
                 ),
-                labelText: "Profile name",
+                labelText: "Profile handle",
                 labelStyle: const TextStyle(
                   color: Colors.white,
                 ),
