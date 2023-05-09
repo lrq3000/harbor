@@ -32,9 +32,7 @@ class BackupPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 150),
-              main.neopassLogoAndText,
-              const SizedBox(height: 120),
+              const SizedBox(height: 50),
               Container(
                 alignment: AlignmentDirectional.centerStart,
                 child: const Text(
@@ -47,6 +45,7 @@ class BackupPage extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 10),
               main.StandardButton(
                 actionText: 'Share',
                 actionDescription: 'Send your identity to another app',
