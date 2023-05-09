@@ -450,7 +450,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       main.StandardButton(
         actionText: 'Delete account',
-        actionDescription: 'Permanently account from this device',
+        actionDescription: 'Permanently delete account from this device',
         icon: Icons.delete,
         onPressed: () async {
           deleteAccountDialog(context, state, identity);
