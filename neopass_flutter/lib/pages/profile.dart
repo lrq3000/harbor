@@ -47,13 +47,13 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             actions: [
               TextButton(
-                child: const Text("cancel"),
+                child: const Text("Cancel"),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               TextButton(
-                child: const Text("submit"),
+                child: const Text("Submit"),
                 onPressed: () async {
                   if (usernameController.text.isEmpty) {
                     return;
@@ -97,13 +97,13 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             actions: [
               TextButton(
-                child: const Text("cancel"),
+                child: const Text("Cancel"),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               TextButton(
-                child: const Text("submit"),
+                child: const Text("Submit"),
                 onPressed: () async {
                   if (descriptionController.text.isEmpty) {
                     return;
@@ -117,6 +117,50 @@ class _ProfilePageState extends State<ProfilePage> {
                   if (context.mounted) {
                     Navigator.of(context).pop();
                   }
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  Future<void> deleteAccountDialog(
+    BuildContext context,
+    main.PolycentricModel state,
+    main.ProcessInfo identity,
+  ) async {
+    await showDialog<AlertDialog>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Delete Account"),
+            content: const Text("Are you sure you want to delete your account? "
+                "This action cannot be undone."),
+            actions: [
+              TextButton(
+                child: const Text("Cancel"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text("Delete"),
+                onPressed: () async {
+                  final public =
+                      await identity.processSecret.system.extractPublicKey();
+
+                  await main.deleteIdentity(
+                      state.db, public.bytes, identity.processSecret.process);
+
+                  if (context.mounted) {
+                    Navigator.push(context,
+                        MaterialPageRoute<NewOrImportProfilePage>(
+                            builder: (context) {
+                      return const NewOrImportProfilePage();
+                    }));
+                  }
+
+                  await state.mLoadIdentities();
                 },
               ),
             ],
@@ -373,19 +417,7 @@ class _ProfilePageState extends State<ProfilePage> {
         actionDescription: 'Permanently account from this device',
         icon: Icons.delete,
         onPressed: () async {
-          final public = await identity.processSecret.system.extractPublicKey();
-
-          await main.deleteIdentity(
-              state.db, public.bytes, identity.processSecret.process);
-
-          if (context.mounted) {
-            Navigator.push(context,
-                MaterialPageRoute<NewOrImportProfilePage>(builder: (context) {
-              return const NewOrImportProfilePage();
-            }));
-          }
-
-          await state.mLoadIdentities();
+          deleteAccountDialog(context, state, identity);
         },
       ),
       const SizedBox(height: 30),
