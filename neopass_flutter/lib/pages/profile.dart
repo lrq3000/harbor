@@ -163,15 +163,134 @@ class _ProfilePageState extends State<ProfilePage> {
       return result;
     }
 
-    List<StatelessWidget> listViewChildren = [
-      const Text(
-        'Claims',
-        textAlign: TextAlign.left,
-        style: TextStyle(
-          fontFamily: 'inter',
-          fontSize: 16,
-          fontWeight: FontWeight.w300,
-          color: Colors.white,
+    List<Widget> listViewChildren = [
+      InkWell(
+        child: Container(
+          margin: const EdgeInsets.only(top: 50),
+          child: CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: 50,
+            foregroundImage:
+                identity.avatar != null ? identity.avatar!.image : null,
+            child: const Text(
+              'Tap to set avatar',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+        onTap: () async {
+          file_picker.FilePickerResult? result =
+              await file_picker.FilePicker.platform.pickFiles(
+            type: file_picker.FileType.custom,
+            allowedExtensions: ['png', 'jpg'],
+          );
+
+          if (result != null) {
+            final bytes = await File(result.files.single.path!).readAsBytes();
+
+            final pointer = await main.publishBlob(
+              state.db,
+              identity.processSecret,
+              "image/jpeg",
+              bytes,
+            );
+
+            await main.setAvatar(
+              state.db,
+              identity.processSecret,
+              pointer,
+            );
+          }
+        },
+      ),
+      const SizedBox(height: 10),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(width: 30),
+          Text(
+            identity.username,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontFamily: 'inter',
+              fontWeight: FontWeight.w300,
+              fontSize: 32,
+              color: Colors.white,
+            ),
+          ),
+          OutlinedButton(
+            child: const Icon(
+              Icons.edit_outlined,
+              size: 20,
+              semanticLabel: "edit",
+              color: Colors.white,
+            ),
+            onPressed: () {
+              editUsername(context, state, identity.processSecret);
+            },
+          ),
+        ],
+      ),
+      const SizedBox(height: 10),
+      const Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: Text(
+          "About",
+          style: TextStyle(
+            fontFamily: 'inter',
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      const SizedBox(height: 10),
+      OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          backgroundColor: main.tokenColor,
+          foregroundColor: Colors.black,
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 5),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: Text(identity.description,
+                  style: const TextStyle(
+                    fontFamily: 'inter',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white,
+                  )),
+            ),
+            const SizedBox(height: 10),
+            const Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: Icon(
+                Icons.edit_outlined,
+                size: 15,
+                semanticLabel: "edit",
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 5),
+          ],
+        ),
+        onPressed: () {
+          editDescription(context, state, identity.processSecret);
+        },
+      ),
+      const SizedBox(height: 10),
+      const Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: Text(
+          'Claims',
+          style: TextStyle(
+            fontFamily: 'inter',
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+            color: Colors.white,
+          ),
         ),
       ),
     ];
@@ -179,11 +298,11 @@ class _ProfilePageState extends State<ProfilePage> {
     listViewChildren.addAll(renderClaims(identity.claims));
 
     listViewChildren.addAll([
-      Container(
-        margin: const EdgeInsets.only(top: 20),
-        child: const Text(
-          'Other',
-          textAlign: TextAlign.left,
+      const SizedBox(height: 10),
+      const Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: Text(
+          'Actions',
           style: TextStyle(
             fontFamily: 'inter',
             fontSize: 16,
@@ -263,137 +382,16 @@ class _ProfilePageState extends State<ProfilePage> {
           await state.mLoadIdentities();
         },
       ),
+      const SizedBox(height: 30),
     ]);
 
     return Scaffold(
         body: Container(
       padding: main.scaffoldPadding,
-      child: Column(
-        children: [
-          InkWell(
-            child: Container(
-              margin: const EdgeInsets.only(top: 50),
-              child: CircleAvatar(
-                backgroundColor: Colors.white,
-                radius: 50,
-                foregroundImage:
-                    identity.avatar != null ? identity.avatar!.image : null,
-                child: const Text(
-                  'Tap to set avatar',
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-            onTap: () async {
-              file_picker.FilePickerResult? result =
-                  await file_picker.FilePicker.platform.pickFiles(
-                type: file_picker.FileType.custom,
-                allowedExtensions: ['png', 'jpg'],
-              );
-
-              if (result != null) {
-                final bytes =
-                    await File(result.files.single.path!).readAsBytes();
-
-                final pointer = await main.publishBlob(
-                  state.db,
-                  identity.processSecret,
-                  "image/jpeg",
-                  bytes,
-                );
-
-                await main.setAvatar(
-                  state.db,
-                  identity.processSecret,
-                  pointer,
-                );
-              }
-            },
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(width: 30),
-              Text(
-                identity.username,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontFamily: 'inter',
-                  fontWeight: FontWeight.w300,
-                  fontSize: 32,
-                  color: Colors.white,
-                ),
-              ),
-              OutlinedButton(
-                child: const Icon(
-                  Icons.edit_outlined,
-                  size: 20,
-                  semanticLabel: "edit",
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  editUsername(context, state, identity.processSecret);
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          const Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Text(
-              "About",
-              style: TextStyle(
-                fontFamily: 'inter',
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              backgroundColor: main.tokenColor,
-              foregroundColor: Colors.black,
-            ),
-            child: Column(
-              children: [
-                const SizedBox(height: 5),
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text(identity.description,
-                      style: const TextStyle(
-                        fontFamily: 'inter',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white,
-                      )),
-                ),
-                const SizedBox(height: 10),
-                const Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: Icon(
-                    Icons.edit_outlined,
-                    size: 15,
-                    semanticLabel: "edit",
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 5),
-              ],
-            ),
-            onPressed: () {
-              editDescription(context, state, identity.processSecret);
-            },
-          ),
-          Expanded(
-            child: ListView(
-              shrinkWrap: true,
-              children: listViewChildren,
-            ),
-          ),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          children: listViewChildren,
+        ),
       ),
     ));
   }
