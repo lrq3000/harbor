@@ -200,6 +200,8 @@ class _ProfilePageState extends State<ProfilePage> {
               identity.processSecret,
               pointer,
             );
+
+            await state.mLoadIdentities();
           }
         },
       ),
