@@ -280,22 +280,26 @@ class _ProfilePageState extends State<ProfilePage> {
           editDescription(context, state, identity.processSecret);
         },
       ),
-      const SizedBox(height: 10),
-      const Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: Text(
-          'Claims',
-          style: TextStyle(
-            fontFamily: 'inter',
-            fontSize: 16,
-            fontWeight: FontWeight.w300,
-            color: Colors.white,
-          ),
-        ),
-      ),
     ];
 
-    listViewChildren.addAll(renderClaims(identity.claims));
+    if (identity.claims.isNotEmpty) {
+      listViewChildren.addAll([
+        const SizedBox(height: 10),
+        const Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: Text(
+            'Claims',
+            style: TextStyle(
+              fontFamily: 'inter',
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ]);
+      listViewChildren.addAll(renderClaims(identity.claims));
+    }
 
     listViewChildren.addAll([
       const SizedBox(height: 10),
