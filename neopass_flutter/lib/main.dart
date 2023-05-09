@@ -1365,3 +1365,53 @@ Text makeAppBarTitleText(String text) {
 }
 
 const scaffoldPadding = EdgeInsets.only(left: 10.0, right: 10.0);
+
+class LabeledTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String title;
+  final String label;
+
+  const LabeledTextField({
+    Key? key,
+    required this.controller,
+    required this.title,
+    required this.label,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(
+        title,
+        style: const TextStyle(
+          fontFamily: 'inter',
+          fontSize: 16,
+          fontWeight: FontWeight.w300,
+          color: Colors.white,
+        ),
+      ),
+      const SizedBox(height: 8),
+      TextField(
+        controller: controller,
+        maxLines: 1,
+        cursorColor: Colors.white,
+        style: const TextStyle(color: Colors.white, fontSize: 13),
+        decoration: InputDecoration(
+          filled: true,
+          isDense: true,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          fillColor: formColor,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          labelText: label,
+          labelStyle: const TextStyle(
+            color: Colors.grey,
+          ),
+          floatingLabelBehavior: FloatingLabelBehavior.never,
+        ),
+      ),
+    ]);
+  }
+}

@@ -50,38 +50,10 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            const Text(
-              "Freeform",
-              style: TextStyle(
-                fontFamily: 'inter',
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 5),
-            TextField(
+            main.LabeledTextField(
               controller: textController,
-              maxLines: 1,
-              cursorColor: Colors.white,
-              style: const TextStyle(
-                fontFamily: 'inter',
-                fontSize: 14,
-                fontWeight: FontWeight.w300,
-                color: Colors.white,
-              ),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: main.formColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(40.0),
-                ),
-                labelText: "Type of claim",
-                labelStyle: const TextStyle(
-                  color: Colors.white,
-                ),
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-              ),
+              title: "Freeform",
+              label: "Type of claim",
             ),
             Align(
               alignment: AlignmentDirectional.centerEnd,

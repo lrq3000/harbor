@@ -44,34 +44,10 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
               ),
             ),
             const SizedBox(height: 100),
-            const Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: Text(
-                "Profile information",
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            const SizedBox(height: 5),
-            TextField(
+            main.LabeledTextField(
               controller: textController,
-              maxLines: 1,
-              cursorColor: Colors.white,
-              style: const TextStyle(color: Colors.white, fontSize: 12),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: main.formColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(40.0),
-                ),
-                labelText: "Profile handle",
-                labelStyle: const TextStyle(
-                  color: Colors.white,
-                ),
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-              ),
+              title: "Profile information",
+              label: "Profile handle",
             ),
             const SizedBox(height: 150),
             Align(

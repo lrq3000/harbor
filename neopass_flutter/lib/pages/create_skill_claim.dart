@@ -64,33 +64,10 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            const Text(
-              "Name",
-              style: TextStyle(
-                fontFamily: 'inter',
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 5),
-            TextField(
+            main.LabeledTextField(
               controller: textController,
-              maxLines: 1,
-              cursorColor: Colors.white,
-              style: const TextStyle(color: Colors.white, fontSize: 12),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: main.formColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(40.0),
-                ),
-                labelText: "Python programming, Web Marketing, ...",
-                labelStyle: const TextStyle(
-                  color: Colors.white,
-                ),
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-              ),
+              title: "Name",
+              label: "Python programming, Web marketing, ...",
             ),
           ],
         ),

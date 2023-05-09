@@ -64,91 +64,22 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            const Text(
-              "Organization",
-              style: TextStyle(
-                fontFamily: 'inter',
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 5),
-            TextField(
+            main.LabeledTextField(
               controller: textControllerOrganization,
-              maxLines: 1,
-              cursorColor: Colors.white,
-              style: const TextStyle(color: Colors.white, fontSize: 12),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: main.formColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(40.0),
-                ),
-                labelText: "Stanford University, Amazon, Goldman Sachs, ...",
-                labelStyle: const TextStyle(
-                  color: Colors.white,
-                ),
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-              ),
+              title: "Organization",
+              label: "Stanford University, Amazon, Goldman Sachs, ...",
             ),
             const SizedBox(height: 20),
-            const Text(
-              "Role",
-              style: TextStyle(
-                fontFamily: 'inter',
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 5),
-            TextField(
+            main.LabeledTextField(
               controller: textControllerRole,
-              maxLines: 1,
-              cursorColor: Colors.white,
-              style: const TextStyle(color: Colors.white, fontSize: 12),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: main.formColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(40.0),
-                ),
-                labelText: "Professor of Physics, Engineer, Analyst, ...",
-                labelStyle: const TextStyle(
-                  color: Colors.white,
-                ),
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-              ),
+              title: "Role",
+              label: "Professor of Physics, Engineer, Analyst, ...",
             ),
             const SizedBox(height: 20),
-            const Text(
-              "Location",
-              style: TextStyle(
-                fontFamily: 'inter',
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 5),
-            TextField(
+            main.LabeledTextField(
               controller: textControllerLocation,
-              maxLines: 1,
-              cursorColor: Colors.white,
-              style: const TextStyle(color: Colors.white, fontSize: 12),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: main.formColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(40.0),
-                ),
-                labelText: "Midwest, Massachusetts, New York City, ...",
-                labelStyle: const TextStyle(
-                  color: Colors.white,
-                ),
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-              ),
+              title: "Location",
+              label: "Midwest, Massachusetts, New York City, ...",
             ),
           ],
         ),
