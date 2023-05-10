@@ -5,6 +5,12 @@ import 'present.dart';
 import 'add_token.dart';
 import '../main.dart' as main;
 
+const Set<String> manualVerificationClaimTypes = {
+  "Generic",
+  "Skill",
+  "Occupation"
+};
+
 class ClaimPage extends StatefulWidget {
   final int identityIndex;
   final int claimIndex;
@@ -102,20 +108,21 @@ class _ClaimPageState extends State<ClaimPage> {
                 ),
               ),
             ),
-            main.StandardButton(
-              actionText: 'Automated',
-              actionDescription:
-                  'Get an automated authority to vouch for this claim',
-              icon: Icons.refresh,
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute<AddTokenPage>(builder: (context) {
-                  return AddTokenPage(
-                    claim: claim,
-                  );
-                }));
-              },
-            ),
+            if (!manualVerificationClaimTypes.contains(claim.claimType))
+              main.StandardButton(
+                actionText: 'Automated',
+                actionDescription:
+                    'Get an automated authority to vouch for this claim',
+                icon: Icons.refresh,
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute<AddTokenPage>(builder: (context) {
+                    return AddTokenPage(
+                      claim: claim,
+                    );
+                  }));
+                },
+              ),
             main.StandardButton(
               actionText: 'Manual',
               actionDescription:
