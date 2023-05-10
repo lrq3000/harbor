@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/services.dart' as services;
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +9,7 @@ Future<void> handleShareClipboard(
   main.ProcessSecret processSecret,
 ) async {
   final exportBundle = await main.makeExportBundle(state.db, processSecret);
-  final encoded = base64Url.encode(exportBundle.writeToBuffer());
-  await services.Clipboard.setData(services.ClipboardData(text: encoded));
+  await services.Clipboard.setData(services.ClipboardData(text: exportBundle));
 }
 
 class BackupPage extends StatelessWidget {

@@ -23,7 +23,9 @@ CREATE TABLE IF NOT EXISTS events (
     process         BLOB    NOT NULL,
     logical_clock   INTEGER NOT NULL,
     content_type    INTEGER NOT NULL,
-    raw_event       BLOB    NOT NULL
+    raw_event       BLOB    NOT NULL,
+
+    UNIQUE(system_key_type, system_key, process, logical_clock)
 );
 ''';
 
@@ -33,7 +35,9 @@ CREATE TABLE IF NOT EXISTS process_secrets (
     system_key_type INTEGER NOT NULL,
     system_key      BLOB    NOT NULL,
     system_key_pub  BLOB    NOT NULL,
-    process         BLOB    NOT NULL
+    process         BLOB    NOT NULL,
+
+    UNIQUE(system_key_type, system_key, process)
 );
 ''';
 
@@ -135,7 +139,7 @@ Future<List<ProcessSecret>> loadIdentities(sqflite.Database db) async {
   return result;
 }
 
-Future<protocol.ExportBundle> makeExportBundle(
+Future<String> makeExportBundle(
   sqflite.Database db,
   ProcessSecret processSecret,
 ) async {
@@ -153,7 +157,7 @@ Future<protocol.ExportBundle> makeExportBundle(
   exportBundle.keyPair = keyPair;
   exportBundle.events = events;
 
-  return exportBundle;
+  return "polycentric://${base64Url.encode(exportBundle.writeToBuffer())}";
 }
 
 Future<void> importExportBundle(
@@ -944,7 +948,7 @@ class PolycentricModel extends ChangeNotifier {
 
 Future<PolycentricModel> setupModel() async {
   final db = await sqflite.openDatabase(
-    path.join(await sqflite.getDatabasesPath(), 'neopass13.db'),
+    path.join(await sqflite.getDatabasesPath(), 'neopass14.db'),
     onCreate: (db, version) async {
       await db.execute(schemaTableEvents);
       await db.execute(schemaTableProcessSecrets);

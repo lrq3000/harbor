@@ -16,6 +16,14 @@ Future<void> importFromBase64(
   String text,
 ) async {
   try {
+    const prefix = "polycentric://";
+
+    if (!text.startsWith(prefix)) {
+      return;
+    }
+
+    text = text.substring(prefix.length);
+
     final decoded = protocol.ExportBundle.fromBuffer(
       base64.decode(text),
     );
