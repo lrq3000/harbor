@@ -159,6 +159,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
       ),
       body: Container(
         padding: main.scaffoldPadding,
+        width: double.infinity,
         child: Column(
           children: columnChildren,
         ),
