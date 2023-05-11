@@ -76,7 +76,7 @@ Future<bool> requestVerification(
   String claimType,
 ) async {
   final url = "https://autoupdate.unkto.com/verifiers/"
-      "${claimType.toLowerCase}"
+      "${claimType.toLowerCase()}"
       "/api/v1/vouch";
 
   try {

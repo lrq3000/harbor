@@ -13,7 +13,7 @@ class AddTokenPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final token = convert.base64Url.encode(claim.pointer.system.key);
+    final token = convert.base64.encode(claim.pointer.system.key);
 
     return Scaffold(
       appBar: AppBar(
