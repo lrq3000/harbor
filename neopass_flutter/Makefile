@@ -16,6 +16,8 @@ lint:
 	flutter analyze \
 		lib/main.dart \
 		lib/ranges.dart \
+		lib/queries.dart \
+		lib/synchronizer.dart \
 		lib/pages/* \
 		lib/api_methods.dart \
 		test/*
@@ -23,7 +25,9 @@ lint:
 format:
 	dart format --set-exit-if-changed \
 		lib/main.dart \
+		lib/queries.dart \
 		lib/ranges.dart \
+		lib/synchronizer.dart \
 		lib/pages/* \
 		lib/api_methods.dart \
 		test/*

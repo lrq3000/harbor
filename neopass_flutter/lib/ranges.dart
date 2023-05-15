@@ -18,6 +18,11 @@ class Range {
     }
     return low == other.low && high == other.high;
   }
+
+  @override
+  String toString() {
+    return "Range(low: $low, high: $high)";
+  }
 }
 
 void insert(List<Range> ranges, fixnum.Int64 item) {

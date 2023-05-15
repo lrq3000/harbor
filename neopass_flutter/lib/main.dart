@@ -13,6 +13,7 @@ import 'api_methods.dart';
 import 'pages/new_or_import_profile.dart';
 import 'models.dart' as models;
 import 'protocol.pb.dart' as protocol;
+import 'synchronizer.dart' as synchronizer;
 import 'logger.dart';
 
 const schemaTableEvents = '''
@@ -940,6 +941,14 @@ class PolycentricModel extends ChangeNotifier {
       this.identities.add(
             ProcessInfo(identity, username, claims, avatar, description),
           );
+
+      // blah
+      final systemProto = protocol.PublicKey();
+      systemProto.keyType = fixnum.Int64(1);
+      systemProto.key = public.bytes;
+
+      await synchronizer.backfillClient(
+          db, systemProto, 'https://srv1-stg.polycentric.io');
     }
 
     notifyListeners();

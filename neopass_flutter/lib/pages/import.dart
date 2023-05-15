@@ -19,7 +19,7 @@ Future<void> importFromBase64(
     const prefix = "polycentric://";
 
     if (!text.startsWith(prefix)) {
-      return;
+      throw const FormatException();
     }
 
     text = text.substring(prefix.length);
