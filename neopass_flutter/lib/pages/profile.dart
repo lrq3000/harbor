@@ -9,6 +9,7 @@ import 'package:file_picker/file_picker.dart' as file_picker;
 import '../logger.dart';
 import '../main.dart' as main;
 import '../protocol.pb.dart' as protocol;
+import '../queries.dart' as queries;
 import 'backup.dart';
 import 'claim.dart';
 import 'create_claim.dart';
@@ -149,7 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   final public =
                       await identity.processSecret.system.extractPublicKey();
 
-                  await main.deleteIdentity(
+                  await queries.deleteIdentity(
                       state.db, public.bytes, identity.processSecret.process);
 
                   if (context.mounted) {

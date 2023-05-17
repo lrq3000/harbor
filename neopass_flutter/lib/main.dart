@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'dart:math';
-import 'package:path/path.dart' as path;
 import 'package:fixnum/fixnum.dart' as fixnum;
 
 import 'api_methods.dart';
@@ -14,57 +13,8 @@ import 'pages/new_or_import_profile.dart';
 import 'models.dart' as models;
 import 'protocol.pb.dart' as protocol;
 import 'synchronizer.dart' as synchronizer;
+import 'queries.dart' as queries;
 import 'logger.dart';
-
-const schemaTableEvents = '''
-CREATE TABLE IF NOT EXISTS events (
-    id              INTEGER PRIMARY KEY,
-    system_key_type INTEGER NOT NULL,
-    system_key      BLOB    NOT NULL,
-    process         BLOB    NOT NULL,
-    logical_clock   INTEGER NOT NULL,
-    content_type    INTEGER NOT NULL,
-    raw_event       BLOB    NOT NULL,
-
-    UNIQUE(system_key_type, system_key, process, logical_clock)
-);
-''';
-
-const schemaTableProcessSecrets = '''
-CREATE TABLE IF NOT EXISTS process_secrets (
-    id              INTEGER PRIMARY KEY,
-    system_key_type INTEGER NOT NULL,
-    system_key      BLOB    NOT NULL,
-    system_key_pub  BLOB    NOT NULL,
-    process         BLOB    NOT NULL,
-
-    UNIQUE(system_key_type, system_key, process)
-);
-''';
-
-const schemaTableDeletions = '''
-CREATE TABLE IF NOT EXISTS deletions (
-    id              INTEGER PRIMARY KEY,
-    system_key_type INTEGER NOT NULL,
-    system_key      INTEGER NOT NULL,
-    process         BLOB    NOT NULL,
-    logical_clock   INTEGER NOT NULL,
-    event_id        INTEGER NOT NULL
-);
-''';
-
-const schemaTableCRDTs = '''
-CREATE TABLE IF NOT EXISTS crdts (
-    id                INTEGER PRIMARY KEY,
-    unix_milliseconds INTEGER NOT NULL,
-    value             BLOB    NOT NULL,
-    event_id          INTEGER NOT NULL,
-
-    FOREIGN KEY (event_id)
-      REFERENCES events (id)
-      ON DELETE CASCADE
-);
-''';
 
 class ProcessSecret {
   cryptography.SimpleKeyPair system;
@@ -90,19 +40,15 @@ Future<ProcessSecret> importIdentity(
 
   final process = List<int>.generate(16, (i) => Random.secure().nextInt(256));
 
-  await db.rawInsert('''
-            INSERT INTO process_secrets (
-                system_key_type,
-                system_key,
-                system_key_pub,
-                process
-            ) VALUES(?, ?, ?, ?);
-        ''', [
-    1,
-    privateBytes,
-    publicBytes,
-    process,
-  ]);
+  await db.transaction((transaction) async {
+    await queries.insertProcessSecret(
+      transaction,
+      Uint8List.fromList(publicBytes),
+      Uint8List.fromList(privateBytes),
+      1,
+      Uint8List.fromList(process),
+    );
+  });
 
   final publicProto = protocol.PublicKey(
     keyType: fixnum.Int64(1),
@@ -184,109 +130,6 @@ Future<void> importExportBundle(
   });
 }
 
-Future<void> deleteIdentity(
-  sqflite.Database db,
-  List<int> system,
-  List<int> process,
-) async {
-  const query = '''
-      DELETE FROM process_secrets
-      WHERE system_key_type = 1
-      AND system_key_pub = ?
-      AND process = ?;
-  ''';
-
-  await db.rawDelete(
-      query, [Uint8List.fromList(system), Uint8List.fromList(process)]);
-}
-
-Future<bool> isEventDeleted(
-  sqflite.Transaction transaction,
-  protocol.Event event,
-) async {
-  const query = '''
-      SELECT 1 FROM deletions
-      WHERE system_key_type = ?
-      AND system_key = ?
-      AND process = ?
-      AND logical_clock = ?
-      LIMIT 1;
-  ''';
-
-  final rows = await transaction.rawQuery(query, [
-    event.system.keyType.toInt(),
-    Uint8List.fromList(event.system.key),
-    Uint8List.fromList(event.process.process),
-    event.logicalClock.toInt(),
-  ]);
-
-  return rows.isNotEmpty;
-}
-
-Future<void> deleteEventDB(
-  sqflite.Transaction transaction,
-  int rowId,
-  protocol.PublicKey system,
-  protocol.Delete deleteBody,
-) async {
-  const queryInsertDelete = '''
-      INSERT INTO deletions
-      (
-          system_key_type,
-          system_key,
-          process,
-          logical_clock,
-          event_id
-      )
-      VALUES (?, ?, ?, ?, ?);
-  ''';
-
-  const queryDeleteEvent = '''
-      DELETE FROM events
-      WHERE system_key_type = ?
-      AND system_key = ?
-      AND process = ?
-      AND logical_clock = ?;
-  ''';
-
-  await transaction.rawQuery(queryInsertDelete, [
-    system.keyType.toInt(),
-    Uint8List.fromList(system.key),
-    Uint8List.fromList(deleteBody.process.process),
-    deleteBody.logicalClock.toInt(),
-    rowId,
-  ]);
-
-  await transaction.rawDelete(queryDeleteEvent, [
-    system.keyType.toInt(),
-    Uint8List.fromList(system.key),
-    Uint8List.fromList(deleteBody.process.process),
-    deleteBody.logicalClock.toInt(),
-  ]);
-}
-
-Future<void> insertLWWElement(
-  sqflite.Transaction transaction,
-  int rowId,
-  protocol.LWWElement element,
-) async {
-  const query = '''
-    INSERT INTO crdts
-    (
-      unix_milliseconds,
-      value,
-      event_id
-    )
-    VALUES (?, ?, ?);
-  ''';
-
-  await transaction.rawQuery(query, [
-    element.unixMilliseconds.toInt(),
-    Uint8List.fromList(element.value),
-    rowId,
-  ]);
-}
-
 Future<void> ingest(
   sqflite.Transaction transaction,
   protocol.SignedEvent signedEvent,
@@ -312,57 +155,27 @@ Future<void> ingest(
     throw 'invalid signature';
   }
 
-  if (await isEventDeleted(transaction, event)) {
+  if (await queries.doesEventExist(transaction, event)) {
+    logger.d("event already persisted");
+    return;
+  }
+
+  if (await queries.isEventDeleted(transaction, event)) {
     logger.d("event already deleted");
     return;
   }
 
-  final eventId = await transaction.rawInsert('''
-            INSERT INTO events (
-                system_key_type,
-                system_key,
-                process,
-                logical_clock,
-                content_type,
-                raw_event
-            ) VALUES(?, ?, ?, ?, ?, ?);
-        ''', [
-    event.system.keyType.toInt(),
-    Uint8List.fromList(event.system.key),
-    Uint8List.fromList(event.process.process),
-    event.logicalClock.toInt(),
-    event.contentType.toInt(),
-    signedEvent.writeToBuffer(),
-  ]);
+  final eventId = await queries.insertEvent(transaction, signedEvent, event);
 
   if (event.contentType == models.ContentType.contentTypeDelete) {
     final protocol.Delete deleteBody =
         protocol.Delete.fromBuffer(event.content);
 
-    await deleteEventDB(transaction, eventId, event.system, deleteBody);
+    await queries.deleteEventDB(transaction, eventId, event.system, deleteBody);
   }
 
   if (event.hasLwwElement()) {
-    await insertLWWElement(transaction, eventId, event.lwwElement);
-  }
-}
-
-Future<int> loadLatestClock(
-  sqflite.Database db,
-  List<int> system,
-  List<int> process,
-) async {
-  final f = sqflite.Sqflite.firstIntValue(await db.rawQuery('''
-        SELECT MAX(logical_clock) as x FROM events
-        WHERE system_key_type = 1
-        AND system_key = ?
-        AND process = ?;
-    ''', [Uint8List.fromList(system), Uint8List.fromList(process)]));
-
-  if (f == null) {
-    return 0;
-  } else {
-    return f + 1;
+    await queries.insertLWWElement(transaction, eventId, event.lwwElement);
   }
 }
 
@@ -441,70 +254,11 @@ Future<void> sendAllEventsToServer(
   await postEvents(payload);
 }
 
-Future<protocol.SignedEvent?> loadLatestEventByContentType(
-  sqflite.Database db,
-  List<int> system,
-  List<int> process,
-  fixnum.Int64 contentType,
-) async {
-  final q = await db.rawQuery('''
-        SELECT raw_event FROM events
-        WHERE system_key_type = 1
-        AND system_key = ?
-        AND process = ?
-        AND content_type = ?
-        ORDER BY
-        logical_clock DESC
-        LIMIT 1;
-    ''', [
-    Uint8List.fromList(system),
-    Uint8List.fromList(process),
-    contentType.toInt()
-  ]);
-
-  if (q.isEmpty) {
-    return null;
-  } else {
-    return protocol.SignedEvent.fromBuffer(q[0]['raw_event'] as List<int>);
-  }
-}
-
-Future<protocol.SignedEvent?> loadLatestCRDTByContentType(
-  sqflite.Database db,
-  List<int> system,
-  fixnum.Int64 contentType,
-) async {
-  final q = await db.rawQuery('''
-            SELECT events.raw_event
-            FROM
-              crdts
-            JOIN
-              events
-            ON
-              crdts.event_id = events.id
-            WHERE
-              events.content_type = ?
-            AND
-              events.system_key_type = 1
-            AND
-              events.system_key = ?
-            ORDER BY
-              crdts.unix_milliseconds DESC
-            LIMIT 1
-    ''', [contentType.toInt(), Uint8List.fromList(system)]);
-
-  if (q.isEmpty) {
-    return null;
-  } else {
-    return protocol.SignedEvent.fromBuffer(q[0]['raw_event'] as List<int>);
-  }
-}
-
 Future<String> loadLatestUsername(
   sqflite.Database db,
   List<int> system,
 ) async {
-  final signedEvent = await loadLatestCRDTByContentType(
+  final signedEvent = await queries.loadLatestCRDTByContentType(
     db,
     system,
     models.ContentType.contentTypeUsername,
@@ -523,7 +277,7 @@ Future<String> loadLatestDescription(
   sqflite.Database db,
   List<int> system,
 ) async {
-  final signedEvent = await loadLatestCRDTByContentType(
+  final signedEvent = await queries.loadLatestCRDTByContentType(
     db,
     system,
     models.ContentType.contentTypeDescription,
@@ -538,38 +292,11 @@ Future<String> loadLatestDescription(
   }
 }
 
-Future<protocol.SignedEvent?> loadEvent(
-  sqflite.Database db,
-  List<int> system,
-  List<int> process,
-  fixnum.Int64 logicalClock,
-) async {
-  final rows = await db.rawQuery('''
-    SELECT raw_event FROM events
-    WHERE system_key_type = 1
-    AND system_key = ?
-    AND process = ?
-    AND logical_clock = ?
-    LIMIT 1;
-  ''', [
-    Uint8List.fromList(system),
-    Uint8List.fromList(process),
-    logicalClock.toInt()
-  ]);
-
-  if (rows.isNotEmpty) {
-    return protocol.SignedEvent.fromBuffer(
-        rows.first["raw_event"] as List<int>);
-  }
-
-  return null;
-}
-
 Future<Image?> loadImage(
   sqflite.Database db,
   protocol.Pointer pointer,
 ) async {
-  final metaSignedEvent = await loadEvent(
+  final metaSignedEvent = await queries.loadEvent(
     db,
     pointer.system.key,
     pointer.process.process,
@@ -591,7 +318,7 @@ Future<Image?> loadImage(
 
   // final blobMeta = Protocol.BlobMeta.fromBuffer(metaEvent.content);
 
-  final contentSignedEvent = await loadEvent(
+  final contentSignedEvent = await queries.loadEvent(
     db,
     metaEvent.system.key,
     metaEvent.process.process,
@@ -620,7 +347,7 @@ Future<Image?> loadLatestAvatar(
   sqflite.Database db,
   List<int> system,
 ) async {
-  final signedEvent = await loadLatestCRDTByContentType(
+  final signedEvent = await queries.loadLatestCRDTByContentType(
     db,
     system,
     models.ContentType.contentTypeAvatar,
@@ -657,7 +384,7 @@ Future<protocol.Pointer> saveEvent(sqflite.Database db,
     process: processInfo.process,
   );
 
-  final clock = await loadLatestClock(
+  final clock = await queries.loadLatestClock(
     db,
     public.bytes,
     processInfo.process,
@@ -695,7 +422,7 @@ Future<void> deleteEvent(
   ProcessSecret processInfo,
   protocol.Pointer pointer,
 ) async {
-  final signedEvent = await loadEvent(
+  final signedEvent = await queries.loadEvent(
     db,
     pointer.system.key,
     pointer.process.process,
@@ -952,18 +679,7 @@ class PolycentricModel extends ChangeNotifier {
 }
 
 Future<PolycentricModel> setupModel() async {
-  final db = await sqflite.openDatabase(
-    path.join(await sqflite.getDatabasesPath(), 'neopass14.db'),
-    onCreate: (db, version) async {
-      await db.execute(schemaTableEvents);
-      await db.execute(schemaTableProcessSecrets);
-      await db.execute(schemaTableDeletions);
-      await db.execute(schemaTableCRDTs);
-    },
-    version: 1,
-  );
-
-  return PolycentricModel(db);
+  return PolycentricModel(await queries.createDB('neopass14.db'));
 }
 
 class NeopassApp extends StatelessWidget {
