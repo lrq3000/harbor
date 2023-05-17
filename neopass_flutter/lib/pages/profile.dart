@@ -60,8 +60,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     return;
                   }
 
-                  await main.setUsername(
-                      state.db, identity, usernameController.text);
+                  await state.db.transaction((transaction) async {
+                    await main.setUsername(
+                        transaction, identity, usernameController.text);
+                  });
 
                   await state.mLoadIdentities();
 
@@ -110,8 +112,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     return;
                   }
 
-                  await main.setDescription(
-                      state.db, identity, descriptionController.text);
+                  await state.db.transaction((transaction) async {
+                    await main.setDescription(
+                        transaction, identity, descriptionController.text);
+                  });
 
                   await state.mLoadIdentities();
 
@@ -150,8 +154,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   final public =
                       await identity.processSecret.system.extractPublicKey();
 
-                  await queries.deleteIdentity(
-                      state.db, public.bytes, identity.processSecret.process);
+                  await state.db.transaction((transaction) async {
+                    await queries.deleteIdentity(transaction, public.bytes,
+                        identity.processSecret.process);
+                  });
 
                   if (context.mounted) {
                     Navigator.push(context,
@@ -192,8 +198,10 @@ class _ProfilePageState extends State<ProfilePage> {
               TextButton(
                   child: const Text("Delete"),
                   onPressed: () async {
-                    await main.deleteEvent(
-                        state.db, identity.processSecret, pointer);
+                    await state.db.transaction((transaction) async {
+                      await main.deleteEvent(
+                          transaction, identity.processSecret, pointer);
+                    });
 
                     await state.mLoadIdentities();
 
@@ -267,18 +275,20 @@ class _ProfilePageState extends State<ProfilePage> {
           if (result != null) {
             final bytes = await File(result.files.single.path!).readAsBytes();
 
-            final pointer = await main.publishBlob(
-              state.db,
-              identity.processSecret,
-              "image/jpeg",
-              bytes,
-            );
+            await state.db.transaction((transaction) async {
+              final pointer = await main.publishBlob(
+                transaction,
+                identity.processSecret,
+                "image/jpeg",
+                bytes,
+              );
 
-            await main.setAvatar(
-              state.db,
-              identity.processSecret,
-              pointer,
-            );
+              await main.setAvatar(
+                transaction,
+                identity.processSecret,
+                pointer,
+              );
+            });
 
             await state.mLoadIdentities();
           }
@@ -421,7 +431,10 @@ class _ProfilePageState extends State<ProfilePage> {
             final protocol.Pointer pointer =
                 protocol.Pointer.fromBuffer(buffer);
 
-            await main.makeVouch(state.db, identity.processSecret, pointer);
+            await state.db.transaction((transaction) async {
+              await main.makeVouch(
+                  transaction, identity.processSecret, pointer);
+            });
           } catch (err) {
             logger.e(err);
           }

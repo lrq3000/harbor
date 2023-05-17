@@ -75,8 +75,12 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
                     if (textController.text.isEmpty) {
                       return;
                     }
-                    await main.makeClaim(
-                        state.db, identity.processSecret, textController.text);
+
+                    await state.db.transaction((transaction) async {
+                      await main.makeClaim(transaction, identity.processSecret,
+                          textController.text);
+                    });
+
                     await state.mLoadIdentities();
                     if (context.mounted) {
                       Navigator.pop(context);

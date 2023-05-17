@@ -26,11 +26,14 @@ class ProcessSecret {
 Future<ProcessSecret> createNewIdentity(sqflite.Database db) async {
   final algorithm = cryptography.Ed25519();
   final keyPair = await algorithm.newKeyPair();
-  return await importIdentity(db, keyPair);
+
+  return await db.transaction((transaction) async {
+    return await importIdentity(transaction, keyPair);
+  });
 }
 
 Future<ProcessSecret> importIdentity(
-  sqflite.Database db,
+  sqflite.Transaction transaction,
   cryptography.SimpleKeyPair keyPair,
 ) async {
   final public = await keyPair.extractPublicKey();
@@ -40,15 +43,13 @@ Future<ProcessSecret> importIdentity(
 
   final process = List<int>.generate(16, (i) => Random.secure().nextInt(256));
 
-  await db.transaction((transaction) async {
-    await queries.insertProcessSecret(
-      transaction,
-      Uint8List.fromList(publicBytes),
-      Uint8List.fromList(privateBytes),
-      1,
-      Uint8List.fromList(process),
-    );
-  });
+  await queries.insertProcessSecret(
+    transaction,
+    Uint8List.fromList(publicBytes),
+    Uint8List.fromList(privateBytes),
+    1,
+    Uint8List.fromList(process),
+  );
 
   final publicProto = protocol.PublicKey(
     keyType: fixnum.Int64(1),
@@ -121,9 +122,9 @@ Future<void> importExportBundle(
     type: cryptography.KeyPairType.ed25519,
   );
 
-  await importIdentity(db, keyPair);
-
   await db.transaction((transaction) async {
+    await importIdentity(transaction, keyPair);
+
     for (final event in exportBundle.events.events) {
       await ingest(transaction, event);
     }
@@ -197,11 +198,11 @@ Future<protocol.Pointer> signedEventToPointer(
 }
 
 Future<List<ClaimInfo>> loadClaims(
-  sqflite.Database db,
+  sqflite.Transaction transaction,
   List<int> system,
 ) async {
   final signedEvents = await queries.loadEventsForSystemByContentType(
-    db,
+    transaction,
     system,
     fixnum.Int64(12),
   );
@@ -225,10 +226,10 @@ Future<List<ClaimInfo>> loadClaims(
 }
 
 Future<void> sendAllEventsToServer(
-  sqflite.Database db,
+  sqflite.Transaction transaction,
   List<int> system,
 ) async {
-  final rows = await db.rawQuery('''
+  final rows = await transaction.rawQuery('''
         SELECT raw_event FROM events
         WHERE system_key_type = 1
         AND system_key = ?;
@@ -249,11 +250,11 @@ Future<void> sendAllEventsToServer(
 }
 
 Future<String> loadLatestUsername(
-  sqflite.Database db,
+  sqflite.Transaction transaction,
   List<int> system,
 ) async {
   final signedEvent = await queries.loadLatestCRDTByContentType(
-    db,
+    transaction,
     system,
     models.ContentType.contentTypeUsername,
   );
@@ -268,11 +269,11 @@ Future<String> loadLatestUsername(
 }
 
 Future<String> loadLatestDescription(
-  sqflite.Database db,
+  sqflite.Transaction transaction,
   List<int> system,
 ) async {
   final signedEvent = await queries.loadLatestCRDTByContentType(
-    db,
+    transaction,
     system,
     models.ContentType.contentTypeDescription,
   );
@@ -287,11 +288,11 @@ Future<String> loadLatestDescription(
 }
 
 Future<Image?> loadImage(
-  sqflite.Database db,
+  sqflite.Transaction transaction,
   protocol.Pointer pointer,
 ) async {
   final metaSignedEvent = await queries.loadEvent(
-    db,
+    transaction,
     pointer.system.key,
     pointer.process.process,
     pointer.logicalClock,
@@ -313,7 +314,7 @@ Future<Image?> loadImage(
   // final blobMeta = Protocol.BlobMeta.fromBuffer(metaEvent.content);
 
   final contentSignedEvent = await queries.loadEvent(
-    db,
+    transaction,
     metaEvent.system.key,
     metaEvent.process.process,
     metaEvent.logicalClock + 1,
@@ -338,11 +339,11 @@ Future<Image?> loadImage(
 }
 
 Future<Image?> loadLatestAvatar(
-  sqflite.Database db,
+  sqflite.Transaction transaction,
   List<int> system,
 ) async {
   final signedEvent = await queries.loadLatestCRDTByContentType(
-    db,
+    transaction,
     system,
     models.ContentType.contentTypeAvatar,
   );
@@ -363,11 +364,11 @@ Future<Image?> loadLatestAvatar(
       event.lwwElement.value,
     );
 
-    return loadImage(db, pointer);
+    return loadImage(transaction, pointer);
   }
 }
 
-Future<protocol.Pointer> saveEvent(sqflite.Database db,
+Future<protocol.Pointer> saveEvent(sqflite.Transaction transaction,
     ProcessSecret processInfo, protocol.Event event) async {
   final public = await processInfo.system.extractPublicKey();
   final protocol.PublicKey system = protocol.PublicKey();
@@ -379,7 +380,7 @@ Future<protocol.Pointer> saveEvent(sqflite.Database db,
   );
 
   final clock = await queries.loadLatestClock(
-    db,
+    transaction,
     public.bytes,
     processInfo.process,
   );
@@ -402,22 +403,20 @@ Future<protocol.Pointer> saveEvent(sqflite.Database db,
     signature: signature,
   );
 
-  await db.transaction((transaction) async {
-    await ingest(transaction, signedEvent);
-  });
+  await ingest(transaction, signedEvent);
 
-  sendAllEventsToServer(db, public.bytes);
+  sendAllEventsToServer(transaction, public.bytes);
 
   return await signedEventToPointer(signedEvent);
 }
 
 Future<void> deleteEvent(
-  sqflite.Database db,
+  sqflite.Transaction transaction,
   ProcessSecret processInfo,
   protocol.Pointer pointer,
 ) async {
   final signedEvent = await queries.loadEvent(
-    db,
+    transaction,
     pointer.system.key,
     pointer.process.process,
     pointer.logicalClock,
@@ -438,11 +437,11 @@ Future<void> deleteEvent(
       ).writeToBuffer(),
     );
 
-    await saveEvent(db, processInfo, deleteEvent);
+    await saveEvent(transaction, processInfo, deleteEvent);
   }
 }
 
-Future<protocol.Pointer> publishBlob(sqflite.Database db,
+Future<protocol.Pointer> publishBlob(sqflite.Transaction transaction,
     ProcessSecret processInfo, String mime, List<int> bytes) async {
   final protocol.Event blobMetaEvent = protocol.Event(
     contentType: models.ContentType.contentTypeBlobMeta,
@@ -452,7 +451,11 @@ Future<protocol.Pointer> publishBlob(sqflite.Database db,
     ).writeToBuffer(),
   );
 
-  final blobMetaPointer = await saveEvent(db, processInfo, blobMetaEvent);
+  final blobMetaPointer = await saveEvent(
+    transaction,
+    processInfo,
+    blobMetaEvent,
+  );
 
   final blobSectionEvent = protocol.Event(
     contentType: models.ContentType.contentTypeBlobSection,
@@ -462,12 +465,12 @@ Future<protocol.Pointer> publishBlob(sqflite.Database db,
     ).writeToBuffer(),
   );
 
-  await saveEvent(db, processInfo, blobSectionEvent);
+  await saveEvent(transaction, processInfo, blobSectionEvent);
 
   return blobMetaPointer;
 }
 
-Future<void> setCRDT(sqflite.Database db, ProcessSecret processInfo,
+Future<void> setCRDT(sqflite.Transaction transaction, ProcessSecret processInfo,
     fixnum.Int64 contentType, Uint8List bytes) async {
   final protocol.Event event = protocol.Event(
     contentType: contentType,
@@ -477,41 +480,41 @@ Future<void> setCRDT(sqflite.Database db, ProcessSecret processInfo,
     ),
   );
 
-  await saveEvent(db, processInfo, event);
+  await saveEvent(transaction, processInfo, event);
 }
 
-Future<void> setAvatar(sqflite.Database db, ProcessSecret processInfo,
-    protocol.Pointer pointer) async {
+Future<void> setAvatar(sqflite.Transaction transaction,
+    ProcessSecret processInfo, protocol.Pointer pointer) async {
   await setCRDT(
-    db,
+    transaction,
     processInfo,
     models.ContentType.contentTypeAvatar,
     pointer.writeToBuffer(),
   );
 }
 
-Future<void> setUsername(
-    sqflite.Database db, ProcessSecret processInfo, String username) async {
+Future<void> setUsername(sqflite.Transaction transaction,
+    ProcessSecret processInfo, String username) async {
   await setCRDT(
-    db,
+    transaction,
     processInfo,
     models.ContentType.contentTypeUsername,
     Uint8List.fromList(utf8.encode(username)),
   );
 }
 
-Future<void> setDescription(
-    sqflite.Database db, ProcessSecret processInfo, String description) async {
+Future<void> setDescription(sqflite.Transaction transaction,
+    ProcessSecret processInfo, String description) async {
   await setCRDT(
-    db,
+    transaction,
     processInfo,
     models.ContentType.contentTypeDescription,
     Uint8List.fromList(utf8.encode(description)),
   );
 }
 
-Future<void> makeClaim(
-    sqflite.Database db, ProcessSecret processInfo, String claimText) async {
+Future<void> makeClaim(sqflite.Transaction transaction,
+    ProcessSecret processInfo, String claimText) async {
   final protocol.Event event = protocol.Event(
     contentType: models.ContentType.contentTypeClaim,
     content: protocol.Claim(
@@ -522,10 +525,10 @@ Future<void> makeClaim(
     ).writeToBuffer(),
   );
 
-  await saveEvent(db, processInfo, event);
+  await saveEvent(transaction, processInfo, event);
 }
 
-Future<ClaimInfo> makePlatformClaim(sqflite.Database db,
+Future<ClaimInfo> makePlatformClaim(sqflite.Transaction transaction,
     ProcessSecret processInfo, String claimType, String account) async {
   final protocol.Event event = protocol.Event(
     contentType: models.ContentType.contentTypeClaim,
@@ -537,13 +540,13 @@ Future<ClaimInfo> makePlatformClaim(sqflite.Database db,
     ).writeToBuffer(),
   );
 
-  final pointer = await saveEvent(db, processInfo, event);
+  final pointer = await saveEvent(transaction, processInfo, event);
 
   return ClaimInfo(claimType, account, pointer);
 }
 
 Future<ClaimInfo> makeOccupationClaim(
-    sqflite.Database db,
+    sqflite.Transaction transaction,
     ProcessSecret processInfo,
     String organization,
     String role,
@@ -560,13 +563,13 @@ Future<ClaimInfo> makeOccupationClaim(
     ).writeToBuffer(),
   );
 
-  final pointer = await saveEvent(db, processInfo, event);
+  final pointer = await saveEvent(transaction, processInfo, event);
 
   return ClaimInfo("Occupation", organization, pointer);
 }
 
-Future<void> makeVouch(sqflite.Database db, ProcessSecret processInfo,
-    protocol.Pointer pointer) async {
+Future<void> makeVouch(sqflite.Transaction transaction,
+    ProcessSecret processInfo, protocol.Pointer pointer) async {
   final protocol.Event event = protocol.Event(
     contentType: models.ContentType.contentTypeVouch,
     references: [
@@ -577,7 +580,7 @@ Future<void> makeVouch(sqflite.Database db, ProcessSecret processInfo,
     ],
   );
 
-  await saveEvent(db, processInfo, event);
+  await saveEvent(transaction, processInfo, event);
 }
 
 Future<void> main() async {
@@ -641,23 +644,29 @@ class PolycentricModel extends ChangeNotifier {
     this.identities = [];
     for (final identity in identities) {
       final public = await identity.system.extractPublicKey();
-      final username = await loadLatestUsername(
-        db,
-        public.bytes,
-      );
-      final description = await loadLatestDescription(
-        db,
-        public.bytes,
-      );
-      final avatar = await loadLatestAvatar(
-        db,
-        public.bytes,
-      );
-      final claims = await loadClaims(db, public.bytes);
 
-      this.identities.add(
-            ProcessInfo(identity, username, claims, avatar, description),
-          );
+      await db.transaction((transaction) async {
+        final username = await loadLatestUsername(
+          transaction,
+          public.bytes,
+        );
+
+        final description = await loadLatestDescription(
+          transaction,
+          public.bytes,
+        );
+
+        final avatar = await loadLatestAvatar(
+          transaction,
+          public.bytes,
+        );
+
+        final claims = await loadClaims(transaction, public.bytes);
+
+        this.identities.add(
+              ProcessInfo(identity, username, claims, avatar, description),
+            );
+      });
 
       // blah
       final systemProto = protocol.PublicKey();

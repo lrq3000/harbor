@@ -44,8 +44,10 @@ class _NewProfilePageState extends State<NewProfilePage> {
                       return;
                     }
                     final identity = await main.createNewIdentity(state.db);
-                    await main.setUsername(
-                        state.db, identity, textController.text);
+                    await state.db.transaction((transaction) async {
+                      await main.setUsername(
+                          transaction, identity, textController.text);
+                    });
                     await state.mLoadIdentities();
                     if (context.mounted) {
                       Navigator.push(context,

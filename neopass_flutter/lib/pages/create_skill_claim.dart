@@ -37,12 +37,14 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
                 return;
               }
 
-              await main.makePlatformClaim(
-                state.db,
-                identity.processSecret,
-                'Skill',
-                textController.text,
-              );
+              await state.db.transaction((transaction) async {
+                await main.makePlatformClaim(
+                  transaction,
+                  identity.processSecret,
+                  'Skill',
+                  textController.text,
+                );
+              });
 
               await state.mLoadIdentities();
 

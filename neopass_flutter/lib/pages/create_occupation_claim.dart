@@ -36,13 +36,15 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
             ),
             child: const Text("Save"),
             onPressed: () async {
-              await main.makeOccupationClaim(
-                state.db,
-                identity.processSecret,
-                textControllerOrganization.text,
-                textControllerRole.text,
-                textControllerLocation.text,
-              );
+              await state.db.transaction((transaction) async {
+                await main.makeOccupationClaim(
+                  transaction,
+                  identity.processSecret,
+                  textControllerOrganization.text,
+                  textControllerRole.text,
+                  textControllerLocation.text,
+                );
+              });
 
               await state.mLoadIdentities();
 

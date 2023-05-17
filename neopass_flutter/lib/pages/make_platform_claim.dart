@@ -63,11 +63,16 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
                         if (textController.text.isEmpty) {
                           return;
                         }
-                        final claim = await main.makePlatformClaim(
-                            state.db,
-                            identity.processSecret,
-                            widget.claimType,
-                            textController.text);
+
+                        final claim =
+                            await state.db.transaction((transaction) async {
+                          return await main.makePlatformClaim(
+                              transaction,
+                              identity.processSecret,
+                              widget.claimType,
+                              textController.text);
+                        });
+
                         await state.mLoadIdentities();
 
                         if (context.mounted) {

@@ -275,7 +275,7 @@ Future<int> insertEvent(
 }
 
 Future<void> deleteIdentity(
-  sqflite.Database db,
+  sqflite.Transaction transaction,
   List<int> system,
   List<int> process,
 ) async {
@@ -286,17 +286,17 @@ Future<void> deleteIdentity(
       AND process = ?;
   ''';
 
-  await db.rawDelete(
+  await transaction.rawDelete(
       query, [Uint8List.fromList(system), Uint8List.fromList(process)]);
 }
 
 Future<protocol.SignedEvent?> loadEvent(
-  sqflite.Database db,
+  sqflite.Transaction transaction,
   List<int> system,
   List<int> process,
   fixnum.Int64 logicalClock,
 ) async {
-  final rows = await db.rawQuery('''
+  final rows = await transaction.rawQuery('''
     SELECT raw_event FROM events
     WHERE system_key_type = 1
     AND system_key = ?
@@ -340,11 +340,11 @@ Future<void> insertProcessSecret(
 }
 
 Future<int> loadLatestClock(
-  sqflite.Database db,
+  sqflite.Transaction transaction,
   List<int> system,
   List<int> process,
 ) async {
-  final f = sqflite.Sqflite.firstIntValue(await db.rawQuery('''
+  final f = sqflite.Sqflite.firstIntValue(await transaction.rawQuery('''
         SELECT MAX(logical_clock) as x FROM events
         WHERE system_key_type = 1
         AND system_key = ?
@@ -359,12 +359,12 @@ Future<int> loadLatestClock(
 }
 
 Future<protocol.SignedEvent?> loadLatestEventByContentType(
-  sqflite.Database db,
+  sqflite.Transaction transaction,
   List<int> system,
   List<int> process,
   fixnum.Int64 contentType,
 ) async {
-  final q = await db.rawQuery('''
+  final q = await transaction.rawQuery('''
         SELECT raw_event FROM events
         WHERE system_key_type = 1
         AND system_key = ?
@@ -387,11 +387,11 @@ Future<protocol.SignedEvent?> loadLatestEventByContentType(
 }
 
 Future<protocol.SignedEvent?> loadLatestCRDTByContentType(
-  sqflite.Database db,
+  sqflite.Transaction transaction,
   List<int> system,
   fixnum.Int64 contentType,
 ) async {
-  final q = await db.rawQuery('''
+  final q = await transaction.rawQuery('''
             SELECT events.raw_event
             FROM
               crdts
@@ -418,11 +418,11 @@ Future<protocol.SignedEvent?> loadLatestCRDTByContentType(
 }
 
 Future<List<protocol.SignedEvent>> loadEventsForSystemByContentType(
-  sqflite.Database db,
+  sqflite.Transaction transaction,
   List<int> system,
   fixnum.Int64 contentType,
 ) async {
-  final rows = await db.rawQuery('''
+  final rows = await transaction.rawQuery('''
         SELECT raw_event FROM events
         WHERE system_key_type = 1
         AND system_key = ?
