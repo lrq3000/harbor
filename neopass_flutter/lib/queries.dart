@@ -56,6 +56,20 @@ CREATE TABLE IF NOT EXISTS crdts (
 );
 ''';
 
+const schemaTableCRDTSetItems = '''
+CREATE TABLE IF NOT EXISTS crdt_set_items (
+    id                INTEGER PRIMARY KEY,
+    unix_milliseconds INTEGER NOT NULL,
+    operation         BOOLEAN NOT NULL,
+    value             BLOB    NOT NULL,
+    event_id          INTEGER NOT NULL,
+
+    FOREIGN KEY (event_id)
+      REFERENCES events (id)
+      ON DELETE CASCADE
+);
+''';
+
 Future<sqflite.Database> createDB(String name) async {
   return await sqflite.openDatabase(
     path.join(await sqflite.getDatabasesPath(), name),
@@ -64,6 +78,7 @@ Future<sqflite.Database> createDB(String name) async {
       await db.execute(schemaTableProcessSecrets);
       await db.execute(schemaTableDeletions);
       await db.execute(schemaTableCRDTs);
+      await db.execute(schemaTableCRDTSetItems);
     },
     version: 1,
   );
@@ -250,6 +265,30 @@ Future<void> insertLWWElement(
   ]);
 }
 
+Future<void> insertCRDTSetItem(
+  sqflite.Transaction transaction,
+  int rowId,
+  protocol.LWWElementSet element,
+) async {
+  const query = '''
+    INSERT INTO crdt_set_items
+    (
+      unix_milliseconds,
+      operation,
+      value,
+      event_id
+    )
+    VALUES (?, ?, ?, ?);
+  ''';
+
+  await transaction.rawQuery(query, [
+    element.unixMilliseconds.toInt(),
+    element.operation.value,
+    Uint8List.fromList(element.value),
+    rowId,
+  ]);
+}
+
 Future<int> insertEvent(
   sqflite.Transaction transaction,
   protocol.SignedEvent signedEvent,
@@ -428,6 +467,49 @@ Future<List<protocol.SignedEvent>> loadEventsForSystemByContentType(
         AND system_key = ?
         AND content_type = ?;
     ''', [Uint8List.fromList(system), contentType.toInt()]);
+
+  final List<protocol.SignedEvent> result = [];
+
+  for (final row in rows) {
+    result.add(protocol.SignedEvent.fromBuffer(row['raw_event'] as List<int>));
+  }
+
+  return result;
+}
+
+Future<List<protocol.SignedEvent>> loadLatestCRDTSetItemsByContentType(
+  sqflite.Transaction transaction,
+  List<int> system,
+  fixnum.Int64 contentType,
+) async {
+  final rows = await transaction.rawQuery('''
+    WITH latest_values AS (
+        SELECT
+          events.raw_event as raw_event,
+          crdt_set_items.value as value,
+          MAX(crdt.set_items.unix_milliseconds),
+        FROM
+          crdt_set_items
+        JOIN
+          events
+        ON
+          crdt_set_items.event_id = events.id
+        WHERE
+          events.content_type = ?
+        AND
+          events.system_key_type = 1
+        AND
+          events.system_key = ?
+        GROUP BY
+            crdt_set_items.value
+    )
+    SELECT
+        raw_event
+    FROM
+        latest_values
+    WHERE
+        latest_values.value = 0
+    ''', [contentType.toInt(), Uint8List.fromList(system)]);
 
   final List<protocol.SignedEvent> result = [];
 

@@ -29,7 +29,16 @@ Future<ProcessSecret> createNewIdentity(sqflite.Database db) async {
   final keyPair = await algorithm.newKeyPair();
 
   return await db.transaction((transaction) async {
-    return await importIdentity(transaction, keyPair);
+    final processInfo = await importIdentity(transaction, keyPair);
+
+    await setServer(
+      transaction,
+      processInfo,
+      protocol.LWWElementSet_Operation.ADD,
+      'https://srv1-stg.polycentric.io',
+    );
+
+    return processInfo;
   });
 }
 
@@ -178,6 +187,10 @@ Future<void> ingest(
 
   if (event.hasLwwElement()) {
     await queries.insertLWWElement(transaction, eventId, event.lwwElement);
+  }
+
+  if (event.hasLwwElementSet()) {
+    await queries.insertCRDTSetItem(transaction, eventId, event.lwwElementSet);
   }
 }
 
@@ -529,6 +542,39 @@ Future<void> makeClaim(sqflite.Transaction transaction,
   await saveEvent(transaction, processInfo, event);
 }
 
+Future<void> setCRDTSetItem(
+    sqflite.Transaction transaction,
+    ProcessSecret processInfo,
+    fixnum.Int64 contentType,
+    protocol.LWWElementSet_Operation operation,
+    Uint8List value) async {
+  final protocol.Event event = protocol.Event(
+    contentType: contentType,
+    lwwElementSet: protocol.LWWElementSet(
+      unixMilliseconds: fixnum.Int64(DateTime.now().millisecondsSinceEpoch),
+      value: value,
+      operation: operation,
+    ),
+  );
+
+  await saveEvent(transaction, processInfo, event);
+}
+
+Future<void> setServer(
+  sqflite.Transaction transaction,
+  ProcessSecret processInfo,
+  protocol.LWWElementSet_Operation operation,
+  String server,
+) async {
+  await setCRDTSetItem(
+    transaction,
+    processInfo,
+    models.ContentType.contentTypeServer,
+    operation,
+    Uint8List.fromList(utf8.encode(server)),
+  );
+}
+
 Future<ClaimInfo> makePlatformClaim(sqflite.Transaction transaction,
     ProcessSecret processInfo, String claimType, String account) async {
   final protocol.Event event = protocol.Event(
@@ -667,7 +713,7 @@ class PolycentricModel extends ChangeNotifier {
 }
 
 Future<PolycentricModel> setupModel() async {
-  return PolycentricModel(await queries.createDB('neopass14.db'));
+  return PolycentricModel(await queries.createDB('neopass15.db'));
 }
 
 class NeopassApp extends StatelessWidget {
