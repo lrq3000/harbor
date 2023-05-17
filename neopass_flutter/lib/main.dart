@@ -200,21 +200,15 @@ Future<List<ClaimInfo>> loadClaims(
   sqflite.Database db,
   List<int> system,
 ) async {
-  final rows = await db.rawQuery('''
-        SELECT raw_event FROM events
-        WHERE system_key_type = 1
-        AND system_key = ?
-        AND content_type = 12;
-    ''', [Uint8List.fromList(system)]);
+  final signedEvents = await queries.loadEventsForSystemByContentType(
+    db,
+    system,
+    fixnum.Int64(12),
+  );
 
   final List<ClaimInfo> result = [];
 
-  for (final row in rows) {
-    final rawEvent = row['raw_event'];
-
-    protocol.SignedEvent signedEvent =
-        protocol.SignedEvent.fromBuffer(rawEvent as List<int>);
-
+  for (final signedEvent in signedEvents) {
     protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
 
     protocol.Claim claim = protocol.Claim.fromBuffer(event.content);

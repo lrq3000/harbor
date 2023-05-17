@@ -416,3 +416,24 @@ Future<protocol.SignedEvent?> loadLatestCRDTByContentType(
     return protocol.SignedEvent.fromBuffer(q[0]['raw_event'] as List<int>);
   }
 }
+
+Future<List<protocol.SignedEvent>> loadEventsForSystemByContentType(
+  sqflite.Database db,
+  List<int> system,
+  fixnum.Int64 contentType,
+) async {
+  final rows = await db.rawQuery('''
+        SELECT raw_event FROM events
+        WHERE system_key_type = 1
+        AND system_key = ?
+        AND content_type = ?;
+    ''', [Uint8List.fromList(system), contentType.toInt()]);
+
+  final List<protocol.SignedEvent> result = [];
+
+  for (final row in rows) {
+    result.add(protocol.SignedEvent.fromBuffer(row['raw_event'] as List<int>));
+  }
+
+  return result;
+}
