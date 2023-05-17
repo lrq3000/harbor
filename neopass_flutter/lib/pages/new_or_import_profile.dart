@@ -5,6 +5,7 @@ import 'profile.dart';
 import 'new_profile.dart';
 import 'import.dart';
 import '../main.dart' as main;
+import '../shared_ui.dart' as shared_ui;
 
 class NewOrImportProfilePage extends StatefulWidget {
   const NewOrImportProfilePage({Key? key}) : super(key: key);
@@ -18,7 +19,7 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
     List<StatelessWidget> result = [];
 
     for (var i = 0; i < identities.length; i++) {
-      result.add(main.StandardButtonGeneric(
+      result.add(shared_ui.StandardButtonGeneric(
         actionText: identities[i].username,
         actionDescription: 'Sign in to this identity',
         left: Padding(
@@ -58,7 +59,7 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
     final listViewChildren = _renderProfiles(state.identities);
 
     listViewChildren.addAll([
-      main.StandardButton(
+      shared_ui.StandardButton(
         actionText: 'New Profile',
         actionDescription: 'Generate a new Polycentric Identity',
         icon: Icons.person_add,
@@ -69,7 +70,7 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
           }));
         },
       ),
-      main.StandardButton(
+      shared_ui.StandardButton(
         actionText: 'Import Existing Profile',
         actionDescription: 'Use an existing Polycentric Identity',
         icon: Icons.arrow_downward,
@@ -84,11 +85,11 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
 
     return Scaffold(
       body: Container(
-        padding: main.scaffoldPadding,
+        padding: shared_ui.scaffoldPadding,
         child: Column(
           children: [
             const SizedBox(height: 150),
-            main.neopassLogoAndText,
+            shared_ui.neopassLogoAndText,
             const SizedBox(height: 50),
             Expanded(
               child: ListView(
@@ -97,7 +98,7 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
               ),
             ),
             const SizedBox(height: 50),
-            main.futoLogoAndText,
+            shared_ui.futoLogoAndText,
             const SizedBox(height: 50),
           ],
         ),

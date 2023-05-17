@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'new_or_import_profile.dart';
 import '../main.dart' as main;
+import '../shared_ui.dart' as shared_ui;
 import '../api_methods.dart' as api_methods;
 
 class AutomatedVerificationPage extends StatefulWidget {
@@ -48,7 +49,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
   Widget build(BuildContext context) {
     List<Widget> columnChildren = [
       const SizedBox(height: 100),
-      main.neopassLogoAndText,
+      shared_ui.neopassLogoAndText,
       const SizedBox(height: 150),
     ];
 
@@ -90,7 +91,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
           alignment: AlignmentDirectional.center,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: main.blueButtonColor,
+              backgroundColor: shared_ui.blueButtonColor,
               shape: const StadiumBorder(),
             ),
             child: const Text(
@@ -133,7 +134,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
           alignment: AlignmentDirectional.center,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: main.blueButtonColor,
+              backgroundColor: shared_ui.blueButtonColor,
               shape: const StadiumBorder(),
             ),
             child: const Text(
@@ -155,10 +156,10 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: main.makeAppBarTitleText('Verifying Claim'),
+        title: shared_ui.makeAppBarTitleText('Verifying Claim'),
       ),
       body: Container(
-        padding: main.scaffoldPadding,
+        padding: shared_ui.scaffoldPadding,
         width: double.infinity,
         child: Column(
           children: columnChildren,

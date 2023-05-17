@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'add_token.dart';
 import '../main.dart' as main;
+import '../shared_ui.dart' as shared_ui;
 
 class MakePlatformClaimPage extends StatefulWidget {
   final int identityIndex;
@@ -26,16 +27,16 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: main.makeAppBarTitleText('Make Claim'),
+        title: shared_ui.makeAppBarTitleText('Make Claim'),
       ),
       body: Container(
-          padding: main.scaffoldPadding,
+          padding: shared_ui.scaffoldPadding,
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 75),
-                main.claimTypeToImage(widget.claimType),
+                shared_ui.claimTypeToImage(widget.claimType),
                 const SizedBox(height: 75),
                 Text(
                   widget.claimType,
@@ -45,7 +46,7 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
                   ),
                 ),
                 const SizedBox(height: 100),
-                main.LabeledTextField(
+                shared_ui.LabeledTextField(
                   controller: textController,
                   title: "Profile information",
                   label: "Profile handle",
@@ -55,7 +56,7 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
                   alignment: AlignmentDirectional.center,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: main.blueButtonColor,
+                        backgroundColor: shared_ui.blueButtonColor,
                         shape: const StadiumBorder(),
                       ),
                       child: const Text('Next step'),

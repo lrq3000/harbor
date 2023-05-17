@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart' as main;
+import '../shared_ui.dart' as shared_ui;
 
 Future<void> handleShareClipboard(
   main.PolycentricModel state,
@@ -22,10 +23,10 @@ class BackupPage extends StatelessWidget {
     final state = context.watch<main.PolycentricModel>();
     return Scaffold(
         appBar: AppBar(
-          title: main.makeAppBarTitleText("Backup"),
+          title: shared_ui.makeAppBarTitleText("Backup"),
         ),
         body: Container(
-          padding: main.scaffoldPadding,
+          padding: shared_ui.scaffoldPadding,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -43,7 +44,7 @@ class BackupPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              main.StandardButton(
+              shared_ui.StandardButton(
                 actionText: 'Share',
                 actionDescription: 'Send your identity to another app',
                 icon: Icons.share,
@@ -51,14 +52,14 @@ class BackupPage extends StatelessWidget {
                   handleShareClipboard(state, processSecret);
                 },
               ),
-              main.StandardButton(
+              shared_ui.StandardButton(
                   actionText: 'Copy',
                   actionDescription: 'Copy your identity to clipboard',
                   icon: Icons.content_copy,
                   onPressed: () async {
                     handleShareClipboard(state, processSecret);
                   }),
-              main.StandardButton(
+              shared_ui.StandardButton(
                 actionText: 'QR Code',
                 actionDescription: 'Backup to another phone',
                 icon: Icons.qr_code,

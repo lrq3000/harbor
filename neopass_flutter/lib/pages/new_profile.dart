@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart' as main;
+import '../shared_ui.dart' as shared_ui;
 import 'new_or_import_profile.dart';
 
 class NewProfilePage extends StatefulWidget {
@@ -20,13 +21,13 @@ class _NewProfilePageState extends State<NewProfilePage> {
 
     return Scaffold(
       body: Container(
-          padding: main.scaffoldPadding,
+          padding: shared_ui.scaffoldPadding,
           child: Column(
             children: [
               const SizedBox(height: 150),
-              main.neopassLogoAndText,
+              shared_ui.neopassLogoAndText,
               const SizedBox(height: 100),
-              main.LabeledTextField(
+              shared_ui.LabeledTextField(
                 controller: textController,
                 title: "Profile Name",
                 label: "Alice, Bob, ...",
@@ -36,7 +37,7 @@ class _NewProfilePageState extends State<NewProfilePage> {
                 alignment: Alignment.center,
                 child: TextButton(
                   style: TextButton.styleFrom(
-                    backgroundColor: main.blueButtonColor,
+                    backgroundColor: shared_ui.blueButtonColor,
                     shape: const StadiumBorder(),
                   ),
                   onPressed: () async {
@@ -69,7 +70,7 @@ class _NewProfilePageState extends State<NewProfilePage> {
                 ),
               ),
               Expanded(flex: 1, child: Container()),
-              main.futoLogoAndText,
+              shared_ui.futoLogoAndText,
               const SizedBox(height: 50),
             ],
           )),

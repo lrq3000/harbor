@@ -5,6 +5,7 @@ import 'package:flutter/services.dart' as services;
 
 import 'automated_verification.dart';
 import '../main.dart' as main;
+import '../shared_ui.dart' as shared_ui;
 
 class AddTokenPage extends StatelessWidget {
   final main.ClaimInfo claim;
@@ -17,10 +18,10 @@ class AddTokenPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: main.makeAppBarTitleText('Add Token'),
+        title: shared_ui.makeAppBarTitleText('Add Token'),
       ),
       body: Container(
-        padding: main.scaffoldPadding,
+        padding: shared_ui.scaffoldPadding,
         child: Column(
           children: [
             const SizedBox(height: 20),
@@ -39,7 +40,7 @@ class AddTokenPage extends StatelessWidget {
             const SizedBox(height: 5),
             OutlinedButton(
               style: OutlinedButton.styleFrom(
-                backgroundColor: main.tokenColor,
+                backgroundColor: shared_ui.tokenColor,
                 foregroundColor: Colors.black,
               ),
               child: Column(
@@ -83,7 +84,7 @@ class AddTokenPage extends StatelessWidget {
               alignment: AlignmentDirectional.center,
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: main.blueButtonColor,
+                    backgroundColor: shared_ui.blueButtonColor,
                     shape: const StadiumBorder(),
                   ),
                   child: const Text(

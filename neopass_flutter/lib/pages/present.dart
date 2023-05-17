@@ -5,6 +5,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart' as main;
+import '../shared_ui.dart' as shared_ui;
 
 class PresentPage extends StatelessWidget {
   final int identityIndex;
@@ -22,10 +23,10 @@ class PresentPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: main.makeAppBarTitleText('Request Verification'),
+        title: shared_ui.makeAppBarTitleText('Request Verification'),
       ),
       body: Container(
-        padding: main.scaffoldPadding,
+        padding: shared_ui.scaffoldPadding,
         child: Column(
           children: [
             Container(
@@ -96,13 +97,13 @@ class PresentPage extends StatelessWidget {
                 color: Colors.grey,
               ),
             ),
-            main.StandardButton(
+            shared_ui.StandardButton(
               actionText: 'Copy',
               actionDescription: 'Share this unique code with others to verify',
               icon: Icons.content_copy,
               onPressed: () async {},
             ),
-            main.StandardButton(
+            shared_ui.StandardButton(
               actionText: 'Share',
               actionDescription: 'Share code for verification',
               icon: Icons.share,

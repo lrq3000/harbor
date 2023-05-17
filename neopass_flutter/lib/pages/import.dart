@@ -8,6 +8,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import '../logger.dart';
 import '../protocol.pb.dart' as protocol;
 import '../main.dart' as main;
+import '../shared_ui.dart' as shared_ui;
 import 'new_or_import_profile.dart';
 
 Future<void> importFromBase64(
@@ -49,17 +50,17 @@ class ImportPage extends StatelessWidget {
     final state = context.watch<main.PolycentricModel>();
     return Scaffold(
       appBar: AppBar(
-        title: main.makeAppBarTitleText("Import"),
+        title: shared_ui.makeAppBarTitleText("Import"),
       ),
       body: Container(
-        padding: main.scaffoldPadding,
+        padding: shared_ui.scaffoldPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 150),
-            main.neopassLogoAndText,
+            shared_ui.neopassLogoAndText,
             const SizedBox(height: 120),
-            main.StandardButton(
+            shared_ui.StandardButton(
                 actionText: 'Text',
                 actionDescription: 'Paste an exported identity',
                 icon: Icons.content_copy,
@@ -70,7 +71,7 @@ class ImportPage extends StatelessWidget {
                     await importFromBase64(context, state, clip);
                   }
                 }),
-            main.StandardButton(
+            shared_ui.StandardButton(
               actionText: 'QR Code',
               actionDescription: 'Backup from another phone',
               icon: Icons.qr_code,

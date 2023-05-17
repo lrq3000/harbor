@@ -5,6 +5,7 @@ import 'make_platform_claim.dart';
 import 'create_skill_claim.dart';
 import 'create_occupation_claim.dart';
 import '../main.dart' as main;
+import '../shared_ui.dart' as shared_ui;
 
 class CreateClaimPage extends StatefulWidget {
   final int identityIndex;
@@ -25,9 +26,9 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
     final identity = state.identities[widget.identityIndex];
 
     StatelessWidget makePlatformButton(String claimType) {
-      return main.ClaimButtonImage(
+      return shared_ui.ClaimButtonImage(
         nameText: claimType,
-        image: main.claimTypeToImage(claimType),
+        image: shared_ui.claimTypeToImage(claimType),
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute<MakePlatformClaimPage>(builder: (context) {
@@ -42,15 +43,15 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: main.makeAppBarTitleText("Make Claim"),
+        title: shared_ui.makeAppBarTitleText("Make Claim"),
       ),
       body: Container(
-        padding: main.scaffoldPadding,
+        padding: shared_ui.scaffoldPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            main.LabeledTextField(
+            shared_ui.LabeledTextField(
               controller: textController,
               title: "Freeform",
               label: "Type of claim",
@@ -59,7 +60,7 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
               alignment: AlignmentDirectional.centerEnd,
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: main.blueButtonColor,
+                    backgroundColor: shared_ui.blueButtonColor,
                     shape: const StadiumBorder(),
                   ),
                   child: const Text(
@@ -101,7 +102,7 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
               shrinkWrap: true,
               childAspectRatio: 123.0 / 106.0,
               children: [
-                main.ClaimButtonIcon(
+                shared_ui.ClaimButtonIcon(
                   nameText: "Occupation",
                   icon: Icons.work,
                   onPressed: () {
@@ -114,7 +115,7 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
                     }));
                   },
                 ),
-                main.ClaimButtonIcon(
+                shared_ui.ClaimButtonIcon(
                   nameText: "Skill",
                   icon: Icons.build,
                   onPressed: () {

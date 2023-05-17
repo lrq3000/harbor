@@ -10,6 +10,7 @@ import '../logger.dart';
 import '../main.dart' as main;
 import '../protocol.pb.dart' as protocol;
 import '../queries.dart' as queries;
+import '../shared_ui.dart' as shared_ui;
 import 'backup.dart';
 import 'claim.dart';
 import 'create_claim.dart';
@@ -225,12 +226,12 @@ class _ProfilePageState extends State<ProfilePage> {
       List<StatelessWidget> result = [];
 
       for (var i = 0; i < claims.length; i++) {
-        result.add(main.StandardButtonGeneric(
+        result.add(shared_ui.StandardButtonGeneric(
           actionText: claims[i].claimType,
           actionDescription: claims[i].text,
           left: Container(
             margin: const EdgeInsets.only(top: 5, bottom: 5),
-            child: main.claimTypeToVisual(claims[i].claimType),
+            child: shared_ui.claimTypeToVisual(claims[i].claimType),
           ),
           onPressed: () {
             Navigator.push(context,
@@ -338,7 +339,7 @@ class _ProfilePageState extends State<ProfilePage> {
       const SizedBox(height: 10),
       OutlinedButton(
         style: OutlinedButton.styleFrom(
-          backgroundColor: main.tokenColor,
+          backgroundColor: shared_ui.tokenColor,
           foregroundColor: Colors.black,
         ),
         child: Stack(children: [
@@ -408,7 +409,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
       ),
-      main.StandardButton(
+      shared_ui.StandardButton(
         actionText: 'Make a claim',
         actionDescription: 'Make a new claim for your profile',
         icon: Icons.person_add,
@@ -419,7 +420,7 @@ class _ProfilePageState extends State<ProfilePage> {
           }));
         },
       ),
-      main.StandardButton(
+      shared_ui.StandardButton(
         actionText: 'Vouch for a claim',
         actionDescription: 'Vouch for someone elses claim',
         icon: Icons.video_call,
@@ -440,7 +441,7 @@ class _ProfilePageState extends State<ProfilePage> {
           }
         },
       ),
-      main.StandardButton(
+      shared_ui.StandardButton(
         actionText: 'Change account',
         actionDescription: 'Switch to a different account',
         icon: Icons.switch_account,
@@ -451,7 +452,7 @@ class _ProfilePageState extends State<ProfilePage> {
           }));
         },
       ),
-      main.StandardButton(
+      shared_ui.StandardButton(
         actionText: 'Backup',
         actionDescription: 'Make a backup of your identity',
         icon: Icons.save,
@@ -462,7 +463,7 @@ class _ProfilePageState extends State<ProfilePage> {
           }));
         },
       ),
-      main.StandardButton(
+      shared_ui.StandardButton(
         actionText: 'Delete account',
         actionDescription: 'Permanently delete account from this device',
         icon: Icons.delete,
@@ -475,7 +476,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
         body: Container(
-      padding: main.scaffoldPadding,
+      padding: shared_ui.scaffoldPadding,
       child: SingleChildScrollView(
         child: Column(
           children: listViewChildren,

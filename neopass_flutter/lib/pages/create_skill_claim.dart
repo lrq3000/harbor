@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart' as main;
+import '../shared_ui.dart' as shared_ui;
 import 'profile.dart';
 
 class CreateSkillClaimPage extends StatefulWidget {
@@ -24,7 +25,7 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: main.makeAppBarTitleText('Skill'),
+        title: shared_ui.makeAppBarTitleText('Skill'),
         actions: [
           TextButton(
             style: TextButton.styleFrom(
@@ -61,12 +62,12 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
         ],
       ),
       body: Container(
-        padding: main.scaffoldPadding,
+        padding: shared_ui.scaffoldPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            main.LabeledTextField(
+            shared_ui.LabeledTextField(
               controller: textController,
               title: "Name",
               label: "Python programming, Web marketing, ...",

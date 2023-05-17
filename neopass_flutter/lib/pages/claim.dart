@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'present.dart';
 import 'add_token.dart';
 import '../main.dart' as main;
+import '../shared_ui.dart' as shared_ui;
 
 const Set<String> manualVerificationClaimTypes = {
   "Generic",
@@ -32,10 +33,10 @@ class _ClaimPageState extends State<ClaimPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: main.makeAppBarTitleText('Claim'),
+        title: shared_ui.makeAppBarTitleText('Claim'),
       ),
       body: Container(
-        padding: main.scaffoldPadding,
+        padding: shared_ui.scaffoldPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -109,7 +110,7 @@ class _ClaimPageState extends State<ClaimPage> {
               ),
             ),
             if (!manualVerificationClaimTypes.contains(claim.claimType))
-              main.StandardButton(
+              shared_ui.StandardButton(
                 actionText: 'Automated',
                 actionDescription:
                     'Get an automated authority to vouch for this claim',
@@ -123,7 +124,7 @@ class _ClaimPageState extends State<ClaimPage> {
                   }));
                 },
               ),
-            main.StandardButton(
+            shared_ui.StandardButton(
               actionText: 'Manual',
               actionDescription:
                   'Get a manual authority to vouch for this claim',
