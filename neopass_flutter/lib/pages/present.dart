@@ -1,11 +1,25 @@
 import 'dart:convert';
 
+import 'package:flutter/services.dart' as services;
+import 'package:share_plus/share_plus.dart' as share_plus;
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart' as main;
 import '../shared_ui.dart' as shared_ui;
+
+Future<void> handlePresentClipboard(
+  String encodedClaim,
+) async {
+  await services.Clipboard.setData(services.ClipboardData(text: encodedClaim));
+}
+
+void handlePresentShare(
+  String encodedClaim,
+) {
+  share_plus.Share.share(encodedClaim);
+}
 
 class PresentPage extends StatelessWidget {
   final int identityIndex;
@@ -20,6 +34,7 @@ class PresentPage extends StatelessWidget {
     final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[identityIndex];
     final claim = identity.claims[claimIndex];
+    final encodedClaim = base64.encode(claim.pointer.writeToBuffer());
 
     return Scaffold(
       appBar: AppBar(
@@ -88,7 +103,7 @@ class PresentPage extends StatelessWidget {
             Center(
               child: QrImage(
                 backgroundColor: Colors.white,
-                data: base64.encode(claim.pointer.writeToBuffer()),
+                data: encodedClaim,
                 version: QrVersions.auto,
                 size: 200.0,
               ),
@@ -107,13 +122,17 @@ class PresentPage extends StatelessWidget {
               actionText: 'Copy',
               actionDescription: 'Share this unique code with others to verify',
               icon: Icons.content_copy,
-              onPressed: () async {},
+              onPressed: () async {
+                handlePresentClipboard(encodedClaim);
+              },
             ),
             shared_ui.StandardButton(
               actionText: 'Share',
               actionDescription: 'Share code for verification',
               icon: Icons.share,
-              onPressed: () async {},
+              onPressed: () async {
+                handlePresentShare(encodedClaim);
+              },
             ),
           ],
         ),
