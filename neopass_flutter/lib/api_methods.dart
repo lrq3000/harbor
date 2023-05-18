@@ -71,7 +71,7 @@ Future<protocol.Events> getEvents(
   return protocol.Events.fromBuffer(response.bodyBytes);
 }
 
-Future<bool> requestVerification(
+Future<void> requestVerification(
   protocol.Pointer pointer,
   String claimType,
 ) async {
@@ -79,21 +79,13 @@ Future<bool> requestVerification(
       "${claimType.toLowerCase()}"
       "/api/v1/vouch";
 
-  try {
-    final response = await http.post(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/octet-stream',
-      },
-      body: pointer.writeToBuffer(),
-    );
+  final response = await http.post(
+    Uri.parse(url),
+    headers: <String, String>{
+      'Content-Type': 'application/octet-stream',
+    },
+    body: pointer.writeToBuffer(),
+  );
 
-    checkResponse('requestVerification', response);
-
-    return true;
-  } catch (err) {
-    logger.w(err);
-  }
-
-  return false;
+  checkResponse('requestVerification', response);
 }

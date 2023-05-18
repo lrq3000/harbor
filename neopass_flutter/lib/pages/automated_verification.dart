@@ -4,6 +4,7 @@ import 'new_or_import_profile.dart';
 import '../main.dart' as main;
 import '../shared_ui.dart' as shared_ui;
 import '../api_methods.dart' as api_methods;
+import '../logger.dart';
 
 class AutomatedVerificationPage extends StatefulWidget {
   final main.ClaimInfo claim;
@@ -31,18 +32,24 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
       page = 0;
     });
 
-    final success = await api_methods.requestVerification(
-      widget.claim.pointer,
-      widget.claim.claimType,
-    );
+    try {
+      await api_methods.requestVerification(
+        widget.claim.pointer,
+        widget.claim.claimType,
+      );
 
-    setState(() {
-      if (success) {
+      setState(() {
         page = 1;
-      } else {
+      });
+    } catch (err) {
+      logger.e(err);
+
+      setState(() {
         page = 2;
-      }
-    });
+      });
+
+      shared_ui.errorDialog(context, err.toString());
+    }
   }
 
   @override

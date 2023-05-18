@@ -446,3 +446,28 @@ class LabeledTextField extends StatelessWidget {
     ]);
   }
 }
+
+Future<void> errorDialog(
+  BuildContext context,
+  String text,
+) async {
+  await showDialog<AlertDialog>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Error"),
+          content: Text(text),
+          actions: [
+            TextButton(
+              child: const Text("Ok"),
+              onPressed: () async {
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ],
+        );
+      });
+}
+

@@ -39,32 +39,8 @@ Future<void> importFromBase64(
     }
   } catch (err) {
     logger.e(err);
-    errorDialog(context, err.toString());
+    shared_ui.errorDialog(context, err.toString());
   }
-}
-
-Future<void> errorDialog(
-  BuildContext context,
-  String text,
-) async {
-  await showDialog<AlertDialog>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Error"),
-          content: Text(text),
-          actions: [
-            TextButton(
-              child: const Text("Ok"),
-              onPressed: () async {
-                if (context.mounted) {
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-          ],
-        );
-      });
 }
 
 class ImportPage extends StatelessWidget {
