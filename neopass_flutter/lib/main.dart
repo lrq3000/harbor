@@ -105,13 +105,36 @@ Future<String> makeExportBundle(
   final privateKey = await processSecret.system.extractPrivateKeyBytes();
   final publicKey = (await processSecret.system.extractPublicKey()).bytes;
 
+  final events = protocol.Events();
+
+  await db.transaction((transaction) async {
+    final usernameSignedEvent = await queries.loadLatestCRDTByContentType(
+      transaction,
+      publicKey,
+      models.ContentType.contentTypeUsername,
+    );
+
+    if (usernameSignedEvent != null) {
+      events.events.add(usernameSignedEvent);
+    }
+
+    final serverSignedEvents =
+        await queries.loadLatestCRDTSetItemsByContentType(
+      transaction,
+      publicKey,
+      models.ContentType.contentTypeServer,
+    );
+
+    events.events.addAll(serverSignedEvents);
+  });
+
   final exportBundle = protocol.ExportBundle(
     keyPair: protocol.KeyPair(
       keyType: fixnum.Int64(1),
       privateKey: privateKey,
       publicKey: publicKey,
     ),
-    events: protocol.Events(),
+    events: events,
   );
 
   return "polycentric://${base64Url.encode(exportBundle.writeToBuffer())}";
