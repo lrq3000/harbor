@@ -6,6 +6,7 @@ import 'protocol.pb.dart' as protocol;
 import 'api_methods.dart' as api_methods;
 import 'ranges.dart' as ranges;
 import 'queries.dart' as queries;
+import 'logger.dart';
 
 bool processDeepEqual(protocol.Process x, protocol.Process y) {
   return foundation.listEquals(x.process, y.process);
@@ -24,11 +25,13 @@ List<protocol.Range> rangesToProtocolRanges(List<ranges.Range> x) {
   }).toList();
 }
 
-Future<bool> backfillClient(
+Future<bool> backfillClientSingle(
   sqflite.Database db,
   protocol.PublicKey system,
   String server,
 ) async {
+  logger.d('backfillClientSingle $server');
+
   final serverRangesForSystem = await api_methods.getRanges(server, system);
   final clientRangesForSystem = await db.transaction((transaction) async {
     return await queries.rangesForSystem(transaction, system);
@@ -77,6 +80,27 @@ Future<bool> backfillClient(
       await db.transaction((transaction) async {
         await main.ingest(transaction, event);
       });
+    }
+  }
+
+  return progress;
+}
+
+Future<bool> backfillClient(
+  sqflite.Database db,
+  protocol.PublicKey system,
+) async {
+  final servers = await db.transaction((transaction) async {
+    return await main.loadServerList(transaction, system.key);
+  });
+
+  var progress = false;
+
+  for (final server in servers) {
+    final subProgress = await backfillClientSingle(db, system, server);
+
+    if (subProgress == true) {
+      progress = true;
     }
   }
 

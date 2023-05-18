@@ -486,8 +486,8 @@ Future<List<protocol.SignedEvent>> loadLatestCRDTSetItemsByContentType(
     WITH latest_values AS (
         SELECT
           events.raw_event as raw_event,
-          crdt_set_items.value as value,
-          MAX(crdt.set_items.unix_milliseconds),
+          crdt_set_items.operation as operation,
+          MAX(crdt_set_items.unix_milliseconds)
         FROM
           crdt_set_items
         JOIN
@@ -508,7 +508,7 @@ Future<List<protocol.SignedEvent>> loadLatestCRDTSetItemsByContentType(
     FROM
         latest_values
     WHERE
-        latest_values.value = 0
+        latest_values.operation = 0
     ''', [contentType.toInt(), Uint8List.fromList(system)]);
 
   final List<protocol.SignedEvent> result = [];

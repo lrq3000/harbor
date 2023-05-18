@@ -263,6 +263,46 @@ Future<void> sendAllEventsToServer(
   await postEvents(payload);
 }
 
+Future<List<String>> loadServerList(
+  sqflite.Transaction transaction,
+  List<int> system,
+) async {
+  final signedEvents = await queries.loadLatestCRDTSetItemsByContentType(
+    transaction,
+    system,
+    models.ContentType.contentTypeServer,
+  );
+
+  final List<String> result = [];
+
+  for (final signedEvent in signedEvents) {
+    final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
+
+    if (!event.hasLwwElementSet()) {
+      logger.d("expected hasLWWElementSet");
+
+      continue;
+    }
+
+    if (event.contentType != models.ContentType.contentTypeServer) {
+      logger
+          .d("expected server event but got: ${event.contentType.toString()}");
+
+      continue;
+    }
+
+    if (event.lwwElementSet.operation != protocol.LWWElementSet_Operation.ADD) {
+      logger.d("expected ADD operation");
+
+      continue;
+    }
+
+    result.add(utf8.decode(event.lwwElementSet.value));
+  }
+
+  return result;
+}
+
 Future<String> loadLatestUsername(
   sqflite.Transaction transaction,
   List<int> system,
@@ -704,8 +744,7 @@ class PolycentricModel extends ChangeNotifier {
       systemProto.keyType = fixnum.Int64(1);
       systemProto.key = public.bytes;
 
-      await synchronizer.backfillClient(
-          db, systemProto, 'https://srv1-stg.polycentric.io');
+      await synchronizer.backfillClient(db, systemProto);
     }
 
     notifyListeners();
