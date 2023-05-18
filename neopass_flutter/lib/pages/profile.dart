@@ -428,6 +428,11 @@ class _ProfilePageState extends State<ProfilePage> {
           try {
             final String rawScan = await FlutterBarcodeScanner.scanBarcode(
                 "#ff6666", 'cancel', false, ScanMode.QR);
+
+            if (rawScan == "-1") {
+              return;
+            }
+
             final List<int> buffer = base64.decode(rawScan);
             final protocol.Pointer pointer =
                 protocol.Pointer.fromBuffer(buffer);

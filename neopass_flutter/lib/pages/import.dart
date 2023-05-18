@@ -39,7 +39,32 @@ Future<void> importFromBase64(
     }
   } catch (err) {
     logger.e(err);
+    errorDialog(context, err.toString());
   }
+}
+
+Future<void> errorDialog(
+  BuildContext context,
+  String text,
+) async {
+  await showDialog<AlertDialog>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Error"),
+          content: Text(text),
+          actions: [
+            TextButton(
+              child: const Text("Ok"),
+              onPressed: () async {
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ],
+        );
+      });
 }
 
 class ImportPage extends StatelessWidget {
@@ -78,8 +103,8 @@ class ImportPage extends StatelessWidget {
               onPressed: () async {
                 try {
                   final rawScan = await FlutterBarcodeScanner.scanBarcode(
-                      "#ff6666", 'cancel', false, ScanMode.QR);
-                  if (rawScan != "" && context.mounted) {
+                      "#ff6666", 'Cancel', false, ScanMode.QR);
+                  if (rawScan != "-1" && context.mounted) {
                     await importFromBase64(context, state, rawScan);
                   }
                 } catch (err) {
