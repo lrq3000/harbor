@@ -1,12 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:file_picker/file_picker.dart' as file_picker;
 
-import '../logger.dart';
 import '../main.dart' as main;
 import '../protocol.pb.dart' as protocol;
 import '../queries.dart' as queries;
@@ -15,6 +12,7 @@ import 'backup.dart';
 import 'claim.dart';
 import 'create_claim.dart';
 import 'new_or_import_profile.dart';
+import 'vouch.dart';
 
 class ProfilePage extends StatefulWidget {
   final int identityIndex;
@@ -423,27 +421,12 @@ class _ProfilePageState extends State<ProfilePage> {
       shared_ui.StandardButton(
         actionText: 'Vouch for a claim',
         actionDescription: 'Vouch for someone elses claim',
-        icon: Icons.video_call,
-        onPressed: () async {
-          try {
-            final String rawScan = await FlutterBarcodeScanner.scanBarcode(
-                "#ff6666", 'cancel', false, ScanMode.QR);
-
-            if (rawScan == "-1") {
-              return;
-            }
-
-            final List<int> buffer = base64.decode(rawScan);
-            final protocol.Pointer pointer =
-                protocol.Pointer.fromBuffer(buffer);
-
-            await state.db.transaction((transaction) async {
-              await main.makeVouch(
-                  transaction, identity.processSecret, pointer);
-            });
-          } catch (err) {
-            logger.e(err);
-          }
+        icon: Icons.check_box,
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute<VouchPage>(builder: (context) {
+            return VouchPage(processSecret: identity.processSecret);
+          }));
         },
       ),
       shared_ui.StandardButton(
