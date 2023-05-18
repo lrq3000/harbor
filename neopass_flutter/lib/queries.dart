@@ -5,6 +5,7 @@ import 'package:fixnum/fixnum.dart' as fixnum;
 import 'package:path/path.dart' as path;
 
 import 'protocol.pb.dart' as protocol;
+import 'ranges.dart' as ranges;
 
 const schemaTableEvents = '''
 CREATE TABLE IF NOT EXISTS events (
@@ -510,6 +511,36 @@ Future<List<protocol.SignedEvent>> loadLatestCRDTSetItemsByContentType(
     WHERE
         latest_values.operation = 0
     ''', [contentType.toInt(), Uint8List.fromList(system)]);
+
+  final List<protocol.SignedEvent> result = [];
+
+  for (final row in rows) {
+    result.add(protocol.SignedEvent.fromBuffer(row['raw_event'] as List<int>));
+  }
+
+  return result;
+}
+
+Future<List<protocol.SignedEvent>> loadEventRange(
+  sqflite.Transaction transaction,
+  List<int> system,
+  List<int> process,
+  ranges.Range range,
+) async {
+  final rows = await transaction.rawQuery('''
+    SELECT raw_event FROM events
+    WHERE system_key_type = 1
+    AND system_key = ?
+    AND process = ?
+    AND logical_clock <= ?
+    AND logical_clock >= ?
+    LIMIT 1;
+  ''', [
+    Uint8List.fromList(system),
+    Uint8List.fromList(process),
+    range.low.toInt(),
+    range.high.toInt(),
+  ]);
 
   final List<protocol.SignedEvent> result = [];
 

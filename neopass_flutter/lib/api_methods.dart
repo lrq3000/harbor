@@ -12,10 +12,12 @@ void checkResponse(String name, http.Response response) {
   }
 }
 
-Future<void> postEvents(protocol.Events payload) async {
+Future<void> postEvents(String server, protocol.Events payload) async {
   try {
+    final url = "$server/events";
+
     final response = await http.post(
-      Uri.parse('https://srv1-stg.polycentric.io/events'),
+      Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/octet-stream',
       },

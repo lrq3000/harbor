@@ -8,7 +8,6 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:fixnum/fixnum.dart' as fixnum;
 
-import 'api_methods.dart';
 import 'pages/new_or_import_profile.dart';
 import 'models.dart' as models;
 import 'protocol.pb.dart' as protocol;
@@ -262,30 +261,6 @@ Future<List<ClaimInfo>> loadClaims(
   return result;
 }
 
-Future<void> sendAllEventsToServer(
-  sqflite.Transaction transaction,
-  List<int> system,
-) async {
-  final rows = await transaction.rawQuery('''
-        SELECT raw_event FROM events
-        WHERE system_key_type = 1
-        AND system_key = ?;
-    ''', [Uint8List.fromList(system)]);
-
-  final protocol.Events payload = protocol.Events();
-
-  for (final row in rows) {
-    final rawEvent = row['raw_event'];
-
-    final protocol.SignedEvent signedEvent =
-        protocol.SignedEvent.fromBuffer(rawEvent as List<int>);
-
-    payload.events.add(signedEvent);
-  }
-
-  await postEvents(payload);
-}
-
 Future<List<String>> loadServerList(
   sqflite.Transaction transaction,
   List<int> system,
@@ -448,9 +423,11 @@ Future<Image?> loadLatestAvatar(
 Future<protocol.Pointer> saveEvent(sqflite.Transaction transaction,
     ProcessSecret processInfo, protocol.Event event) async {
   final public = await processInfo.system.extractPublicKey();
-  final protocol.PublicKey system = protocol.PublicKey();
-  system.keyType = fixnum.Int64(1);
-  system.key = public.bytes;
+
+  final protocol.PublicKey system = protocol.PublicKey(
+    keyType: fixnum.Int64(1),
+    key: public.bytes,
+  );
 
   final protocol.Process process = protocol.Process(
     process: processInfo.process,
@@ -481,8 +458,6 @@ Future<protocol.Pointer> saveEvent(sqflite.Transaction transaction,
   );
 
   await ingest(transaction, signedEvent);
-
-  sendAllEventsToServer(transaction, public.bytes);
 
   return await signedEventToPointer(signedEvent);
 }
@@ -767,7 +742,8 @@ class PolycentricModel extends ChangeNotifier {
       systemProto.keyType = fixnum.Int64(1);
       systemProto.key = public.bytes;
 
-      await synchronizer.backfillClient(db, systemProto);
+      synchronizer.backfillClient(db, systemProto);
+      synchronizer.backfillServers(db, systemProto);
     }
 
     notifyListeners();

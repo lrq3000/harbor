@@ -104,5 +104,89 @@ Future<bool> backfillClient(
     }
   }
 
+  logger.d('backfillclient progress $progress');
+
+  return progress;
+}
+
+Future<bool> backfillServerSingle(
+  sqflite.Database db,
+  protocol.PublicKey system,
+  String server,
+) async {
+  logger.d('backfillServerSingle $server');
+
+  final serverRangesForSystem = await api_methods.getRanges(server, system);
+  final clientRangesForSystem = await db.transaction((transaction) async {
+    return await queries.rangesForSystem(transaction, system);
+  });
+
+  var progress = false;
+
+  for (final clientRangesForProcess
+      in clientRangesForSystem.rangesForProcesses) {
+    var clientRanges = protocolRangesToRanges(clientRangesForProcess.ranges);
+    List<ranges.Range> serverRanges = [];
+
+    for (final serverRangesForProcess
+        in serverRangesForSystem.rangesForProcesses) {
+      if (processDeepEqual(
+        clientRangesForProcess.process,
+        serverRangesForProcess.process,
+      )) {
+        serverRanges = protocolRangesToRanges(serverRangesForProcess.ranges);
+        break;
+      }
+    }
+
+    final serverNeeds = ranges.subtractRange(clientRanges, serverRanges);
+
+    if (serverNeeds.isEmpty) {
+      break;
+    }
+
+    final protocol.Events payload = protocol.Events();
+
+    await db.transaction((transaction) async {
+      for (final range in serverNeeds) {
+        payload.events.addAll(
+          await queries.loadEventRange(
+            transaction,
+            system.key,
+            clientRangesForProcess.process.process,
+            range,
+          ),
+        );
+      }
+    });
+
+    await api_methods.postEvents(server, payload);
+
+    progress = true;
+  }
+
+  return progress;
+}
+
+Future<bool> backfillServers(
+  sqflite.Database db,
+  protocol.PublicKey system,
+) async {
+  final servers = await db.transaction((transaction) async {
+    return await main.loadServerList(transaction, system.key);
+  });
+
+  var progress = false;
+
+  for (final server in servers) {
+    final subProgress = await backfillServerSingle(db, system, server);
+
+    if (subProgress == true) {
+      progress = true;
+    }
+  }
+
+  logger.d('backfillServers progress $progress');
+
   return progress;
 }
