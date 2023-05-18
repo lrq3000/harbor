@@ -36,6 +36,12 @@ class PresentPage extends StatelessWidget {
                 radius: 50,
                 foregroundImage:
                     identity.avatar != null ? identity.avatar!.image : null,
+                child: const SizedBox.expand(
+                  child: FittedBox(
+                    fit: BoxFit.fill,
+                    child: Icon(Icons.person),
+                  ),
+                ),
               ),
             ),
             Container(
