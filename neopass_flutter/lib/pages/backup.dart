@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart' as services;
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart' as qr_flutter;
 
 import '../main.dart' as main;
 import '../shared_ui.dart' as shared_ui;
@@ -11,6 +12,46 @@ Future<void> handleShareClipboard(
 ) async {
   final exportBundle = await main.makeExportBundle(state.db, processSecret);
   await services.Clipboard.setData(services.ClipboardData(text: exportBundle));
+}
+
+Future<void> handleShareQR(
+  main.PolycentricModel state,
+  main.ProcessSecret processSecret,
+  BuildContext context,
+) async {
+  final exportBundle = await main.makeExportBundle(state.db, processSecret);
+
+  if (context.mounted) {
+    Navigator.push(context, MaterialPageRoute<BackupPageQR>(builder: (context) {
+      return BackupPageQR(link: exportBundle);
+    }));
+  }
+}
+
+class BackupPageQR extends StatelessWidget {
+  final String link;
+
+  const BackupPageQR({Key? key, required this.link}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: shared_ui.makeAppBarTitleText("Scan QR Code"),
+      ),
+      body: Container(
+        padding: shared_ui.scaffoldPadding,
+        child: Center(
+          child: qr_flutter.QrImage(
+            backgroundColor: Colors.white,
+            data: link,
+            version: qr_flutter.QrVersions.auto,
+            size: 250.0,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class BackupPage extends StatelessWidget {
@@ -64,7 +105,7 @@ class BackupPage extends StatelessWidget {
                 actionDescription: 'Backup to another phone',
                 icon: Icons.qr_code,
                 onPressed: () async {
-                  handleShareClipboard(state, processSecret);
+                  handleShareQR(state, processSecret, context);
                 },
               ),
             ],
