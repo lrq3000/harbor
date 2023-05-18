@@ -38,7 +38,7 @@ class VouchPage extends StatelessWidget {
     main.PolycentricModel state,
   ) async {
     final String rawScan = await FlutterBarcodeScanner.scanBarcode(
-        "#ff6666", 'cancel', false, ScanMode.QR);
+        "#ff6666", 'Cancel', false, ScanMode.QR);
 
     if (rawScan != "-1" && context.mounted) {
       await handleBase64(context, state, rawScan);
