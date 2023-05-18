@@ -2,6 +2,7 @@ import 'package:flutter/services.dart' as services;
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart' as qr_flutter;
+import 'package:share_plus/share_plus.dart' as share_plus;
 
 import '../main.dart' as main;
 import '../shared_ui.dart' as shared_ui;
@@ -26,6 +27,14 @@ Future<void> handleShareQR(
       return BackupPageQR(link: exportBundle);
     }));
   }
+}
+
+Future<void> handleShareShare(
+  main.PolycentricModel state,
+  main.ProcessSecret processSecret,
+) async {
+  final exportBundle = await main.makeExportBundle(state.db, processSecret);
+  share_plus.Share.share(exportBundle);
 }
 
 class BackupPageQR extends StatelessWidget {
@@ -90,7 +99,7 @@ class BackupPage extends StatelessWidget {
                 actionDescription: 'Send your identity to another app',
                 icon: Icons.share,
                 onPressed: () async {
-                  handleShareClipboard(state, processSecret);
+                  handleShareShare(state, processSecret);
                 },
               ),
               shared_ui.StandardButton(
