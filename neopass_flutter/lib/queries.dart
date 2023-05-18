@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS process_secrets (
     system_key_pub  BLOB    NOT NULL,
     process         BLOB    NOT NULL,
 
-    UNIQUE(system_key_type, system_key, process)
+    UNIQUE(system_key_type, system_key)
 );
 ''';
 
