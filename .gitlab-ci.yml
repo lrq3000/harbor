@@ -10,6 +10,9 @@ build:
   stage: build
   script:
     - cd neopass_flutter && make build-apk
+  artifacts:
+    paths:
+      - neopass_flutter/build/app/outputs/flutter-apk/app-release.apk
 
 test:
   stage: test
