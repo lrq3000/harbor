@@ -25,6 +25,10 @@ Future<void> importFromBase64(
 
     text = text.substring(prefix.length);
 
+    while ((text.length % 4) != 0) {
+      text = "$text=";
+    }
+
     final decoded = protocol.ExportBundle.fromBuffer(
       base64.decode(text),
     );

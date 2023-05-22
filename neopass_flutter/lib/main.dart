@@ -136,7 +136,7 @@ Future<String> makeExportBundle(
     events: events,
   );
 
-  return "polycentric://${base64Url.encode(exportBundle.writeToBuffer())}";
+  return "polycentric://${base64.encode(exportBundle.writeToBuffer())}";
 }
 
 Future<void> importExportBundle(
