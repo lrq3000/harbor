@@ -258,10 +258,12 @@ class _ProfilePageState extends State<ProfilePage> {
             radius: 50,
             foregroundImage:
                 identity.avatar != null ? identity.avatar!.image : null,
-            child: const Text(
-              'Tap to set avatar',
-              textAlign: TextAlign.center,
-            ),
+            child: (identity.avatar == null)
+                ? const Text(
+                    'Tap to set avatar',
+                    textAlign: TextAlign.center,
+                  )
+                : null,
           ),
         ),
         onTap: () async {
