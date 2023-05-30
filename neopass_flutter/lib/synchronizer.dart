@@ -149,6 +149,7 @@ Future<bool> backfillServerSingle(
 
     await db.transaction((transaction) async {
       for (final range in serverNeeds) {
+        logger.d('loading range $range');
         payload.events.addAll(
           await queries.loadEventRange(
             transaction,
@@ -159,6 +160,8 @@ Future<bool> backfillServerSingle(
         );
       }
     });
+
+    logger.d('sending count ${payload.events.length}');
 
     await api_methods.postEvents(server, payload);
 

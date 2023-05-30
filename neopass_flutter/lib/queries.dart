@@ -532,9 +532,8 @@ Future<List<protocol.SignedEvent>> loadEventRange(
     WHERE system_key_type = 1
     AND system_key = ?
     AND process = ?
-    AND logical_clock <= ?
     AND logical_clock >= ?
-    LIMIT 1;
+    AND logical_clock <= ?
   ''', [
     Uint8List.fromList(system),
     Uint8List.fromList(process),

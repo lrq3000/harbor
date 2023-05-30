@@ -9,8 +9,11 @@ import '../shared_ui.dart' as shared_ui;
 
 class AddTokenPage extends StatelessWidget {
   final main.ClaimInfo claim;
+  final int identityIndex;
 
-  const AddTokenPage({Key? key, required this.claim}) : super(key: key);
+  const AddTokenPage(
+      {Key? key, required this.claim, required this.identityIndex})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +105,7 @@ class AddTokenPage extends StatelessWidget {
                             builder: (BuildContext context) {
                       return AutomatedVerificationPage(
                         claim: claim,
+                        identityIndex: identityIndex,
                       );
                     }));
                   }),

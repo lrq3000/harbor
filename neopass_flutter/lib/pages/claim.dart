@@ -120,6 +120,7 @@ class _ClaimPageState extends State<ClaimPage> {
                       MaterialPageRoute<AddTokenPage>(builder: (context) {
                     return AddTokenPage(
                       claim: claim,
+                      identityIndex: widget.identityIndex,
                     );
                   }));
                 },

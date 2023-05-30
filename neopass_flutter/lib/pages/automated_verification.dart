@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:fixnum/fixnum.dart' as fixnum;
 
 import 'new_or_import_profile.dart';
 import '../main.dart' as main;
 import '../shared_ui.dart' as shared_ui;
 import '../api_methods.dart' as api_methods;
+import '../synchronizer.dart' as synchronizer;
+import '../protocol.pb.dart' as protocol;
 import '../logger.dart';
 
 class AutomatedVerificationPage extends StatefulWidget {
   final main.ClaimInfo claim;
+  final int identityIndex;
 
-  const AutomatedVerificationPage({Key? key, required this.claim})
+  const AutomatedVerificationPage(
+      {Key? key, required this.claim, required this.identityIndex})
       : super(key: key);
 
   @override
@@ -24,15 +30,27 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
   void initState() {
     super.initState();
 
-    doVerification();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      doVerification(context);
+    });
   }
 
-  Future<void> doVerification() async {
+  Future<void> doVerification(BuildContext context) async {
     setState(() {
       page = 0;
     });
 
     try {
+      final state = Provider.of<main.PolycentricModel>(context, listen: false);
+      final identity = state.identities[widget.identityIndex];
+
+      final public = await identity.processSecret.system.extractPublicKey();
+      final systemProto = protocol.PublicKey();
+      systemProto.keyType = fixnum.Int64(1);
+      systemProto.key = public.bytes;
+
+      await synchronizer.backfillServers(state.db, systemProto);
+
       await api_methods.requestVerification(
         widget.claim.pointer,
         widget.claim.claimType,
@@ -154,7 +172,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
               ),
             ),
             onPressed: () async {
-              doVerification();
+              doVerification(context);
             },
           ),
         ),

@@ -84,6 +84,7 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
                                   builder: (context) {
                             return AddTokenPage(
                               claim: claim,
+                              identityIndex: widget.identityIndex,
                             );
                           }));
                         }
