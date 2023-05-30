@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'add_token.dart';
 import '../main.dart' as main;
 import '../shared_ui.dart' as shared_ui;
+import '../handle_validation.dart' as handle_validation;
 
 class MakePlatformClaimPage extends StatefulWidget {
   final int identityIndex;
@@ -61,7 +62,8 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
                       ),
                       child: const Text('Next step'),
                       onPressed: () async {
-                        if (textController.text.isEmpty) {
+                        if (!handle_validation.isHandleValid(
+                            widget.claimType, textController.text)) {
                           return;
                         }
 
