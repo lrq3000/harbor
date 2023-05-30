@@ -77,7 +77,7 @@ Future<void> requestVerification(
   protocol.Pointer pointer,
   String claimType,
 ) async {
-  final url = "https://verifiers.grayjay.app/verifiers/"
+  final url = "https://verifiers.grayjay.app/"
       "${claimType.toLowerCase()}"
       "/api/v1/vouch";
 
