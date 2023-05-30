@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import 'make_platform_claim.dart';
 import 'create_skill_claim.dart';
 import 'create_occupation_claim.dart';
-import '../main.dart' as main;
+import 'create_generic_claim.dart';
 import '../shared_ui.dart' as shared_ui;
 
 class CreateClaimPage extends StatefulWidget {
@@ -18,13 +16,8 @@ class CreateClaimPage extends StatefulWidget {
 }
 
 class _CreateClaimPageState extends State<CreateClaimPage> {
-  TextEditingController textController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<main.PolycentricModel>();
-    final identity = state.identities[widget.identityIndex];
-
     StatelessWidget makePlatformButton(String claimType) {
       return shared_ui.ClaimButtonGeneric(
         nameText: claimType,
@@ -51,43 +44,6 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            shared_ui.LabeledTextField(
-              controller: textController,
-              title: "Freeform",
-              label: "Type of claim",
-            ),
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: shared_ui.blueButtonColor,
-                    shape: const StadiumBorder(),
-                  ),
-                  child: const Text(
-                    'Make Claim',
-                    style: TextStyle(
-                      fontFamily: 'inter',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
-                      color: Colors.white,
-                    ),
-                  ),
-                  onPressed: () async {
-                    if (textController.text.isEmpty) {
-                      return;
-                    }
-
-                    await state.db.transaction((transaction) async {
-                      await main.makeClaim(transaction, identity.processSecret,
-                          textController.text);
-                    });
-
-                    await state.mLoadIdentities();
-                    if (context.mounted) {
-                      Navigator.pop(context);
-                    }
-                  }),
-            ),
             const Text(
               "Common",
               style: TextStyle(
@@ -123,6 +79,19 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
                         MaterialPageRoute<CreateSkillClaimPage>(
                             builder: (context) {
                       return CreateSkillClaimPage(
+                        identityIndex: widget.identityIndex,
+                      );
+                    }));
+                  },
+                ),
+                shared_ui.ClaimButtonGeneric(
+                  nameText: "Freeform",
+                  top: shared_ui.claimTypeToVisual("Generic"),
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute<CreateSkillClaimPage>(
+                            builder: (context) {
+                      return CreateGenericClaimPage(
                         identityIndex: widget.identityIndex,
                       );
                     }));
