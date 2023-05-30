@@ -410,7 +410,7 @@ class _ProfilePageState extends State<ProfilePage> {
       shared_ui.StandardButtonGeneric(
         actionText: 'Make a claim',
         actionDescription: 'Make a new claim for your profile',
-        left: shared_ui.makeSVG('person_add.svg', 'Claim'),
+        left: shared_ui.makeSVG('add_circle.svg', 'Claim'),
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute<CreateClaimPage>(builder: (context) {
