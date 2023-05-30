@@ -110,11 +110,11 @@ class _ClaimPageState extends State<ClaimPage> {
               ),
             ),
             if (!manualVerificationClaimTypes.contains(claim.claimType))
-              shared_ui.StandardButton(
+              shared_ui.StandardButtonGeneric(
                 actionText: 'Automated',
                 actionDescription:
                     'Get an automated authority to vouch for this claim',
-                icon: Icons.refresh,
+                left: shared_ui.makeSVG('smart_toy.svg', 'Automated'),
                 onPressed: () {
                   Navigator.push(context,
                       MaterialPageRoute<AddTokenPage>(builder: (context) {
@@ -124,11 +124,11 @@ class _ClaimPageState extends State<ClaimPage> {
                   }));
                 },
               ),
-            shared_ui.StandardButton(
+            shared_ui.StandardButtonGeneric(
               actionText: 'Manual',
               actionDescription:
                   'Get a manual authority to vouch for this claim',
-              icon: Icons.refresh,
+              left: shared_ui.makeSVG('refresh.svg', 'Manual'),
               onPressed: () async {
                 Navigator.push(context,
                     MaterialPageRoute<PresentPage>(builder: (context) {

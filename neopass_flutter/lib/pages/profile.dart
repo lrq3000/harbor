@@ -407,10 +407,10 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
       ),
-      shared_ui.StandardButton(
+      shared_ui.StandardButtonGeneric(
         actionText: 'Make a claim',
         actionDescription: 'Make a new claim for your profile',
-        icon: Icons.person_add,
+        left: shared_ui.makeSVG('person_add.svg', 'Claim'),
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute<CreateClaimPage>(builder: (context) {
@@ -418,10 +418,10 @@ class _ProfilePageState extends State<ProfilePage> {
           }));
         },
       ),
-      shared_ui.StandardButton(
+      shared_ui.StandardButtonGeneric(
         actionText: 'Vouch for a claim',
         actionDescription: 'Vouch for someone elses claim',
-        icon: Icons.check_box,
+        left: shared_ui.makeSVG('check_box.svg', 'Vouch'),
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute<VouchPage>(builder: (context) {
@@ -429,10 +429,10 @@ class _ProfilePageState extends State<ProfilePage> {
           }));
         },
       ),
-      shared_ui.StandardButton(
+      shared_ui.StandardButtonGeneric(
         actionText: 'Change account',
         actionDescription: 'Switch to a different account',
-        icon: Icons.switch_account,
+        left: shared_ui.makeSVG('switch_account.svg', 'Switch'),
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute<NewOrImportProfilePage>(builder: (context) {
@@ -440,10 +440,10 @@ class _ProfilePageState extends State<ProfilePage> {
           }));
         },
       ),
-      shared_ui.StandardButton(
+      shared_ui.StandardButtonGeneric(
         actionText: 'Backup',
         actionDescription: 'Make a backup of your identity',
-        icon: Icons.save,
+        left: shared_ui.makeSVG('save.svg', 'Backup'),
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute<BackupPage>(builder: (context) {
@@ -451,10 +451,10 @@ class _ProfilePageState extends State<ProfilePage> {
           }));
         },
       ),
-      shared_ui.StandardButton(
+      shared_ui.StandardButtonGeneric(
         actionText: 'Delete account',
         actionDescription: 'Permanently delete account from this device',
-        icon: Icons.delete,
+        left: shared_ui.makeSVG('delete.svg', 'Delete'),
         onPressed: () async {
           deleteAccountDialog(context, state, identity);
         },

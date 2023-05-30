@@ -94,25 +94,25 @@ class BackupPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              shared_ui.StandardButton(
+              shared_ui.StandardButtonGeneric(
                 actionText: 'Share',
                 actionDescription: 'Send your identity to another app',
-                icon: Icons.share,
+                left: shared_ui.makeSVG('share.svg', 'Share'),
                 onPressed: () async {
                   handleShareShare(state, processSecret);
                 },
               ),
-              shared_ui.StandardButton(
+              shared_ui.StandardButtonGeneric(
                   actionText: 'Copy',
                   actionDescription: 'Copy your identity to clipboard',
-                  icon: Icons.content_copy,
+                  left: shared_ui.makeSVG('content_copy.svg', 'Copy'),
                   onPressed: () async {
                     handleShareClipboard(state, processSecret);
                   }),
-              shared_ui.StandardButton(
+              shared_ui.StandardButtonGeneric(
                 actionText: 'QR Code',
                 actionDescription: 'Backup to another phone',
-                icon: Icons.qr_code,
+                left: shared_ui.makeSVG('qr_code_2.svg', 'Scan'),
                 onPressed: () async {
                   handleShareQR(state, processSecret, context);
                 },

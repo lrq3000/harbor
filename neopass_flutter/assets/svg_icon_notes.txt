@@ -1,0 +1,3 @@
+weight 100
+grade 0
+optical size 48px

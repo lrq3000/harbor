@@ -80,17 +80,17 @@ class VouchPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              shared_ui.StandardButton(
+              shared_ui.StandardButtonGeneric(
                   actionText: 'Text',
                   actionDescription: 'Paste an exported claim',
-                  icon: Icons.content_copy,
+                  left: shared_ui.makeSVG('content_copy.svg', 'copy'),
                   onPressed: () async {
                     handleClipboard(context, state);
                   }),
-              shared_ui.StandardButton(
+              shared_ui.StandardButtonGeneric(
                 actionText: 'QR Code',
                 actionDescription: 'Scan a claim',
-                icon: Icons.qr_code,
+                left: shared_ui.makeSVG('qr_code_2.svg', 'Scan'),
                 onPressed: () async {
                   handleScan(context, state);
                 },

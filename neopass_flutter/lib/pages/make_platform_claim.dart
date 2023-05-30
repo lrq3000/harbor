@@ -36,7 +36,7 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 75),
-                shared_ui.claimTypeToImage(widget.claimType),
+                shared_ui.claimTypeToVisual(widget.claimType),
                 const SizedBox(height: 75),
                 Text(
                   widget.claimType,

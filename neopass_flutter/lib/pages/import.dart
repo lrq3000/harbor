@@ -65,10 +65,10 @@ class ImportPage extends StatelessWidget {
             const SizedBox(height: 150),
             shared_ui.neopassLogoAndText,
             const SizedBox(height: 120),
-            shared_ui.StandardButton(
+            shared_ui.StandardButtonGeneric(
                 actionText: 'Text',
                 actionDescription: 'Paste an exported identity',
-                icon: Icons.content_copy,
+                left: shared_ui.makeSVG('content_copy.svg', 'Copy'),
                 onPressed: () async {
                   final clip =
                       (await services.Clipboard.getData('text/plain'))?.text;
@@ -76,10 +76,10 @@ class ImportPage extends StatelessWidget {
                     await importFromBase64(context, state, clip);
                   }
                 }),
-            shared_ui.StandardButton(
+            shared_ui.StandardButtonGeneric(
               actionText: 'QR Code',
               actionDescription: 'Backup from another phone',
-              icon: Icons.qr_code,
+              left: shared_ui.makeSVG('qr_code_2.svg', 'Scan'),
               onPressed: () async {
                 try {
                   final rawScan = await FlutterBarcodeScanner.scanBarcode(

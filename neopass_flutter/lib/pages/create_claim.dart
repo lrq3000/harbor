@@ -26,9 +26,9 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
     final identity = state.identities[widget.identityIndex];
 
     StatelessWidget makePlatformButton(String claimType) {
-      return shared_ui.ClaimButtonImage(
+      return shared_ui.ClaimButtonGeneric(
         nameText: claimType,
-        image: shared_ui.claimTypeToImage(claimType),
+        top: shared_ui.claimTypeToVisual(claimType),
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute<MakePlatformClaimPage>(builder: (context) {
@@ -102,9 +102,9 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
               shrinkWrap: true,
               childAspectRatio: 123.0 / 106.0,
               children: [
-                shared_ui.ClaimButtonIcon(
+                shared_ui.ClaimButtonGeneric(
                   nameText: "Occupation",
-                  icon: Icons.work,
+                  top: shared_ui.claimTypeToVisual("Occupation"),
                   onPressed: () {
                     Navigator.push(context,
                         MaterialPageRoute<CreateOccupationClaimPage>(
@@ -115,9 +115,9 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
                     }));
                   },
                 ),
-                shared_ui.ClaimButtonIcon(
+                shared_ui.ClaimButtonGeneric(
                   nameText: "Skill",
-                  icon: Icons.build,
+                  top: shared_ui.claimTypeToVisual("Skill"),
                   onPressed: () {
                     Navigator.push(context,
                         MaterialPageRoute<CreateSkillClaimPage>(

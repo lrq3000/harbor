@@ -22,22 +22,14 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
       result.add(shared_ui.StandardButtonGeneric(
         actionText: identities[i].username,
         actionDescription: 'Sign in to this identity',
-        left: Padding(
-          padding: const EdgeInsets.all(7),
-          child: CircleAvatar(
-            backgroundColor: Colors.white,
-            radius: 14,
-            foregroundImage: identities[i].avatar != null
-                ? identities[i].avatar!.image
-                : null,
-            child: const SizedBox.expand(
-              child: FittedBox(
-                fit: BoxFit.fill,
-                child: Icon(Icons.person),
-              ),
-            ),
-          ),
-        ),
+        left: (identities[i].avatar != null)
+            ? Padding(
+                padding: const EdgeInsets.all(7),
+                child: CircleAvatar(
+                  radius: 14,
+                  foregroundImage: identities[i].avatar!.image,
+                ))
+            : shared_ui.makeSVG('account_circle.svg', 'Use'),
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute<ProfilePage>(builder: (context) {
@@ -59,10 +51,10 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
     final listViewChildren = _renderProfiles(state.identities);
 
     listViewChildren.addAll([
-      shared_ui.StandardButton(
+      shared_ui.StandardButtonGeneric(
         actionText: 'New Profile',
         actionDescription: 'Generate a new Polycentric Identity',
-        icon: Icons.person_add,
+        left: shared_ui.makeSVG('person_add.svg', 'Create'),
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute<NewProfilePage>(builder: (context) {
@@ -70,10 +62,10 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
           }));
         },
       ),
-      shared_ui.StandardButton(
+      shared_ui.StandardButtonGeneric(
         actionText: 'Import Existing Profile',
         actionDescription: 'Use an existing Polycentric Identity',
-        icon: Icons.arrow_downward,
+        left: shared_ui.makeSVG('arrow_downward.svg', 'Import'),
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute<ImportPage>(builder: (context) {

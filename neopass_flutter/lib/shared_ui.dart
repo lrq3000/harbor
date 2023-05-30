@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart' as flutter_svg;
 
 MaterialColor makeColor(Color color) {
   final Map<int, Color> shades = {};
@@ -18,7 +19,10 @@ final MaterialColor deleteColor = makeColor(const Color(0xFF2F2F2F));
 
 final Widget neopassLogoAndText = Column(
   children: [
-    Image.asset('assets/logo.png'),
+    flutter_svg.SvgPicture.asset(
+      'assets/logo.svg',
+      semanticsLabel: 'Logo',
+    ),
     const SizedBox(height: 20),
     const Text(
       'NeoPass',
@@ -36,9 +40,15 @@ final Widget neopassLogoAndText = Column(
 final Widget futoLogoAndText = Row(
   mainAxisAlignment: MainAxisAlignment.center,
   children: [
-    Image.asset('assets/futo-logo.png'),
+    flutter_svg.SvgPicture.asset(
+      'assets/futo-logo.svg',
+      semanticsLabel: 'Logo',
+    ),
     const SizedBox(width: 10),
-    Image.asset('assets/futo-text.png'),
+    flutter_svg.SvgPicture.asset(
+      'assets/futo-text.svg',
+      semanticsLabel: 'Text',
+    ),
   ],
 );
 
@@ -46,7 +56,7 @@ final Widget futoLogoAndText = Row(
 class ClaimButtonGeneric extends StatelessWidget {
   final String nameText;
   final void Function() onPressed;
-  final StatelessWidget top;
+  final Widget top;
 
   const ClaimButtonGeneric({
     Key? key,
@@ -285,98 +295,65 @@ Image makeButtonImage(String path) {
   return Image.asset(path);
 }
 
+Widget makeSVG(String fileName, String label) {
+  return flutter_svg.SvgPicture.asset(
+    'assets/' + fileName,
+    colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+    semanticsLabel: label,
+    height: 48,
+    width: 48,
+  );
+}
+
 Widget claimTypeToVisual(String claimType) {
   switch (claimType) {
     case "Generic":
       {
-        return makeButtonIcon(Icons.format_quote, claimType);
+        return makeSVG('format_quote.svg', 'Quote');
       }
     case "Skill":
       {
-        return makeButtonIcon(Icons.build, claimType);
+        return makeSVG('build.svg', 'Skill');
       }
     case "Occupation":
       {
-        return makeButtonIcon(Icons.work, claimType);
+        return makeSVG('work.svg', 'Occupation');
       }
     case "YouTube":
       {
-        return makeButtonImage('assets/youtube.png');
+        return makeSVG('youtube.svg', 'YouTube');
       }
     case "Odysee":
       {
-        return makeButtonImage('assets/odysee.png');
+        return makeSVG('odysee.svg', 'Odysee');
       }
     case "Rumble":
       {
-        return makeButtonImage('assets/rumble.png');
+        return makeSVG('rumble.svg', 'Rumble');
       }
     case "Twitch":
       {
-        return makeButtonImage('assets/twitch.png');
+        return makeSVG('twitch.svg', 'Twitch');
       }
     case "Instagram":
       {
-        return makeButtonImage('assets/instagram.png');
+        return makeSVG('instagram.svg', 'Instagram');
       }
     case "Minds":
       {
-        return makeButtonImage('assets/Minds.png');
+        return makeSVG('minds.svg', 'Minds');
       }
     case "Twitter":
       {
-        return makeButtonImage('assets/twitter.png');
+        return makeSVG('twitter.svg', 'Twitter');
       }
     case "Discord":
       {
-        return makeButtonImage('assets/discord.png');
+        return makeSVG('discord.svg', 'Discord');
       }
     case "Patreon":
       {
-        return makeButtonImage('assets/patreon.png');
-      }
-  }
-
-  throw Exception("unknown claim type");
-}
-
-Image claimTypeToImage(String claimType) {
-  switch (claimType) {
-    case "YouTube":
-      {
-        return Image.asset('assets/youtube.png');
-      }
-    case "Odysee":
-      {
-        return Image.asset('assets/odysee.png');
-      }
-    case "Rumble":
-      {
-        return Image.asset('assets/rumble.png');
-      }
-    case "Twitch":
-      {
-        return Image.asset('assets/twitch.png');
-      }
-    case "Instagram":
-      {
-        return Image.asset('assets/instagram.png');
-      }
-    case "Minds":
-      {
-        return Image.asset('assets/minds.png');
-      }
-    case "Twitter":
-      {
-        return Image.asset('assets/twitter.png');
-      }
-    case "Discord":
-      {
-        return Image.asset('assets/discord.png');
-      }
-    case "Patreon":
-      {
-        return Image.asset('assets/patreon.png');
+        return makeSVG('patreon.svg', 'Patreon');
       }
   }
 

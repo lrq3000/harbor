@@ -118,18 +118,18 @@ class PresentPage extends StatelessWidget {
                 color: Colors.grey,
               ),
             ),
-            shared_ui.StandardButton(
+            shared_ui.StandardButtonGeneric(
               actionText: 'Copy',
               actionDescription: 'Share this unique code with others to verify',
-              icon: Icons.content_copy,
+              left: shared_ui.makeSVG('content_copy.svg', 'Copy'),
               onPressed: () async {
                 handlePresentClipboard(encodedClaim);
               },
             ),
-            shared_ui.StandardButton(
+            shared_ui.StandardButtonGeneric(
               actionText: 'Share',
               actionDescription: 'Share code for verification',
-              icon: Icons.share,
+              left: shared_ui.makeSVG('share.svg', 'Share'),
               onPressed: () async {
                 handlePresentShare(encodedClaim);
               },
