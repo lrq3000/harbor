@@ -20,6 +20,8 @@ lint:
 		lib/synchronizer.dart \
 		lib/pages/* \
 		lib/api_methods.dart \
+		lib/shared_ui.dart \
+		lib/handle_validation.dart \
 		test/*
 
 format:
@@ -30,6 +32,8 @@ format:
 		lib/synchronizer.dart \
 		lib/pages/* \
 		lib/api_methods.dart \
+		lib/shared_ui.dart \
+		lib/handle_validation.dart \
 		test/*
 
 icons:

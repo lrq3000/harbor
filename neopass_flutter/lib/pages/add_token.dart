@@ -85,20 +85,8 @@ class AddTokenPage extends StatelessWidget {
             const SizedBox(height: 450),
             Align(
               alignment: AlignmentDirectional.center,
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: shared_ui.blueButtonColor,
-                    shape: const StadiumBorder(),
-                  ),
-                  child: const Text(
-                    '     Verify     ',
-                    style: TextStyle(
-                      fontFamily: 'inter',
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                  ),
+              child: shared_ui.OblongTextButton(
+                  text: 'Verify',
                   onPressed: () {
                     Navigator.push(context,
                         MaterialPageRoute<AutomatedVerificationPage>(

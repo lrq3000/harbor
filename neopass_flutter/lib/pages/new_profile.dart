@@ -35,39 +35,26 @@ class _NewProfilePageState extends State<NewProfilePage> {
               const SizedBox(height: 120),
               Container(
                 alignment: Alignment.center,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: shared_ui.blueButtonColor,
-                    shape: const StadiumBorder(),
-                  ),
-                  onPressed: () async {
-                    if (textController.text.isEmpty) {
-                      return;
-                    }
-                    final identity = await main.createNewIdentity(state.db);
-                    await state.db.transaction((transaction) async {
-                      await main.setUsername(
-                          transaction, identity, textController.text);
-                    });
-                    await state.mLoadIdentities();
-                    if (context.mounted) {
-                      Navigator.push(context,
-                          MaterialPageRoute<NewOrImportProfilePage>(
-                              builder: (context) {
-                        return const NewOrImportProfilePage();
-                      }));
-                    }
-                  },
-                  child: const Text(
-                    "Create Profile",
-                    style: TextStyle(
-                      fontFamily: 'inter',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+                child: shared_ui.OblongTextButton(
+                    text: 'Create Profile',
+                    onPressed: () async {
+                      if (textController.text.isEmpty) {
+                        return;
+                      }
+                      final identity = await main.createNewIdentity(state.db);
+                      await state.db.transaction((transaction) async {
+                        await main.setUsername(
+                            transaction, identity, textController.text);
+                      });
+                      await state.mLoadIdentities();
+                      if (context.mounted) {
+                        Navigator.push(context,
+                            MaterialPageRoute<NewOrImportProfilePage>(
+                                builder: (context) {
+                          return const NewOrImportProfilePage();
+                        }));
+                      }
+                    }),
               ),
               Expanded(flex: 1, child: Container()),
               shared_ui.futoLogoAndText,

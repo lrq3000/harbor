@@ -52,7 +52,6 @@ final Widget futoLogoAndText = Row(
   ],
 );
 
-
 class ClaimButtonGeneric extends StatelessWidget {
   final String nameText;
   final void Function() onPressed;
@@ -142,6 +141,38 @@ class ClaimButtonImage extends StatelessWidget {
       onPressed: onPressed,
       top: Container(
         child: image,
+      ),
+    );
+  }
+}
+
+class OblongTextButton extends StatelessWidget {
+  final void Function() onPressed;
+  final String text;
+
+  const OblongTextButton(
+      {Key? key, required this.onPressed, required this.text})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      style: TextButton.styleFrom(
+        backgroundColor: blueButtonColor,
+        shape: const StadiumBorder(),
+      ),
+      onPressed: onPressed,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 16),
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontFamily: 'inter',
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }
@@ -297,8 +328,8 @@ Image makeButtonImage(String path) {
 
 Widget makeSVG(String fileName, String label) {
   return flutter_svg.SvgPicture.asset(
-    'assets/' + fileName,
-    colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+    'assets/$fileName',
+    colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
     semanticsLabel: label,
     height: 48,
     width: 48,
@@ -447,4 +478,3 @@ Future<void> errorDialog(
         );
       });
 }
-

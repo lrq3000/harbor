@@ -114,20 +114,8 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
         const SizedBox(height: 120),
         Align(
           alignment: AlignmentDirectional.center,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: shared_ui.blueButtonColor,
-              shape: const StadiumBorder(),
-            ),
-            child: const Text(
-              'Continue',
-              style: TextStyle(
-                fontFamily: 'inter',
-                fontWeight: FontWeight.w300,
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
+          child: shared_ui.OblongTextButton(
+            text: 'Continue',
             onPressed: () async {
               Navigator.push(context,
                   MaterialPageRoute<NewOrImportProfilePage>(builder: (context) {
@@ -157,20 +145,8 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
         const SizedBox(height: 120),
         Align(
           alignment: AlignmentDirectional.center,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: shared_ui.blueButtonColor,
-              shape: const StadiumBorder(),
-            ),
-            child: const Text(
-              'Retry verification',
-              style: TextStyle(
-                fontFamily: 'inter',
-                fontWeight: FontWeight.w300,
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
+          child: shared_ui.OblongTextButton(
+            text: 'Retry verification',
             onPressed: () async {
               doVerification(context);
             },

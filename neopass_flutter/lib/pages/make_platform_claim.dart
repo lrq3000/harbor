@@ -55,12 +55,8 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
                 const SizedBox(height: 150),
                 Align(
                   alignment: AlignmentDirectional.center,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: shared_ui.blueButtonColor,
-                        shape: const StadiumBorder(),
-                      ),
-                      child: const Text('Next step'),
+                  child: shared_ui.OblongTextButton(
+                      text: 'Next step',
                       onPressed: () async {
                         if (!handle_validation.isHandleValid(
                             widget.claimType, textController.text)) {
