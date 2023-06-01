@@ -34,99 +34,91 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
       );
     }
 
-    return Scaffold(
+    return shared_ui.StandardScaffold(
       appBar: AppBar(
         title: shared_ui.makeAppBarTitleText("Make Claim"),
       ),
-      body: Container(
-        padding: shared_ui.scaffoldPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20),
+        const Text(
+          "Common",
+          style: TextStyle(
+            fontFamily: 'inter',
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+            color: Colors.white,
+          ),
+        ),
+        GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          childAspectRatio: 123.0 / 106.0,
           children: [
-            const SizedBox(height: 20),
-            const Text(
-              "Common",
-              style: TextStyle(
-                fontFamily: 'inter',
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                color: Colors.white,
-              ),
+            shared_ui.ClaimButtonGeneric(
+              nameText: "Occupation",
+              top: shared_ui.claimTypeToVisual("Occupation"),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute<CreateOccupationClaimPage>(
+                        builder: (context) {
+                  return CreateOccupationClaimPage(
+                    identityIndex: widget.identityIndex,
+                  );
+                }));
+              },
             ),
-            GridView.count(
-              crossAxisCount: 3,
-              shrinkWrap: true,
-              childAspectRatio: 123.0 / 106.0,
-              children: [
-                shared_ui.ClaimButtonGeneric(
-                  nameText: "Occupation",
-                  top: shared_ui.claimTypeToVisual("Occupation"),
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute<CreateOccupationClaimPage>(
-                            builder: (context) {
-                      return CreateOccupationClaimPage(
-                        identityIndex: widget.identityIndex,
-                      );
-                    }));
-                  },
-                ),
-                shared_ui.ClaimButtonGeneric(
-                  nameText: "Skill",
-                  top: shared_ui.claimTypeToVisual("Skill"),
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute<CreateSkillClaimPage>(
-                            builder: (context) {
-                      return CreateSkillClaimPage(
-                        identityIndex: widget.identityIndex,
-                      );
-                    }));
-                  },
-                ),
-                shared_ui.ClaimButtonGeneric(
-                  nameText: "Freeform",
-                  top: shared_ui.claimTypeToVisual("Generic"),
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute<CreateSkillClaimPage>(
-                            builder: (context) {
-                      return CreateGenericClaimPage(
-                        identityIndex: widget.identityIndex,
-                      );
-                    }));
-                  },
-                ),
-              ],
+            shared_ui.ClaimButtonGeneric(
+              nameText: "Skill",
+              top: shared_ui.claimTypeToVisual("Skill"),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute<CreateSkillClaimPage>(builder: (context) {
+                  return CreateSkillClaimPage(
+                    identityIndex: widget.identityIndex,
+                  );
+                }));
+              },
             ),
-            const Text(
-              "Platforms",
-              style: TextStyle(
-                fontFamily: 'inter',
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                color: Colors.white,
-              ),
-            ),
-            GridView.count(
-              crossAxisCount: 3,
-              shrinkWrap: true,
-              childAspectRatio: 123.0 / 106.0,
-              children: [
-                makePlatformButton("YouTube"),
-                makePlatformButton("Odysee"),
-                makePlatformButton("Rumble"),
-                makePlatformButton("Twitch"),
-                makePlatformButton("Instagram"),
-                makePlatformButton("Minds"),
-                makePlatformButton("Twitter"),
-                makePlatformButton("Discord"),
-                makePlatformButton("Patreon"),
-              ],
+            shared_ui.ClaimButtonGeneric(
+              nameText: "Freeform",
+              top: shared_ui.claimTypeToVisual("Generic"),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute<CreateSkillClaimPage>(builder: (context) {
+                  return CreateGenericClaimPage(
+                    identityIndex: widget.identityIndex,
+                  );
+                }));
+              },
             ),
           ],
         ),
-      ),
+        const Text(
+          "Platforms",
+          style: TextStyle(
+            fontFamily: 'inter',
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+            color: Colors.white,
+          ),
+        ),
+        GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          childAspectRatio: 123.0 / 106.0,
+          children: [
+            makePlatformButton("YouTube"),
+            makePlatformButton("Odysee"),
+            makePlatformButton("Rumble"),
+            makePlatformButton("Twitch"),
+            makePlatformButton("Instagram"),
+            makePlatformButton("Minds"),
+            makePlatformButton("Twitter"),
+            makePlatformButton("Discord"),
+            makePlatformButton("Patreon"),
+          ],
+        ),
+      ],
     );
   }
 }

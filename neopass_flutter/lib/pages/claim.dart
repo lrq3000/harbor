@@ -31,31 +31,30 @@ class _ClaimPageState extends State<ClaimPage> {
     final identity = state.identities[widget.identityIndex];
     final claim = identity.claims[widget.claimIndex];
 
-    return Scaffold(
+    return shared_ui.StandardScaffold(
       appBar: AppBar(
         title: shared_ui.makeAppBarTitleText('Claim'),
       ),
-      body: Container(
-        padding: shared_ui.scaffoldPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              margin: const EdgeInsets.only(top: 50),
-              child: CircleAvatar(
-                backgroundColor: Colors.white,
-                radius: 50,
-                foregroundImage:
-                    identity.avatar != null ? identity.avatar!.image : null,
-                child: const SizedBox.expand(
-                  child: FittedBox(
-                    fit: BoxFit.fill,
-                    child: Icon(Icons.person),
-                  ),
+      children: [
+        Center(
+          child: Container(
+            margin: const EdgeInsets.only(top: 50),
+            child: CircleAvatar(
+              backgroundColor: Colors.white,
+              radius: 50,
+              foregroundImage:
+                  identity.avatar != null ? identity.avatar!.image : null,
+              child: const SizedBox.expand(
+                child: FittedBox(
+                  fit: BoxFit.fill,
+                  child: Icon(Icons.person),
                 ),
               ),
             ),
-            Container(
+          ),
+        ),
+        Center(
+            child: Container(
                 margin: const EdgeInsets.only(bottom: 10, top: 10),
                 child: Text(
                   identity.username,
@@ -66,83 +65,86 @@ class _ClaimPageState extends State<ClaimPage> {
                     fontSize: 32,
                     color: Colors.white,
                   ),
-                )),
-            const Text(
-              "Claims",
-              style: TextStyle(
-                fontFamily: 'inter',
-                fontWeight: FontWeight.w300,
-                fontSize: 20,
-                color: Colors.grey,
-              ),
+                ))),
+        const Center(
+          child: Text(
+            "Claims",
+            style: TextStyle(
+              fontFamily: 'inter',
+              fontWeight: FontWeight.w300,
+              fontSize: 20,
+              color: Colors.grey,
             ),
-            const SizedBox(height: 15),
-            Text(
-              claim.claimType,
-              style: const TextStyle(
-                fontFamily: 'inter',
-                fontWeight: FontWeight.w200,
-                fontSize: 24,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              claim.text,
-              style: const TextStyle(
-                fontFamily: 'inter',
-                fontWeight: FontWeight.w200,
-                fontSize: 20,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 30),
-            Container(
-              alignment: AlignmentDirectional.centerStart,
-              child: const Text(
-                "Request Verification",
-                style: TextStyle(
-                  fontFamily: 'inter',
-                  fontWeight: FontWeight.w300,
-                  fontSize: 16,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            if (!manualVerificationClaimTypes.contains(claim.claimType))
-              shared_ui.StandardButtonGeneric(
-                actionText: 'Automated',
-                actionDescription:
-                    'Get an automated authority to vouch for this claim',
-                left: shared_ui.makeSVG('smart_toy.svg', 'Automated'),
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute<AddTokenPage>(builder: (context) {
-                    return AddTokenPage(
-                      claim: claim,
-                      identityIndex: widget.identityIndex,
-                    );
-                  }));
-                },
-              ),
-            shared_ui.StandardButtonGeneric(
-              actionText: 'Manual',
-              actionDescription:
-                  'Get a manual authority to vouch for this claim',
-              left: shared_ui.makeSVG('refresh.svg', 'Manual'),
-              onPressed: () async {
-                Navigator.push(context,
-                    MaterialPageRoute<PresentPage>(builder: (context) {
-                  return PresentPage(
-                    identityIndex: widget.identityIndex,
-                    claimIndex: widget.claimIndex,
-                  );
-                }));
-              },
-            ),
-          ],
+          ),
         ),
-      ),
+        const SizedBox(height: 15),
+        Center(
+          child: Text(
+            claim.claimType,
+            style: const TextStyle(
+              fontFamily: 'inter',
+              fontWeight: FontWeight.w200,
+              fontSize: 24,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Center(
+          child: Text(
+            claim.text,
+            style: const TextStyle(
+              fontFamily: 'inter',
+              fontWeight: FontWeight.w200,
+              fontSize: 20,
+              color: Colors.grey,
+            ),
+          ),
+        ),
+        const SizedBox(height: 30),
+        Container(
+          alignment: AlignmentDirectional.centerStart,
+          child: const Text(
+            "Request Verification",
+            style: TextStyle(
+              fontFamily: 'inter',
+              fontWeight: FontWeight.w300,
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        if (!manualVerificationClaimTypes.contains(claim.claimType))
+          shared_ui.StandardButtonGeneric(
+            actionText: 'Automated',
+            actionDescription:
+                'Get an automated authority to vouch for this claim',
+            left: shared_ui.makeSVG('smart_toy.svg', 'Automated'),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute<AddTokenPage>(builder: (context) {
+                return AddTokenPage(
+                  claim: claim,
+                  identityIndex: widget.identityIndex,
+                );
+              }));
+            },
+          ),
+        shared_ui.StandardButtonGeneric(
+          actionText: 'Manual',
+          actionDescription: 'Get a manual authority to vouch for this claim',
+          left: shared_ui.makeSVG('refresh.svg', 'Manual'),
+          onPressed: () async {
+            Navigator.push(context,
+                MaterialPageRoute<PresentPage>(builder: (context) {
+              return PresentPage(
+                identityIndex: widget.identityIndex,
+                claimIndex: widget.claimIndex,
+              );
+            }));
+          },
+        ),
+      ],
     );
   }
 }

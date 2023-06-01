@@ -53,48 +53,42 @@ class ImportPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
-    return Scaffold(
+    return shared_ui.StandardScaffold(
       appBar: AppBar(
         title: shared_ui.makeAppBarTitleText("Import"),
       ),
-      body: Container(
-        padding: shared_ui.scaffoldPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 150),
-            shared_ui.neopassLogoAndText,
-            const SizedBox(height: 120),
-            shared_ui.StandardButtonGeneric(
-                actionText: 'Text',
-                actionDescription: 'Paste an exported identity',
-                left: shared_ui.makeSVG('content_copy.svg', 'Copy'),
-                onPressed: () async {
-                  final clip =
-                      (await services.Clipboard.getData('text/plain'))?.text;
-                  if (clip != null && context.mounted) {
-                    await importFromBase64(context, state, clip);
-                  }
-                }),
-            shared_ui.StandardButtonGeneric(
-              actionText: 'QR Code',
-              actionDescription: 'Backup from another phone',
-              left: shared_ui.makeSVG('qr_code_2.svg', 'Scan'),
-              onPressed: () async {
-                try {
-                  final rawScan = await FlutterBarcodeScanner.scanBarcode(
-                      "#ff6666", 'Cancel', false, ScanMode.QR);
-                  if (rawScan != "-1" && context.mounted) {
-                    await importFromBase64(context, state, rawScan);
-                  }
-                } catch (err) {
-                  logger.e(err);
-                }
-              },
-            ),
-          ],
+      children: [
+        const SizedBox(height: 150),
+        shared_ui.neopassLogoAndText,
+        const SizedBox(height: 120),
+        shared_ui.StandardButtonGeneric(
+            actionText: 'Text',
+            actionDescription: 'Paste an exported identity',
+            left: shared_ui.makeSVG('content_copy.svg', 'Copy'),
+            onPressed: () async {
+              final clip =
+                  (await services.Clipboard.getData('text/plain'))?.text;
+              if (clip != null && context.mounted) {
+                await importFromBase64(context, state, clip);
+              }
+            }),
+        shared_ui.StandardButtonGeneric(
+          actionText: 'QR Code',
+          actionDescription: 'Backup from another phone',
+          left: shared_ui.makeSVG('qr_code_2.svg', 'Scan'),
+          onPressed: () async {
+            try {
+              final rawScan = await FlutterBarcodeScanner.scanBarcode(
+                  "#ff6666", 'Cancel', false, ScanMode.QR);
+              if (rawScan != "-1" && context.mounted) {
+                await importFromBase64(context, state, rawScan);
+              }
+            } catch (err) {
+              logger.e(err);
+            }
+          },
         ),
-      ),
+      ],
     );
   }
 }

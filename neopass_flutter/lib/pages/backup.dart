@@ -71,54 +71,50 @@ class BackupPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
-    return Scaffold(
-        appBar: AppBar(
-          title: shared_ui.makeAppBarTitleText("Backup"),
-        ),
-        body: Container(
-          padding: shared_ui.scaffoldPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 50),
-              Container(
-                alignment: AlignmentDirectional.centerStart,
-                child: const Text(
-                  "If you lose this backup you will lose your identity. "
-                  "You will be able to backup your identity at any time. "
-                  "Do not share your identity over an insecure channel.",
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              shared_ui.StandardButtonGeneric(
-                actionText: 'Share',
-                actionDescription: 'Send your identity to another app',
-                left: shared_ui.makeSVG('share.svg', 'Share'),
-                onPressed: () async {
-                  handleShareShare(state, processSecret);
-                },
-              ),
-              shared_ui.StandardButtonGeneric(
-                  actionText: 'Copy',
-                  actionDescription: 'Copy your identity to clipboard',
-                  left: shared_ui.makeSVG('content_copy.svg', 'Copy'),
-                  onPressed: () async {
-                    handleShareClipboard(state, processSecret);
-                  }),
-              shared_ui.StandardButtonGeneric(
-                actionText: 'QR Code',
-                actionDescription: 'Backup to another phone',
-                left: shared_ui.makeSVG('qr_code_2.svg', 'Scan'),
-                onPressed: () async {
-                  handleShareQR(state, processSecret, context);
-                },
-              ),
-            ],
+
+    return shared_ui.StandardScaffold(
+      appBar: AppBar(
+        title: shared_ui.makeAppBarTitleText("Backup"),
+      ),
+      children: [
+        const SizedBox(height: 50),
+        Container(
+          alignment: AlignmentDirectional.centerStart,
+          child: const Text(
+            "If you lose this backup you will lose your identity. "
+            "You will be able to backup your identity at any time. "
+            "Do not share your identity over an insecure channel.",
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.white,
+            ),
           ),
-        ));
+        ),
+        const SizedBox(height: 10),
+        shared_ui.StandardButtonGeneric(
+          actionText: 'Share',
+          actionDescription: 'Send your identity to another app',
+          left: shared_ui.makeSVG('share.svg', 'Share'),
+          onPressed: () async {
+            handleShareShare(state, processSecret);
+          },
+        ),
+        shared_ui.StandardButtonGeneric(
+            actionText: 'Copy',
+            actionDescription: 'Copy your identity to clipboard',
+            left: shared_ui.makeSVG('content_copy.svg', 'Copy'),
+            onPressed: () async {
+              handleShareClipboard(state, processSecret);
+            }),
+        shared_ui.StandardButtonGeneric(
+          actionText: 'QR Code',
+          actionDescription: 'Backup to another phone',
+          left: shared_ui.makeSVG('qr_code_2.svg', 'Scan'),
+          onPressed: () async {
+            handleShareQR(state, processSecret, context);
+          },
+        ),
+      ],
+    );
   }
 }

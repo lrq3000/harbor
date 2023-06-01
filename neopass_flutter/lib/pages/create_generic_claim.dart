@@ -23,7 +23,7 @@ class _CreateGenericClaimPageState extends State<CreateGenericClaimPage> {
     final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[widget.identityIndex];
 
-    return Scaffold(
+    return shared_ui.StandardScaffold(
       appBar: AppBar(
         title: shared_ui.makeAppBarTitleText('Freeform'),
         actions: [
@@ -57,20 +57,14 @@ class _CreateGenericClaimPageState extends State<CreateGenericClaimPage> {
           ),
         ],
       ),
-      body: Container(
-        padding: shared_ui.scaffoldPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            shared_ui.LabeledTextField(
-              controller: textController,
-              title: "Claim",
-              label: "I am Canadian, I have a dog, ...",
-            ),
-          ],
+      children: [
+        const SizedBox(height: 20),
+        shared_ui.LabeledTextField(
+          controller: textController,
+          title: "Claim",
+          label: "I am Canadian, I have a dog, ...",
         ),
-      ),
+      ],
     );
   }
 }

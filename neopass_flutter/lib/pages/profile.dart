@@ -250,50 +250,52 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     List<Widget> listViewChildren = [
-      InkWell(
-        child: Container(
-          margin: const EdgeInsets.only(top: 50),
-          child: CircleAvatar(
-            backgroundColor: Colors.white,
-            radius: 50,
-            foregroundImage:
-                identity.avatar != null ? identity.avatar!.image : null,
-            child: (identity.avatar == null)
-                ? const Text(
-                    'Tap to set avatar',
-                    textAlign: TextAlign.center,
-                  )
-                : null,
+      Center(
+        child: InkWell(
+          child: Container(
+            margin: const EdgeInsets.only(top: 50),
+            child: CircleAvatar(
+              backgroundColor: Colors.white,
+              radius: 50,
+              foregroundImage:
+                  identity.avatar != null ? identity.avatar!.image : null,
+              child: (identity.avatar == null)
+                  ? const Text(
+                      'Tap to set avatar',
+                      textAlign: TextAlign.center,
+                    )
+                  : null,
+            ),
           ),
+          onTap: () async {
+            file_picker.FilePickerResult? result =
+                await file_picker.FilePicker.platform.pickFiles(
+              type: file_picker.FileType.custom,
+              allowedExtensions: ['png', 'jpg'],
+            );
+
+            if (result != null) {
+              final bytes = await File(result.files.single.path!).readAsBytes();
+
+              await state.db.transaction((transaction) async {
+                final pointer = await main.publishBlob(
+                  transaction,
+                  identity.processSecret,
+                  "image/jpeg",
+                  bytes,
+                );
+
+                await main.setAvatar(
+                  transaction,
+                  identity.processSecret,
+                  pointer,
+                );
+              });
+
+              await state.mLoadIdentities();
+            }
+          },
         ),
-        onTap: () async {
-          file_picker.FilePickerResult? result =
-              await file_picker.FilePicker.platform.pickFiles(
-            type: file_picker.FileType.custom,
-            allowedExtensions: ['png', 'jpg'],
-          );
-
-          if (result != null) {
-            final bytes = await File(result.files.single.path!).readAsBytes();
-
-            await state.db.transaction((transaction) async {
-              final pointer = await main.publishBlob(
-                transaction,
-                identity.processSecret,
-                "image/jpeg",
-                bytes,
-              );
-
-              await main.setAvatar(
-                transaction,
-                identity.processSecret,
-                pointer,
-              );
-            });
-
-            await state.mLoadIdentities();
-          }
-        },
       ),
       const SizedBox(height: 10),
       Row(
@@ -464,14 +466,8 @@ class _ProfilePageState extends State<ProfilePage> {
       const SizedBox(height: 30),
     ]);
 
-    return Scaffold(
-        body: Container(
-      padding: shared_ui.scaffoldPadding,
-      child: SingleChildScrollView(
-        child: Column(
-          children: listViewChildren,
-        ),
-      ),
-    ));
+    return shared_ui.StandardScaffold(
+      children: listViewChildren,
+    );
   }
 }

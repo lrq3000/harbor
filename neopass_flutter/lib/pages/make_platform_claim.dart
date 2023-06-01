@@ -26,69 +26,61 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
     final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[widget.identityIndex];
 
-    return Scaffold(
+    return shared_ui.StandardScaffold(
       appBar: AppBar(
         title: shared_ui.makeAppBarTitleText('Make Claim'),
       ),
-      body: Container(
-          padding: shared_ui.scaffoldPadding,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 75),
-                shared_ui.claimTypeToVisual(widget.claimType),
-                const SizedBox(height: 75),
-                Text(
-                  widget.claimType,
-                  style: const TextStyle(
-                    fontSize: 30,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 100),
-                shared_ui.LabeledTextField(
-                  controller: textController,
-                  title: "Profile information",
-                  label: "Profile handle",
-                ),
-                const SizedBox(height: 150),
-                Align(
-                  alignment: AlignmentDirectional.center,
-                  child: shared_ui.OblongTextButton(
-                      text: 'Next step',
-                      onPressed: () async {
-                        if (!handle_validation.isHandleValid(
-                            widget.claimType, textController.text)) {
-                          return;
-                        }
+      children: [
+        const SizedBox(height: 75),
+        Center(child: shared_ui.claimTypeToVisual(widget.claimType)),
+        const SizedBox(height: 75),
+        Center(
+            child: Text(
+          widget.claimType,
+          style: const TextStyle(
+            fontSize: 30,
+            color: Colors.white,
+          ),
+        )),
+        const SizedBox(height: 100),
+        shared_ui.LabeledTextField(
+          controller: textController,
+          title: "Profile information",
+          label: "Profile handle",
+        ),
+        const SizedBox(height: 150),
+        Align(
+          alignment: AlignmentDirectional.center,
+          child: shared_ui.OblongTextButton(
+              text: 'Next step',
+              onPressed: () async {
+                if (!handle_validation.isHandleValid(
+                    widget.claimType, textController.text)) {
+                  return;
+                }
 
-                        final claim =
-                            await state.db.transaction((transaction) async {
-                          return await main.makePlatformClaim(
-                              transaction,
-                              identity.processSecret,
-                              widget.claimType,
-                              textController.text);
-                        });
+                final claim = await state.db.transaction((transaction) async {
+                  return await main.makePlatformClaim(
+                      transaction,
+                      identity.processSecret,
+                      widget.claimType,
+                      textController.text);
+                });
 
-                        await state.mLoadIdentities();
+                await state.mLoadIdentities();
 
-                        if (context.mounted) {
-                          Navigator.push(context,
-                              MaterialPageRoute<AddTokenPage>(
-                                  builder: (context) {
-                            return AddTokenPage(
-                              claim: claim,
-                              identityIndex: widget.identityIndex,
-                            );
-                          }));
-                        }
-                      }),
-                ),
-              ],
-            ),
-          )),
+                if (context.mounted) {
+                  Navigator.push(context,
+                      MaterialPageRoute<AddTokenPage>(builder: (context) {
+                    return AddTokenPage(
+                      claim: claim,
+                      identityIndex: widget.identityIndex,
+                    );
+                  }));
+                }
+              }),
+        ),
+      ],
     );
   }
 }

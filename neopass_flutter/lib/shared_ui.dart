@@ -17,24 +17,27 @@ final MaterialColor formColor = makeColor(const Color(0xFF303030));
 final MaterialColor tokenColor = makeColor(const Color(0xFF141414));
 final MaterialColor deleteColor = makeColor(const Color(0xFF2F2F2F));
 
-final Widget neopassLogoAndText = Column(
-  children: [
-    flutter_svg.SvgPicture.asset(
-      'assets/logo.svg',
-      semanticsLabel: 'Logo',
-    ),
-    const SizedBox(height: 20),
-    const Text(
-      'NeoPass',
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        fontFamily: 'inter',
-        fontWeight: FontWeight.w300,
-        fontSize: 32,
-        color: Colors.white,
+final Widget neopassLogoAndText = Center(
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      flutter_svg.SvgPicture.asset(
+        'assets/logo.svg',
+        semanticsLabel: 'Logo',
       ),
-    ),
-  ],
+      const SizedBox(height: 20),
+      const Text(
+        'NeoPass',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontFamily: 'inter',
+          fontWeight: FontWeight.w300,
+          fontSize: 32,
+          color: Colors.white,
+        ),
+      ),
+    ],
+  ),
 );
 
 final Widget futoLogoAndText = Row(
@@ -452,6 +455,31 @@ class LabeledTextField extends StatelessWidget {
         ),
       ),
     ]);
+  }
+}
+
+class StandardScaffold extends StatelessWidget {
+  final List<Widget> children;
+  final AppBar? appBar;
+
+  const StandardScaffold({Key? key, this.appBar, required this.children})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: appBar,
+      body: Container(
+        padding: scaffoldPadding,
+        width: double.infinity,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: children,
+          ),
+        ),
+      ),
+    );
   }
 }
 

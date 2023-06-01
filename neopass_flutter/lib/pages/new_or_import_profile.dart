@@ -48,53 +48,38 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
   Widget build(BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
 
-    final listViewChildren = _renderProfiles(state.identities);
-
-    listViewChildren.addAll([
-      shared_ui.StandardButtonGeneric(
-        actionText: 'New Profile',
-        actionDescription: 'Generate a new Polycentric Identity',
-        left: shared_ui.makeSVG('person_add.svg', 'Create'),
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute<NewProfilePage>(builder: (context) {
-            return const NewProfilePage();
-          }));
-        },
-      ),
-      shared_ui.StandardButtonGeneric(
-        actionText: 'Import Existing Profile',
-        actionDescription: 'Use an existing Polycentric Identity',
-        left: shared_ui.makeSVG('arrow_downward.svg', 'Import'),
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute<ImportPage>(builder: (context) {
-            return const ImportPage();
-          }));
-        },
-      ),
-    ]);
-
-    return Scaffold(
-      body: Container(
-        padding: shared_ui.scaffoldPadding,
-        child: Column(
-          children: [
-            const SizedBox(height: 150),
-            shared_ui.neopassLogoAndText,
-            const SizedBox(height: 50),
-            Expanded(
-              child: ListView(
-                shrinkWrap: true,
-                children: listViewChildren,
-              ),
-            ),
-            const SizedBox(height: 50),
-            shared_ui.futoLogoAndText,
-            const SizedBox(height: 50),
-          ],
+    return shared_ui.StandardScaffold(
+      children: [
+        const SizedBox(height: 150),
+        shared_ui.neopassLogoAndText,
+        const SizedBox(height: 50),
+        ..._renderProfiles(state.identities),
+        shared_ui.StandardButtonGeneric(
+          actionText: 'New Profile',
+          actionDescription: 'Generate a new Polycentric Identity',
+          left: shared_ui.makeSVG('person_add.svg', 'Create'),
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute<NewProfilePage>(builder: (context) {
+              return const NewProfilePage();
+            }));
+          },
         ),
-      ),
+        shared_ui.StandardButtonGeneric(
+          actionText: 'Import Existing Profile',
+          actionDescription: 'Use an existing Polycentric Identity',
+          left: shared_ui.makeSVG('arrow_downward.svg', 'Import'),
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute<ImportPage>(builder: (context) {
+              return const ImportPage();
+            }));
+          },
+        ),
+        const SizedBox(height: 50),
+        shared_ui.futoLogoAndText,
+        const SizedBox(height: 50),
+      ],
     );
   }
 }

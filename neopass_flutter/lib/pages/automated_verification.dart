@@ -80,11 +80,13 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
 
     if (page == 0) {
       columnChildren.addAll([
-        const CircularProgressIndicator(
+        const Center(
+            child: CircularProgressIndicator(
           color: Colors.white,
-        ),
+        )),
         const SizedBox(height: 20),
-        const Text(
+        const Center(
+            child: Text(
           "Waiting for verification",
           style: TextStyle(
             fontFamily: 'inter',
@@ -92,17 +94,19 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
             fontSize: 13,
             color: Colors.white,
           ),
-        ),
+        )),
       ]);
     } else if (page == 1) {
       columnChildren.addAll([
-        const Icon(
+        const Center(
+            child: Icon(
           Icons.done,
           size: 75,
           semanticLabel: "success",
           color: Colors.green,
-        ),
-        const Text(
+        )),
+        const Center(
+            child: Text(
           "Success!",
           style: TextStyle(
             fontFamily: 'inter',
@@ -110,7 +114,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
             fontSize: 13,
             color: Colors.white,
           ),
-        ),
+        )),
         const SizedBox(height: 120),
         Align(
           alignment: AlignmentDirectional.center,
@@ -127,13 +131,15 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
       ]);
     } else if (page == 2) {
       columnChildren.addAll([
-        const Icon(
+        const Center(
+            child: Icon(
           Icons.close,
           size: 75,
           semanticLabel: "failure",
           color: Colors.red,
-        ),
-        const Text(
+        )),
+        const Center(
+            child: Text(
           "Verification failed.",
           style: TextStyle(
             fontFamily: 'inter',
@@ -141,7 +147,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
             fontSize: 13,
             color: Colors.white,
           ),
-        ),
+        )),
         const SizedBox(height: 120),
         Align(
           alignment: AlignmentDirectional.center,
@@ -155,17 +161,11 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
       ]);
     }
 
-    return Scaffold(
+    return shared_ui.StandardScaffold(
       appBar: AppBar(
         title: shared_ui.makeAppBarTitleText('Verifying Claim'),
       ),
-      body: Container(
-        padding: shared_ui.scaffoldPadding,
-        width: double.infinity,
-        child: Column(
-          children: columnChildren,
-        ),
-      ),
+      children: columnChildren,
     );
   }
 }

@@ -59,44 +59,39 @@ class VouchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
-    return Scaffold(
-        appBar: AppBar(
-          title: shared_ui.makeAppBarTitleText("Vouch Options"),
-        ),
-        body: Container(
-          padding: shared_ui.scaffoldPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
-              Container(
-                alignment: AlignmentDirectional.centerStart,
-                child: const Text(
-                  "Choose what method you want to use to vouch for a claim",
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              shared_ui.StandardButtonGeneric(
-                  actionText: 'Text',
-                  actionDescription: 'Paste an exported claim',
-                  left: shared_ui.makeSVG('content_copy.svg', 'copy'),
-                  onPressed: () async {
-                    handleClipboard(context, state);
-                  }),
-              shared_ui.StandardButtonGeneric(
-                actionText: 'QR Code',
-                actionDescription: 'Scan a claim',
-                left: shared_ui.makeSVG('qr_code_2.svg', 'Scan'),
-                onPressed: () async {
-                  handleScan(context, state);
-                },
-              ),
-            ],
+    return shared_ui.StandardScaffold(
+      appBar: AppBar(
+        title: shared_ui.makeAppBarTitleText("Vouch Options"),
+      ),
+      children: [
+        const SizedBox(height: 20),
+        Container(
+          alignment: AlignmentDirectional.centerStart,
+          child: const Text(
+            "Choose what method you want to use to vouch for a claim",
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.white,
+            ),
           ),
-        ));
+        ),
+        const SizedBox(height: 10),
+        shared_ui.StandardButtonGeneric(
+            actionText: 'Text',
+            actionDescription: 'Paste an exported claim',
+            left: shared_ui.makeSVG('content_copy.svg', 'copy'),
+            onPressed: () async {
+              handleClipboard(context, state);
+            }),
+        shared_ui.StandardButtonGeneric(
+          actionText: 'QR Code',
+          actionDescription: 'Scan a claim',
+          left: shared_ui.makeSVG('qr_code_2.svg', 'Scan'),
+          onPressed: () async {
+            handleScan(context, state);
+          },
+        ),
+      ],
+    );
   }
 }

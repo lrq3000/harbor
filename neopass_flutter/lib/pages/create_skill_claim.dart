@@ -23,7 +23,7 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
     final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[widget.identityIndex];
 
-    return Scaffold(
+    return shared_ui.StandardScaffold(
       appBar: AppBar(
         title: shared_ui.makeAppBarTitleText('Skill'),
         actions: [
@@ -61,20 +61,14 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
           ),
         ],
       ),
-      body: Container(
-        padding: shared_ui.scaffoldPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            shared_ui.LabeledTextField(
-              controller: textController,
-              title: "Name",
-              label: "Python programming, Web marketing, ...",
-            ),
-          ],
+      children: [
+        const SizedBox(height: 20),
+        shared_ui.LabeledTextField(
+          controller: textController,
+          title: "Name",
+          label: "Python programming, Web marketing, ...",
         ),
-      ),
+      ],
     );
   }
 }

@@ -26,7 +26,7 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
     final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[widget.identityIndex];
 
-    return Scaffold(
+    return shared_ui.StandardScaffold(
       appBar: AppBar(
         title: shared_ui.makeAppBarTitleText('Occupation'),
         actions: [
@@ -61,32 +61,26 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
           ),
         ],
       ),
-      body: Container(
-        padding: shared_ui.scaffoldPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            shared_ui.LabeledTextField(
-              controller: textControllerOrganization,
-              title: "Organization",
-              label: "Stanford University, Amazon, Goldman Sachs, ...",
-            ),
-            const SizedBox(height: 20),
-            shared_ui.LabeledTextField(
-              controller: textControllerRole,
-              title: "Role",
-              label: "Professor of Physics, Engineer, Analyst, ...",
-            ),
-            const SizedBox(height: 20),
-            shared_ui.LabeledTextField(
-              controller: textControllerLocation,
-              title: "Location",
-              label: "Midwest, Massachusetts, New York City, ...",
-            ),
-          ],
+      children: [
+        const SizedBox(height: 20),
+        shared_ui.LabeledTextField(
+          controller: textControllerOrganization,
+          title: "Organization",
+          label: "Stanford University, Amazon, Goldman Sachs, ...",
         ),
-      ),
+        const SizedBox(height: 20),
+        shared_ui.LabeledTextField(
+          controller: textControllerRole,
+          title: "Role",
+          label: "Professor of Physics, Engineer, Analyst, ...",
+        ),
+        const SizedBox(height: 20),
+        shared_ui.LabeledTextField(
+          controller: textControllerLocation,
+          title: "Location",
+          label: "Midwest, Massachusetts, New York City, ...",
+        ),
+      ],
     );
   }
 }
