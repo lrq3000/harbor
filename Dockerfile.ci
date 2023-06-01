@@ -1,0 +1,7 @@
+FROM ghcr.io/cirruslabs/flutter:3.10.2
+USER root
+
+COPY ./neopass_flutter ./neopass_flutter
+RUN ls
+RUN cd neopass_flutter && flutter build apk
+RUN rm -rf neopass_flutter 

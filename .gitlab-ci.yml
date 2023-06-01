@@ -1,4 +1,4 @@
-image: ghcr.io/cirruslabs/flutter:3.10.2
+image: gitlab.futo.org:5050/polycentric/neopass:ci 
 
 stages:
   - build
@@ -8,7 +8,18 @@ stages:
 
 build:
   stage: build
+  cache:
+    paths: 
+      - $CI_PROJECT_DIR/.pub-cache/
+      - $CI_PROJECT_DIR/.gradle/
+  variables:
+    GRADLE_USER_HOME: $CI_PROJECT_DIR/.gradle/
+    FF_USE_FASTZIP: "true"
+    ARTIFACT_COMPRESSION_LEVEL: "fast"
+    CACHE_COMPRESSION_LEVEL: "fast"
   script:
+    - export PUB_CACHE=$CI_PROJECT_DIR/.pub-cache
+    - export PATH="$PATH":"$PUB_CACHE/bin"
     - cd neopass_flutter && make build-apk
   artifacts:
     paths:
