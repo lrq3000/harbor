@@ -116,6 +116,7 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
             makePlatformButton("Twitter"),
             makePlatformButton("Discord"),
             makePlatformButton("Patreon"),
+            makePlatformButton("Substack"),
           ],
         ),
       ],

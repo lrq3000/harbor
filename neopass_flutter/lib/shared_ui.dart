@@ -389,6 +389,10 @@ Widget claimTypeToVisual(String claimType) {
       {
         return makeSVG('patreon.svg', 'Patreon');
       }
+    case "Substack":
+      {
+        return makeSVG('substack.svg', 'Substack');
+      }
   }
 
   throw Exception("unknown claim type");
