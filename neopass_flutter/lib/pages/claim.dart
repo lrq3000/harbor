@@ -90,17 +90,7 @@ class _ClaimPageState extends State<ClaimPage> {
           ),
         ),
         const SizedBox(height: 10),
-        Center(
-          child: Text(
-            claim.text,
-            style: const TextStyle(
-              fontFamily: 'inter',
-              fontWeight: FontWeight.w200,
-              fontSize: 20,
-              color: Colors.grey,
-            ),
-          ),
-        ),
+        ...shared_ui.renderClaim(claim),
         const SizedBox(height: 30),
         Container(
           alignment: AlignmentDirectional.centerStart,

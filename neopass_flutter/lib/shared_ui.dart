@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart' as flutter_svg;
 
+import './main.dart' as main;
+
 MaterialColor makeColor(Color color) {
   final Map<int, Color> shades = {};
 
@@ -509,4 +511,61 @@ Future<void> errorDialog(
           ],
         );
       });
+}
+
+List<Widget> renderClaim(main.ClaimInfo claim) {
+  if (claim.claimOccupation != null) {
+    return [
+      if (claim.claimOccupation!.organization != "")
+        Center(
+          child: Text(
+            "Organization: ${claim.claimOccupation!.organization}",
+            style: const TextStyle(
+              fontFamily: 'inter',
+              fontWeight: FontWeight.w200,
+              fontSize: 20,
+              color: Colors.grey,
+            ),
+          ),
+        ),
+      if (claim.claimOccupation!.role != "")
+        Center(
+          child: Text(
+            "Role: ${claim.claimOccupation!.role}",
+            style: const TextStyle(
+              fontFamily: 'inter',
+              fontWeight: FontWeight.w200,
+              fontSize: 20,
+              color: Colors.grey,
+            ),
+          ),
+        ),
+      if (claim.claimOccupation!.location != "")
+        Center(
+          child: Text(
+            "Location: ${claim.claimOccupation!.location}",
+            style: const TextStyle(
+              fontFamily: 'inter',
+              fontWeight: FontWeight.w200,
+              fontSize: 20,
+              color: Colors.grey,
+            ),
+          ),
+        ),
+    ];
+  } else {
+    return [
+      Center(
+        child: Text(
+          claim.text,
+          style: const TextStyle(
+            fontFamily: 'inter',
+            fontWeight: FontWeight.w200,
+            fontSize: 20,
+            color: Colors.grey,
+          ),
+        ),
+      ),
+    ];
+  }
 }

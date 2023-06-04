@@ -92,16 +92,7 @@ class PresentPage extends StatelessWidget {
           ),
         )),
         const SizedBox(height: 10),
-        Center(
-            child: Text(
-          claim.text,
-          style: const TextStyle(
-            fontFamily: 'inter',
-            fontWeight: FontWeight.w200,
-            fontSize: 20,
-            color: Colors.grey,
-          ),
-        )),
+        ...shared_ui.renderClaim(claim),
         const SizedBox(height: 5),
         Center(
           child: QrImage(
@@ -138,6 +129,7 @@ class PresentPage extends StatelessWidget {
             handlePresentShare(encodedClaim);
           },
         ),
+        const SizedBox(height: 15),
       ],
     );
   }

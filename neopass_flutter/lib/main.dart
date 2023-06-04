@@ -246,16 +246,11 @@ Future<List<ClaimInfo>> loadClaims(
   final List<ClaimInfo> result = [];
 
   for (final signedEvent in signedEvents) {
-    protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
-
-    protocol.Claim claim = protocol.Claim.fromBuffer(event.content);
-
-    protocol.ClaimIdentifier claimIdentifier =
-        protocol.ClaimIdentifier.fromBuffer(claim.claim);
+    final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
 
     final pointer = await signedEventToPointer(signedEvent);
 
-    result.add(ClaimInfo(claim.claimType, claimIdentifier.identifier, pointer));
+    result.add(ClaimInfo(pointer, event));
   }
 
   return result;
@@ -627,7 +622,7 @@ Future<ClaimInfo> makePlatformClaim(sqflite.Transaction transaction,
 
   final pointer = await saveEvent(transaction, processInfo, event);
 
-  return ClaimInfo(claimType, account, pointer);
+  return ClaimInfo(pointer, event);
 }
 
 Future<ClaimInfo> makeOccupationClaim(
@@ -650,7 +645,7 @@ Future<ClaimInfo> makeOccupationClaim(
 
   final pointer = await saveEvent(transaction, processInfo, event);
 
-  return ClaimInfo("Occupation", organization, pointer);
+  return ClaimInfo(pointer, event);
 }
 
 Future<void> makeVouch(sqflite.Transaction transaction,
@@ -679,11 +674,28 @@ Future<void> main() async {
 }
 
 class ClaimInfo {
-  final String claimType;
-  final String text;
+  String claimType = '';
+  String text = '';
   final protocol.Pointer pointer;
+  final protocol.Event event;
+  protocol.ClaimOccupation? claimOccupation;
 
-  ClaimInfo(this.claimType, this.text, this.pointer);
+  ClaimInfo(this.pointer, this.event) {
+    final protocol.Claim claim = protocol.Claim.fromBuffer(event.content);
+
+    claimType = claim.claimType;
+
+    if (claim.claimType == 'Occupation') {
+      claimOccupation = protocol.ClaimOccupation.fromBuffer(claim.claim);
+
+      text = claimOccupation!.organization;
+    } else {
+      final protocol.ClaimIdentifier claimIdentifier =
+          protocol.ClaimIdentifier.fromBuffer(claim.claim);
+
+      text = claimIdentifier.identifier;
+    }
+  }
 }
 
 class ProcessInfo {
