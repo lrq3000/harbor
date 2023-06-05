@@ -6,13 +6,12 @@ import 'package:file_picker/file_picker.dart' as file_picker;
 
 import '../main.dart' as main;
 import '../protocol.pb.dart' as protocol;
-import '../queries.dart' as queries;
 import '../shared_ui.dart' as shared_ui;
-import 'backup.dart';
 import 'claim.dart';
 import 'create_claim.dart';
 import 'new_or_import_profile.dart';
 import 'vouch.dart';
+import 'advanced.dart';
 
 class ProfilePage extends StatefulWidget {
   final int identityIndex;
@@ -121,52 +120,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   if (context.mounted) {
                     Navigator.of(context).pop();
                   }
-                },
-              ),
-            ],
-          );
-        });
-  }
-
-  Future<void> deleteAccountDialog(
-    BuildContext context,
-    main.PolycentricModel state,
-    main.ProcessInfo identity,
-  ) async {
-    await showDialog<AlertDialog>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Delete Account"),
-            content: const Text("Are you sure you want to delete your account? "
-                "This action cannot be undone."),
-            actions: [
-              TextButton(
-                child: const Text("Cancel"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                child: const Text("Delete"),
-                onPressed: () async {
-                  final public =
-                      await identity.processSecret.system.extractPublicKey();
-
-                  await state.db.transaction((transaction) async {
-                    await queries.deleteIdentity(transaction, public.bytes,
-                        identity.processSecret.process);
-                  });
-
-                  if (context.mounted) {
-                    Navigator.push(context,
-                        MaterialPageRoute<NewOrImportProfilePage>(
-                            builder: (context) {
-                      return const NewOrImportProfilePage();
-                    }));
-                  }
-
-                  await state.mLoadIdentities();
                 },
               ),
             ],
@@ -445,22 +398,14 @@ class _ProfilePageState extends State<ProfilePage> {
         },
       ),
       shared_ui.StandardButtonGeneric(
-        actionText: 'Backup',
-        actionDescription: 'Make a backup of your identity',
-        left: shared_ui.makeSVG('save.svg', 'Backup'),
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute<BackupPage>(builder: (context) {
-            return BackupPage(processSecret: identity.processSecret);
-          }));
-        },
-      ),
-      shared_ui.StandardButtonGeneric(
-        actionText: 'Delete account',
-        actionDescription: 'Permanently delete account from this device',
-        left: shared_ui.makeSVG('delete.svg', 'Delete'),
+        actionText: 'Advanced',
+        actionDescription: 'Extra settings and app information',
+        left: shared_ui.makeSVG('settings.svg', 'Settings'),
         onPressed: () async {
-          deleteAccountDialog(context, state, identity);
+          Navigator.push(context,
+              MaterialPageRoute<AdvancedPage>(builder: (context) {
+            return AdvancedPage(identityIndex: widget.identityIndex);
+          }));
         },
       ),
       const SizedBox(height: 30),

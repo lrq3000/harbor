@@ -20,7 +20,7 @@ build:
   script:
     - export PUB_CACHE=$CI_PROJECT_DIR/.pub-cache
     - export PATH="$PATH":"$PUB_CACHE/bin"
-    - cd neopass_flutter && make build-apk
+    - ./version.sh && cd neopass_flutter && make build-apk
   artifacts:
     paths:
       - neopass_flutter/build/app/outputs/flutter-apk/app-release.apk
@@ -28,15 +28,15 @@ build:
 test:
   stage: test
   script:
-    - cd neopass_flutter && make test
+    - ./version.sh && cd neopass_flutter && make test
 
 format:
   stage: format
   script:
-    - cd neopass_flutter && make format
+    - ./version.sh && cd neopass_flutter && make format
 
 lint:
   stage: lint
   script:
-    - cd neopass_flutter && make lint
+    - ./version.sh && cd neopass_flutter && make lint
 
