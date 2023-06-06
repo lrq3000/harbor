@@ -259,7 +259,6 @@ class _ProfilePageState extends State<ProfilePage> {
             identity.username,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontFamily: 'inter',
               fontWeight: FontWeight.w300,
               fontSize: 32,
               color: Colors.white,
@@ -284,7 +283,6 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Text(
           "About",
           style: TextStyle(
-            fontFamily: 'inter',
             fontSize: 16,
             fontWeight: FontWeight.w300,
             color: Colors.white,
@@ -305,7 +303,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 alignment: AlignmentDirectional.centerStart,
                 child: Text(identity.description,
                     style: const TextStyle(
-                      fontFamily: 'inter',
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                       color: Colors.white,
@@ -339,7 +336,6 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Text(
             'Claims',
             style: TextStyle(
-              fontFamily: 'inter',
               fontSize: 16,
               fontWeight: FontWeight.w300,
               color: Colors.white,
@@ -357,7 +353,6 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Text(
           'Actions',
           style: TextStyle(
-            fontFamily: 'inter',
             fontSize: 16,
             fontWeight: FontWeight.w300,
             color: Colors.white,

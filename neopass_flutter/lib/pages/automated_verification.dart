@@ -89,7 +89,6 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
             child: Text(
           "Waiting for verification",
           style: TextStyle(
-            fontFamily: 'inter',
             fontWeight: FontWeight.w400,
             fontSize: 13,
             color: Colors.white,
@@ -109,7 +108,6 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
             child: Text(
           "Success!",
           style: TextStyle(
-            fontFamily: 'inter',
             fontWeight: FontWeight.w400,
             fontSize: 13,
             color: Colors.white,
@@ -142,7 +140,6 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
             child: Text(
           "Verification failed.",
           style: TextStyle(
-            fontFamily: 'inter',
             fontWeight: FontWeight.w400,
             fontSize: 13,
             color: Colors.white,

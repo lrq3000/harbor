@@ -32,7 +32,6 @@ final Widget neopassLogoAndText = Center(
         'NeoPass',
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontFamily: 'inter',
           fontWeight: FontWeight.w300,
           fontSize: 32,
           color: Colors.white,
@@ -87,7 +86,6 @@ class ClaimButtonGeneric extends StatelessWidget {
             Text(
               nameText,
               style: const TextStyle(
-                fontFamily: 'inter',
                 fontSize: 12,
                 fontWeight: FontWeight.w400,
                 color: Colors.white,
@@ -172,7 +170,6 @@ class OblongTextButton extends StatelessWidget {
         child: Text(
           text,
           style: const TextStyle(
-            fontFamily: 'inter',
             fontSize: 16,
             fontWeight: FontWeight.w300,
             color: Colors.white,
@@ -217,13 +214,11 @@ class StandardButtonGeneric extends StatelessWidget {
             children: [
               Text(actionText,
                   style: const TextStyle(
-                      fontFamily: 'inter',
                       fontWeight: FontWeight.w300,
                       fontSize: 14,
                       color: Colors.white)),
               Text(actionDescription,
                   style: const TextStyle(
-                    fontFamily: 'inter',
                     fontWeight: FontWeight.w200,
                     fontSize: 12,
                     color: Colors.grey,
@@ -244,7 +239,6 @@ class StandardButtonGeneric extends StatelessWidget {
                 foregroundColor: Colors.white,
                 backgroundColor: deleteColor,
                 textStyle: const TextStyle(
-                  fontFamily: 'inter',
                   fontSize: 10,
                   fontWeight: FontWeight.w300,
                 ),
@@ -404,7 +398,6 @@ Text makeAppBarTitleText(String text) {
   return Text(
     text,
     style: const TextStyle(
-      fontFamily: 'inter',
       fontSize: 24,
       fontWeight: FontWeight.w200,
       color: Colors.white,
@@ -432,7 +425,6 @@ class LabeledTextField extends StatelessWidget {
       Text(
         title,
         style: const TextStyle(
-          fontFamily: 'inter',
           fontSize: 16,
           fontWeight: FontWeight.w300,
           color: Colors.white,
@@ -521,7 +513,6 @@ List<Widget> renderClaim(main.ClaimInfo claim) {
           child: Text(
             "Organization: ${claim.claimOccupation!.organization}",
             style: const TextStyle(
-              fontFamily: 'inter',
               fontWeight: FontWeight.w200,
               fontSize: 20,
               color: Colors.grey,
@@ -533,7 +524,6 @@ List<Widget> renderClaim(main.ClaimInfo claim) {
           child: Text(
             "Role: ${claim.claimOccupation!.role}",
             style: const TextStyle(
-              fontFamily: 'inter',
               fontWeight: FontWeight.w200,
               fontSize: 20,
               color: Colors.grey,
@@ -545,7 +535,6 @@ List<Widget> renderClaim(main.ClaimInfo claim) {
           child: Text(
             "Location: ${claim.claimOccupation!.location}",
             style: const TextStyle(
-              fontFamily: 'inter',
               fontWeight: FontWeight.w200,
               fontSize: 20,
               color: Colors.grey,
@@ -559,7 +548,6 @@ List<Widget> renderClaim(main.ClaimInfo claim) {
         child: Text(
           claim.text,
           style: const TextStyle(
-            fontFamily: 'inter',
             fontWeight: FontWeight.w200,
             fontSize: 20,
             color: Colors.grey,

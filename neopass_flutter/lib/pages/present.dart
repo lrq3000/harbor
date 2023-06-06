@@ -64,7 +64,6 @@ class PresentPage extends StatelessWidget {
                   identity.username,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontFamily: 'inter',
                     fontWeight: FontWeight.w300,
                     fontSize: 32,
                     color: Colors.white,
@@ -74,7 +73,6 @@ class PresentPage extends StatelessWidget {
             child: Text(
           "Requests you to verify their claim",
           style: TextStyle(
-            fontFamily: 'inter',
             fontWeight: FontWeight.w300,
             fontSize: 20,
             color: Colors.grey,
@@ -85,7 +83,6 @@ class PresentPage extends StatelessWidget {
             child: Text(
           claim.claimType,
           style: const TextStyle(
-            fontFamily: 'inter',
             fontWeight: FontWeight.w200,
             fontSize: 24,
             color: Colors.white,
@@ -107,7 +104,6 @@ class PresentPage extends StatelessWidget {
             child: Text(
           "Scan to Verify",
           style: TextStyle(
-            fontFamily: 'inter',
             fontWeight: FontWeight.w200,
             fontSize: 20,
             color: Colors.grey,

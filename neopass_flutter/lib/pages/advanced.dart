@@ -239,7 +239,6 @@ class _AdvancedPageState extends State<AdvancedPage> {
           child: Text(
             'Actions',
             style: TextStyle(
-              fontFamily: 'inter',
               fontSize: 16,
               fontWeight: FontWeight.w300,
               color: Colors.white,
@@ -279,7 +278,6 @@ class _AdvancedPageState extends State<AdvancedPage> {
           child: Text(
             'Servers',
             style: TextStyle(
-              fontFamily: 'inter',
               fontSize: 16,
               fontWeight: FontWeight.w300,
               color: Colors.white,

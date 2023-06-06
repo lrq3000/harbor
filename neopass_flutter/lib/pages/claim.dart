@@ -60,7 +60,6 @@ class _ClaimPageState extends State<ClaimPage> {
                   identity.username,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontFamily: 'inter',
                     fontWeight: FontWeight.w300,
                     fontSize: 32,
                     color: Colors.white,
@@ -70,7 +69,6 @@ class _ClaimPageState extends State<ClaimPage> {
           child: Text(
             "Claims",
             style: TextStyle(
-              fontFamily: 'inter',
               fontWeight: FontWeight.w300,
               fontSize: 20,
               color: Colors.grey,
@@ -82,7 +80,6 @@ class _ClaimPageState extends State<ClaimPage> {
           child: Text(
             claim.claimType,
             style: const TextStyle(
-              fontFamily: 'inter',
               fontWeight: FontWeight.w200,
               fontSize: 24,
               color: Colors.white,
@@ -97,7 +94,6 @@ class _ClaimPageState extends State<ClaimPage> {
           child: const Text(
             "Request Verification",
             style: TextStyle(
-              fontFamily: 'inter',
               fontWeight: FontWeight.w300,
               fontSize: 16,
               color: Colors.white,

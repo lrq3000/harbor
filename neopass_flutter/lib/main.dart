@@ -788,6 +788,7 @@ class NeopassApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: shared_ui.buttonColor,
           canvasColor: const Color(0xFF000000),
+          fontFamily: 'inter',
         ),
         home: initialPage,
       ),

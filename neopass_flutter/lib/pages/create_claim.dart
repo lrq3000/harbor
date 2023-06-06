@@ -43,7 +43,6 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
         const Text(
           "Common",
           style: TextStyle(
-            fontFamily: 'inter',
             fontSize: 16,
             fontWeight: FontWeight.w300,
             color: Colors.white,
@@ -96,7 +95,6 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
         const Text(
           "Platforms",
           style: TextStyle(
-            fontFamily: 'inter',
             fontSize: 16,
             fontWeight: FontWeight.w300,
             color: Colors.white,

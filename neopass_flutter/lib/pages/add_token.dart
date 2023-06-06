@@ -30,7 +30,6 @@ class AddTokenPage extends StatelessWidget {
           child: Text(
             "Token",
             style: TextStyle(
-              fontFamily: 'inter',
               fontWeight: FontWeight.w300,
               fontSize: 14,
               color: Colors.white,
@@ -49,7 +48,6 @@ class AddTokenPage extends StatelessWidget {
               Text(token,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontFamily: 'inter',
                     fontWeight: FontWeight.w300,
                     fontSize: 14,
                   )),
@@ -59,7 +57,6 @@ class AddTokenPage extends StatelessWidget {
                 child: Text(
                   "Tap to copy",
                   style: TextStyle(
-                    fontFamily: 'inter',
                     fontWeight: FontWeight.w300,
                     fontSize: 14,
                     color: Colors.grey,
