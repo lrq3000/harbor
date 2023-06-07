@@ -13,7 +13,7 @@ class NewProfilePage extends StatefulWidget {
 }
 
 class _NewProfilePageState extends State<NewProfilePage> {
-  TextEditingController textController = TextEditingController();
+  final TextEditingController textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +25,7 @@ class _NewProfilePageState extends State<NewProfilePage> {
         shared_ui.neopassLogoAndText,
         const SizedBox(height: 100),
         shared_ui.LabeledTextField(
+          autofocus: true,
           controller: textController,
           title: "Profile Name",
           label: "Alice, Bob, ...",

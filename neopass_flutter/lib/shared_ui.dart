@@ -411,12 +411,14 @@ class LabeledTextField extends StatelessWidget {
   final TextEditingController controller;
   final String title;
   final String label;
+  final bool? autofocus;
 
   const LabeledTextField({
     Key? key,
     required this.controller,
     required this.title,
     required this.label,
+    this.autofocus,
   }) : super(key: key);
 
   @override
@@ -433,6 +435,7 @@ class LabeledTextField extends StatelessWidget {
       const SizedBox(height: 8),
       TextField(
         controller: controller,
+        autofocus: autofocus != null ? autofocus! : false,
         maxLines: 1,
         cursorColor: Colors.white,
         style: const TextStyle(color: Colors.white, fontSize: 13),
