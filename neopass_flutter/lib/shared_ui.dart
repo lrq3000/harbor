@@ -492,11 +492,11 @@ Future<void> errorDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Error"),
-          content: Text(text),
+          title: Text("Error", style: Theme.of(context).textTheme.bodyMedium),
+          content: Text(text, style: Theme.of(context).textTheme.bodyMedium),
           actions: [
             TextButton(
-              child: const Text("Ok"),
+              child: Text("Ok", style: Theme.of(context).textTheme.bodyMedium),
               onPressed: () async {
                 if (context.mounted) {
                   Navigator.of(context).pop();

@@ -749,10 +749,10 @@ class PolycentricModel extends ChangeNotifier {
             );
       });
 
-      // blah
-      final systemProto = protocol.PublicKey();
-      systemProto.keyType = fixnum.Int64(1);
-      systemProto.key = public.bytes;
+      final systemProto = protocol.PublicKey(
+        keyType: fixnum.Int64(1),
+        key: public.bytes,
+      );
 
       synchronizer.backfillClient(db, systemProto);
       synchronizer.backfillServers(db, systemProto);
@@ -788,7 +788,15 @@ class NeopassApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: shared_ui.buttonColor,
           canvasColor: const Color(0xFF000000),
+          dialogBackgroundColor: shared_ui.buttonColor,
           fontFamily: 'inter',
+          textTheme: const TextTheme(
+            bodyMedium: TextStyle(
+              fontSize: 14,
+              color: Colors.white,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
         ),
         home: initialPage,
       ),

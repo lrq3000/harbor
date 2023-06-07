@@ -66,37 +66,48 @@ class _AdvancedPageState extends State<AdvancedPage> {
     return result;
   }
 
-  final TextEditingController newServerController = TextEditingController();
-  String newServer = "";
-
   Future<void> addServerDialog(
     BuildContext context,
     main.PolycentricModel state,
     main.ProcessSecret identity,
   ) async {
-    newServerController.clear();
+    final TextEditingController newServerController = TextEditingController();
+
     await showDialog<AlertDialog>(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text("Add Server"),
+            title: Text("Add Server",
+                style: Theme.of(context).textTheme.bodyMedium),
             content: TextField(
-              onChanged: (next) {
-                setState(() {
-                  newServer = next;
-                });
-              },
+              autofocus: true,
+              decoration: const InputDecoration(
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              style: Theme.of(context).textTheme.bodyMedium,
+              cursorColor: Colors.white,
               controller: newServerController,
             ),
             actions: [
               TextButton(
-                child: const Text("Cancel"),
+                child: Text("Cancel",
+                    style: Theme.of(context).textTheme.bodyMedium),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               TextButton(
-                child: const Text("Submit"),
+                child: Text("Submit",
+                    style: Theme.of(context).textTheme.bodyMedium),
                 onPressed: () async {
                   if (newServerController.text.isEmpty) {
                     return;
@@ -135,17 +146,21 @@ class _AdvancedPageState extends State<AdvancedPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text("Remove Server"),
-            content: const Text("Are you sure you want to remove this server?"),
+            title: Text("Remove Server",
+                style: Theme.of(context).textTheme.bodyMedium),
+            content: Text("Are you sure you want to remove this server?",
+                style: Theme.of(context).textTheme.bodyMedium),
             actions: [
               TextButton(
-                child: const Text("Cancel"),
+                child: Text("Cancel",
+                    style: Theme.of(context).textTheme.bodyMedium),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               TextButton(
-                child: const Text("Delete"),
+                child: Text("Delete",
+                    style: Theme.of(context).textTheme.bodyMedium),
                 onPressed: () async {
                   await state.db.transaction((transaction) async {
                     await main.setServer(
@@ -179,18 +194,23 @@ class _AdvancedPageState extends State<AdvancedPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text("Delete Account"),
-            content: const Text("Are you sure you want to delete your account? "
-                "This action cannot be undone."),
+            title: Text("Delete Account",
+                style: Theme.of(context).textTheme.bodyMedium),
+            content: Text(
+                "Are you sure you want to delete your account? "
+                "This action cannot be undone.",
+                style: Theme.of(context).textTheme.bodyMedium),
             actions: [
               TextButton(
-                child: const Text("Cancel"),
+                child: Text("Cancel",
+                    style: Theme.of(context).textTheme.bodyMedium),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               TextButton(
-                child: const Text("Delete"),
+                child: Text("Delete",
+                    style: Theme.of(context).textTheme.bodyMedium),
                 onPressed: () async {
                   final public =
                       await identity.processSecret.system.extractPublicKey();

@@ -23,36 +23,48 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final TextEditingController usernameController = TextEditingController();
-  String newUsername = "";
-
   Future<void> editUsername(
     BuildContext context,
     main.PolycentricModel state,
     main.ProcessSecret identity,
   ) async {
+    final TextEditingController usernameController = TextEditingController();
+
     await showDialog<AlertDialog>(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text("Edit Username"),
+            title: Text("Edit Username",
+                style: Theme.of(context).textTheme.bodyMedium),
             content: TextField(
-              onChanged: (next) {
-                setState(() {
-                  newUsername = next;
-                });
-              },
+              autofocus: true,
+              decoration: const InputDecoration(
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              style: Theme.of(context).textTheme.bodyMedium,
+              cursorColor: Colors.white,
               controller: usernameController,
             ),
             actions: [
               TextButton(
-                child: const Text("Cancel"),
+                child: Text("Cancel",
+                    style: Theme.of(context).textTheme.bodyMedium),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               TextButton(
-                child: const Text("Submit"),
+                child: Text("Submit",
+                    style: Theme.of(context).textTheme.bodyMedium),
                 onPressed: () async {
                   if (usernameController.text.isEmpty) {
                     return;
@@ -75,36 +87,48 @@ class _ProfilePageState extends State<ProfilePage> {
         });
   }
 
-  final TextEditingController descriptionController = TextEditingController();
-  String newDescription = "";
-
   Future<void> editDescription(
     BuildContext context,
     main.PolycentricModel state,
     main.ProcessSecret identity,
   ) async {
+    final TextEditingController descriptionController = TextEditingController();
+
     await showDialog<AlertDialog>(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text("Edit Description"),
+            title: Text("Edit Description",
+                style: Theme.of(context).textTheme.bodyMedium),
             content: TextField(
-              onChanged: (next) {
-                setState(() {
-                  newDescription = next;
-                });
-              },
+              autofocus: true,
+              decoration: const InputDecoration(
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              style: Theme.of(context).textTheme.bodyMedium,
+              cursorColor: Colors.white,
               controller: descriptionController,
             ),
             actions: [
               TextButton(
-                child: const Text("Cancel"),
+                child: Text("Cancel",
+                    style: Theme.of(context).textTheme.bodyMedium),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               TextButton(
-                child: const Text("Submit"),
+                child: Text("Submit",
+                    style: Theme.of(context).textTheme.bodyMedium),
                 onPressed: () async {
                   if (descriptionController.text.isEmpty) {
                     return;
@@ -137,18 +161,23 @@ class _ProfilePageState extends State<ProfilePage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text("Delete Claim"),
-            content: const Text("Are you sure you want to delete this claim? "
-                "This action cannot be undone."),
+            title: Text("Delete Claim",
+                style: Theme.of(context).textTheme.bodyMedium),
+            content: Text(
+                "Are you sure you want to delete this claim? "
+                "This action cannot be undone.",
+                style: Theme.of(context).textTheme.bodyMedium),
             actions: [
               TextButton(
-                child: const Text("Cancel"),
+                child: Text("Cancel",
+                    style: Theme.of(context).textTheme.bodyMedium),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               TextButton(
-                  child: const Text("Delete"),
+                  child: Text("Delete",
+                      style: Theme.of(context).textTheme.bodyMedium),
                   onPressed: () async {
                     await state.db.transaction((transaction) async {
                       await main.deleteEvent(
