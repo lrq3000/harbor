@@ -102,6 +102,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 style: Theme.of(context).textTheme.bodyMedium),
             content: TextField(
               autofocus: true,
+              minLines: 1,
+              maxLines: 5,
               decoration: const InputDecoration(
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
