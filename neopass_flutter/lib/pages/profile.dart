@@ -26,9 +26,11 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> editUsername(
     BuildContext context,
     main.PolycentricModel state,
-    main.ProcessSecret identity,
+    main.ProcessInfo identity,
   ) async {
-    final TextEditingController usernameController = TextEditingController();
+    final TextEditingController usernameController = TextEditingController(
+      text: identity.username,
+    );
 
     await showDialog<AlertDialog>(
         context: context,
@@ -71,8 +73,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   }
 
                   await state.db.transaction((transaction) async {
-                    await main.setUsername(
-                        transaction, identity, usernameController.text);
+                    await main.setUsername(transaction, identity.processSecret,
+                        usernameController.text);
                   });
 
                   await state.mLoadIdentities();
@@ -90,9 +92,11 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> editDescription(
     BuildContext context,
     main.PolycentricModel state,
-    main.ProcessSecret identity,
+    main.ProcessInfo identity,
   ) async {
-    final TextEditingController descriptionController = TextEditingController();
+    final TextEditingController descriptionController = TextEditingController(
+      text: identity.description,
+    );
 
     await showDialog<AlertDialog>(
         context: context,
@@ -137,8 +141,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   }
 
                   await state.db.transaction((transaction) async {
-                    await main.setDescription(
-                        transaction, identity, descriptionController.text);
+                    await main.setDescription(transaction,
+                        identity.processSecret, descriptionController.text);
                   });
 
                   await state.mLoadIdentities();
@@ -303,7 +307,7 @@ class _ProfilePageState extends State<ProfilePage> {
               color: Colors.white,
             ),
             onPressed: () {
-              editUsername(context, state, identity.processSecret);
+              editUsername(context, state, identity);
             },
           ),
         ],
@@ -354,7 +358,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ]),
         onPressed: () {
-          editDescription(context, state, identity.processSecret);
+          editDescription(context, state, identity);
         },
       ),
     ];
