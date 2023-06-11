@@ -46,11 +46,11 @@ class _NewProfilePageState extends State<NewProfilePage> {
                 });
                 await state.mLoadIdentities();
                 if (context.mounted) {
-                  Navigator.push(context,
+                  Navigator.pushAndRemoveUntil(context,
                       MaterialPageRoute<NewOrImportProfilePage>(
                           builder: (context) {
                     return const NewOrImportProfilePage();
-                  }));
+                  }), (Route route) => false);
                 }
               }),
         ),

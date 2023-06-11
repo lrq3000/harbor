@@ -221,11 +221,11 @@ class _AdvancedPageState extends State<AdvancedPage> {
                   });
 
                   if (context.mounted) {
-                    Navigator.push(context,
+                    Navigator.pushAndRemoveUntil(context,
                         MaterialPageRoute<NewOrImportProfilePage>(
                             builder: (context) {
                       return const NewOrImportProfilePage();
-                    }));
+                    }), (Route route) => false);
                   }
 
                   await state.mLoadIdentities();

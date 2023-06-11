@@ -36,10 +36,10 @@ Future<void> importFromBase64(
     await state.mLoadIdentities();
 
     if (context.mounted) {
-      Navigator.push(context,
+      Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute<NewOrImportProfilePage>(builder: (context) {
         return const NewOrImportProfilePage();
-      }));
+      }), (Route route) => false);
     }
   } catch (err) {
     logger.e(err);
