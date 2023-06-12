@@ -59,7 +59,7 @@ class ImportPage extends StatelessWidget {
       ),
       children: [
         const SizedBox(height: 150),
-        shared_ui.neopassLogoAndText,
+        shared_ui.appLogoAndText,
         const SizedBox(height: 120),
         shared_ui.StandardButtonGeneric(
             actionText: 'Text',

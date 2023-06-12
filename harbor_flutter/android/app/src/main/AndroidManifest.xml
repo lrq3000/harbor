@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.neopass_flutter">
+    package="org.futo.harbor_flutter">
     <uses-permission
         android:name="android.permission.INTERNET"/>
     <queries>
@@ -13,7 +13,7 @@
         </intent>
     </queries>
     <application
-        android:label="NeoPass"
+        android:label="Harbor"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

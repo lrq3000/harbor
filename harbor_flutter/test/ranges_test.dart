@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
 import 'package:fixnum/fixnum.dart' as fixnum;
 
-import 'package:neopass_flutter/ranges.dart' as ranges;
+import 'package:harbor_flutter/ranges.dart' as ranges;
 
 ranges.Range makeRange(int low, int high) {
   return ranges.Range(

@@ -1,4 +1,4 @@
-package com.example.neopass_flutter
+package org.futo.harbor_flutter
 
 import io.flutter.embedding.android.FlutterActivity
 

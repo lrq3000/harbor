@@ -74,7 +74,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
   Widget build(BuildContext context) {
     List<Widget> columnChildren = [
       const SizedBox(height: 100),
-      shared_ui.neopassLogoAndText,
+      shared_ui.appLogoAndText,
       const SizedBox(height: 150),
     ];
 

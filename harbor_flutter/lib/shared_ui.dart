@@ -19,7 +19,7 @@ final MaterialColor formColor = makeColor(const Color(0xFF303030));
 final MaterialColor tokenColor = makeColor(const Color(0xFF141414));
 final MaterialColor deleteColor = makeColor(const Color(0xFF2F2F2F));
 
-final Widget neopassLogoAndText = Center(
+final Widget appLogoAndText = Center(
   child: Column(
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
@@ -29,11 +29,11 @@ final Widget neopassLogoAndText = Center(
       ),
       const SizedBox(height: 20),
       const Text(
-        'NeoPass',
+        'Harbor',
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontWeight: FontWeight.w300,
-          fontSize: 32,
+          fontWeight: FontWeight.w400,
+          fontSize: 40,
           color: Colors.white,
         ),
       ),

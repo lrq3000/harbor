@@ -1,4 +1,4 @@
-image: gitlab.futo.org:5050/polycentric/neopass:ci 
+image: gitlab.futo.org:5050/polycentric/harbor:ci 
 
 stages:
   - build
@@ -20,23 +20,23 @@ build:
   script:
     - export PUB_CACHE=$CI_PROJECT_DIR/.pub-cache
     - export PATH="$PATH":"$PUB_CACHE/bin"
-    - ./version.sh && cd neopass_flutter && make build-apk
+    - ./version.sh && cd harbor_flutter && make build-apk
   artifacts:
     paths:
-      - neopass_flutter/build/app/outputs/flutter-apk/app-release.apk
+      - harbor_flutter/build/app/outputs/flutter-apk/app-release.apk
 
 test:
   stage: test
   script:
-    - ./version.sh && cd neopass_flutter && make test
+    - ./version.sh && cd harbor_flutter && make test
 
 format:
   stage: format
   script:
-    - ./version.sh && cd neopass_flutter && make format
+    - ./version.sh && cd harbor_flutter && make format
 
 lint:
   stage: lint
   script:
-    - ./version.sh && cd neopass_flutter && make lint
+    - ./version.sh && cd harbor_flutter && make lint
 

@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 
-import 'package:neopass_flutter/handle_validation.dart' as handle_validation;
+import 'package:harbor_flutter/handle_validation.dart' as handle_validation;
 
 void main() {
   group("twitter", () {

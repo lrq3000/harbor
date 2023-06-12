@@ -22,7 +22,7 @@ class _NewProfilePageState extends State<NewProfilePage> {
     return shared_ui.StandardScaffold(
       children: [
         const SizedBox(height: 150),
-        shared_ui.neopassLogoAndText,
+        shared_ui.appLogoAndText,
         const SizedBox(height: 100),
         shared_ui.LabeledTextField(
           autofocus: true,

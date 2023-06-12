@@ -51,7 +51,7 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
     return shared_ui.StandardScaffold(
       children: [
         const SizedBox(height: 150),
-        shared_ui.neopassLogoAndText,
+        shared_ui.appLogoAndText,
         const SizedBox(height: 50),
         ..._renderProfiles(state.identities),
         shared_ui.StandardButtonGeneric(
