@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
+import 'package:fixnum/fixnum.dart' as fixnum;
 
 import '../main.dart' as main;
 import '../shared_ui.dart' as shared_ui;
@@ -240,7 +241,31 @@ class _AdvancedPageState extends State<AdvancedPage> {
     final Uri url = Uri.parse("https://gitlab.futo.org"
         "/polycentric/neopass/~commit/${version.version}");
 
-    await url_launcher.launchUrl(url);
+    await url_launcher.launchUrl(
+      url,
+      mode: url_launcher.LaunchMode.externalApplication,
+    );
+  }
+
+  Future<void> handleOpenHarborSocial(
+    main.PolycentricModel state,
+    main.ProcessInfo identity,
+  ) async {
+    final public = await identity.processSecret.system.extractPublicKey();
+
+    final systemProto = protocol.PublicKey(
+      keyType: fixnum.Int64(1),
+      key: public.bytes,
+    );
+
+    final query = await main.makeSystemLink(state.db, systemProto);
+
+    final Uri url = Uri.parse("https://harbor.social/$query");
+
+    await url_launcher.launchUrl(
+      url,
+      mode: url_launcher.LaunchMode.externalApplication,
+    );
   }
 
   @override
@@ -290,6 +315,14 @@ class _AdvancedPageState extends State<AdvancedPage> {
           left: shared_ui.makeSVG('open_browser.svg', 'Open'),
           onPressed: () async {
             await handleOpenGitLab();
+          },
+        ),
+        shared_ui.StandardButtonGeneric(
+          actionText: 'Open harbor.social',
+          actionDescription: 'Open your profile on the website',
+          left: shared_ui.makeSVG('open_browser.svg', 'Open'),
+          onPressed: () async {
+            await handleOpenHarborSocial(state, identity);
           },
         ),
         const SizedBox(height: 10),

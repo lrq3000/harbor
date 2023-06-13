@@ -50,6 +50,10 @@ protocol.URLInfo urlInfoFromLink(String text) {
     );
 }
 
+String urlInfoToLinkSuffix(protocol.URLInfo proto) {
+  return base64Url.encode(proto.writeToBuffer());
+}
+
 String urlInfoToLink(protocol.URLInfo proto) {
   return "polycentric://${base64Url.encode(proto.writeToBuffer())}";
 }

@@ -97,6 +97,27 @@ Future<List<ProcessSecret>> loadIdentities(sqflite.Database db) async {
   return result;
 }
 
+Future<String> makeSystemLink(
+  sqflite.Database db,
+  protocol.PublicKey system,
+) async {
+  final servers = await db.transaction((transaction) async {
+    return await loadServerList(transaction, system.key);
+  });
+
+  final systemLink = protocol.URLInfoSystemLink(
+    system: system,
+    servers: servers,
+  );
+
+  final urlInfo = protocol.URLInfo(
+    urlType: models.URLInfoType.urlInfoTypeSystemLink,
+    body: systemLink.writeToBuffer(),
+  );
+
+  return models.urlInfoToLinkSuffix(urlInfo);
+}
+
 Future<String> makeExportBundle(
   sqflite.Database db,
   ProcessSecret processSecret,
