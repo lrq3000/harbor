@@ -136,7 +136,12 @@ Future<String> makeExportBundle(
     events: events,
   );
 
-  return "polycentric://${base64.encode(exportBundle.writeToBuffer())}";
+  final urlInfo = protocol.URLInfo(
+    urlType: models.URLInfoType.urlInfoTypeExportBundle,
+    body: exportBundle.writeToBuffer(),
+  );
+
+  return models.urlInfoToLink(urlInfo);
 }
 
 Future<void> importExportBundle(

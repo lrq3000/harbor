@@ -150,15 +150,17 @@ const Event$json = const {
     const {'1': 'lww_element_set', '3': 8, '4': 1, '5': 11, '6': '.userpackage.LWWElementSet', '9': 0, '10': 'lwwElementSet', '17': true},
     const {'1': 'lww_element', '3': 9, '4': 1, '5': 11, '6': '.userpackage.LWWElement', '9': 1, '10': 'lwwElement', '17': true},
     const {'1': 'references', '3': 10, '4': 3, '5': 11, '6': '.userpackage.Reference', '10': 'references'},
+    const {'1': 'unix_milliseconds', '3': 11, '4': 1, '5': 4, '9': 2, '10': 'unixMilliseconds', '17': true},
   ],
   '8': const [
     const {'1': '_lww_element_set'},
     const {'1': '_lww_element'},
+    const {'1': '_unix_milliseconds'},
   ],
 };
 
 /// Descriptor for `Event`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List eventDescriptor = $convert.base64Decode('CgVFdmVudBIuCgZzeXN0ZW0YASABKAsyFi51c2VycGFja2FnZS5QdWJsaWNLZXlSBnN5c3RlbRIuCgdwcm9jZXNzGAIgASgLMhQudXNlcnBhY2thZ2UuUHJvY2Vzc1IHcHJvY2VzcxIjCg1sb2dpY2FsX2Nsb2NrGAMgASgEUgxsb2dpY2FsQ2xvY2sSIQoMY29udGVudF90eXBlGAQgASgEUgtjb250ZW50VHlwZRIYCgdjb250ZW50GAUgASgMUgdjb250ZW50EjsKDHZlY3Rvcl9jbG9jaxgGIAEoCzIYLnVzZXJwYWNrYWdlLlZlY3RvckNsb2NrUgt2ZWN0b3JDbG9jaxIuCgdpbmRpY2VzGAcgASgLMhQudXNlcnBhY2thZ2UuSW5kaWNlc1IHaW5kaWNlcxJHCg9sd3dfZWxlbWVudF9zZXQYCCABKAsyGi51c2VycGFja2FnZS5MV1dFbGVtZW50U2V0SABSDWx3d0VsZW1lbnRTZXSIAQESPQoLbHd3X2VsZW1lbnQYCSABKAsyFy51c2VycGFja2FnZS5MV1dFbGVtZW50SAFSCmx3d0VsZW1lbnSIAQESNgoKcmVmZXJlbmNlcxgKIAMoCzIWLnVzZXJwYWNrYWdlLlJlZmVyZW5jZVIKcmVmZXJlbmNlc0ISChBfbHd3X2VsZW1lbnRfc2V0Qg4KDF9sd3dfZWxlbWVudA==');
+final $typed_data.Uint8List eventDescriptor = $convert.base64Decode('CgVFdmVudBIuCgZzeXN0ZW0YASABKAsyFi51c2VycGFja2FnZS5QdWJsaWNLZXlSBnN5c3RlbRIuCgdwcm9jZXNzGAIgASgLMhQudXNlcnBhY2thZ2UuUHJvY2Vzc1IHcHJvY2VzcxIjCg1sb2dpY2FsX2Nsb2NrGAMgASgEUgxsb2dpY2FsQ2xvY2sSIQoMY29udGVudF90eXBlGAQgASgEUgtjb250ZW50VHlwZRIYCgdjb250ZW50GAUgASgMUgdjb250ZW50EjsKDHZlY3Rvcl9jbG9jaxgGIAEoCzIYLnVzZXJwYWNrYWdlLlZlY3RvckNsb2NrUgt2ZWN0b3JDbG9jaxIuCgdpbmRpY2VzGAcgASgLMhQudXNlcnBhY2thZ2UuSW5kaWNlc1IHaW5kaWNlcxJHCg9sd3dfZWxlbWVudF9zZXQYCCABKAsyGi51c2VycGFja2FnZS5MV1dFbGVtZW50U2V0SABSDWx3d0VsZW1lbnRTZXSIAQESPQoLbHd3X2VsZW1lbnQYCSABKAsyFy51c2VycGFja2FnZS5MV1dFbGVtZW50SAFSCmx3d0VsZW1lbnSIAQESNgoKcmVmZXJlbmNlcxgKIAMoCzIWLnVzZXJwYWNrYWdlLlJlZmVyZW5jZVIKcmVmZXJlbmNlcxIwChF1bml4X21pbGxpc2Vjb25kcxgLIAEoBEgCUhB1bml4TWlsbGlzZWNvbmRziAEBQhIKEF9sd3dfZWxlbWVudF9zZXRCDgoMX2x3d19lbGVtZW50QhQKEl91bml4X21pbGxpc2Vjb25kcw==');
 @$core.Deprecated('Use digestDescriptor instead')
 const Digest$json = const {
   '1': 'Digest',
@@ -237,23 +239,6 @@ const RangesForSystem$json = const {
 
 /// Descriptor for `RangesForSystem`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List rangesForSystemDescriptor = $convert.base64Decode('Cg9SYW5nZXNGb3JTeXN0ZW0STwoUcmFuZ2VzX2Zvcl9wcm9jZXNzZXMYASADKAsyHS51c2VycGFja2FnZS5SYW5nZXNGb3JQcm9jZXNzUhJyYW5nZXNGb3JQcm9jZXNzZXM=');
-@$core.Deprecated('Use uRLInfoDescriptor instead')
-const URLInfo$json = const {
-  '1': 'URLInfo',
-  '2': const [
-    const {'1': 'system', '3': 1, '4': 1, '5': 11, '6': '.userpackage.PublicKey', '10': 'system'},
-    const {'1': 'process', '3': 2, '4': 1, '5': 11, '6': '.userpackage.Process', '9': 0, '10': 'process', '17': true},
-    const {'1': 'logical_clock', '3': 3, '4': 1, '5': 4, '9': 1, '10': 'logicalClock', '17': true},
-    const {'1': 'servers', '3': 4, '4': 3, '5': 9, '10': 'servers'},
-  ],
-  '8': const [
-    const {'1': '_process'},
-    const {'1': '_logical_clock'},
-  ],
-};
-
-/// Descriptor for `URLInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List uRLInfoDescriptor = $convert.base64Decode('CgdVUkxJbmZvEi4KBnN5c3RlbRgBIAEoCzIWLnVzZXJwYWNrYWdlLlB1YmxpY0tleVIGc3lzdGVtEjMKB3Byb2Nlc3MYAiABKAsyFC51c2VycGFja2FnZS5Qcm9jZXNzSABSB3Byb2Nlc3OIAQESKAoNbG9naWNhbF9jbG9jaxgDIAEoBEgBUgxsb2dpY2FsQ2xvY2uIAQESGAoHc2VydmVycxgEIAMoCVIHc2VydmVyc0IKCghfcHJvY2Vzc0IQCg5fbG9naWNhbF9jbG9jaw==');
 @$core.Deprecated('Use privateKeyDescriptor instead')
 const PrivateKey$json = const {
   '1': 'PrivateKey',
@@ -294,12 +279,15 @@ const ResultEventsAndRelatedEventsAndCursor$json = const {
   '2': const [
     const {'1': 'result_events', '3': 1, '4': 1, '5': 11, '6': '.userpackage.Events', '10': 'resultEvents'},
     const {'1': 'related_events', '3': 2, '4': 1, '5': 11, '6': '.userpackage.Events', '10': 'relatedEvents'},
-    const {'1': 'cursor', '3': 3, '4': 1, '5': 4, '10': 'cursor'},
+    const {'1': 'cursor', '3': 3, '4': 1, '5': 12, '9': 0, '10': 'cursor', '17': true},
+  ],
+  '8': const [
+    const {'1': '_cursor'},
   ],
 };
 
 /// Descriptor for `ResultEventsAndRelatedEventsAndCursor`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List resultEventsAndRelatedEventsAndCursorDescriptor = $convert.base64Decode('CiVSZXN1bHRFdmVudHNBbmRSZWxhdGVkRXZlbnRzQW5kQ3Vyc29yEjgKDXJlc3VsdF9ldmVudHMYASABKAsyEy51c2VycGFja2FnZS5FdmVudHNSDHJlc3VsdEV2ZW50cxI6Cg5yZWxhdGVkX2V2ZW50cxgCIAEoCzITLnVzZXJwYWNrYWdlLkV2ZW50c1INcmVsYXRlZEV2ZW50cxIWCgZjdXJzb3IYAyABKARSBmN1cnNvcg==');
+final $typed_data.Uint8List resultEventsAndRelatedEventsAndCursorDescriptor = $convert.base64Decode('CiVSZXN1bHRFdmVudHNBbmRSZWxhdGVkRXZlbnRzQW5kQ3Vyc29yEjgKDXJlc3VsdF9ldmVudHMYASABKAsyEy51c2VycGFja2FnZS5FdmVudHNSDHJlc3VsdEV2ZW50cxI6Cg5yZWxhdGVkX2V2ZW50cxgCIAEoCzITLnVzZXJwYWNrYWdlLkV2ZW50c1INcmVsYXRlZEV2ZW50cxIbCgZjdXJzb3IYAyABKAxIAFIGY3Vyc29yiAEBQgkKB19jdXJzb3I=');
 @$core.Deprecated('Use referenceDescriptor instead')
 const Reference$json = const {
   '1': 'Reference',
@@ -317,17 +305,15 @@ const Post$json = const {
   '2': const [
     const {'1': 'content', '3': 1, '4': 1, '5': 9, '9': 0, '10': 'content', '17': true},
     const {'1': 'image', '3': 2, '4': 1, '5': 11, '6': '.userpackage.Pointer', '9': 1, '10': 'image', '17': true},
-    const {'1': 'boost', '3': 3, '4': 1, '5': 11, '6': '.userpackage.Pointer', '9': 2, '10': 'boost', '17': true},
   ],
   '8': const [
     const {'1': '_content'},
     const {'1': '_image'},
-    const {'1': '_boost'},
   ],
 };
 
 /// Descriptor for `Post`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List postDescriptor = $convert.base64Decode('CgRQb3N0Eh0KB2NvbnRlbnQYASABKAlIAFIHY29udGVudIgBARIvCgVpbWFnZRgCIAEoCzIULnVzZXJwYWNrYWdlLlBvaW50ZXJIAVIFaW1hZ2WIAQESLwoFYm9vc3QYAyABKAsyFC51c2VycGFja2FnZS5Qb2ludGVySAJSBWJvb3N0iAEBQgoKCF9jb250ZW50QggKBl9pbWFnZUIICgZfYm9vc3Q=');
+final $typed_data.Uint8List postDescriptor = $convert.base64Decode('CgRQb3N0Eh0KB2NvbnRlbnQYASABKAlIAFIHY29udGVudIgBARIvCgVpbWFnZRgCIAEoCzIULnVzZXJwYWNrYWdlLlBvaW50ZXJIAVIFaW1hZ2WIAQFCCgoIX2NvbnRlbnRCCAoGX2ltYWdl');
 @$core.Deprecated('Use claimDescriptor instead')
 const Claim$json = const {
   '1': 'Claim',
@@ -453,3 +439,109 @@ const RepeatedUInt64$json = const {
 
 /// Descriptor for `RepeatedUInt64`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List repeatedUInt64Descriptor = $convert.base64Decode('Cg5SZXBlYXRlZFVJbnQ2NBIYCgdudW1iZXJzGAEgAygEUgdudW1iZXJz');
+@$core.Deprecated('Use countLWWElementReferencesDescriptor instead')
+const CountLWWElementReferences$json = const {
+  '1': 'CountLWWElementReferences',
+  '2': const [
+    const {'1': 'value', '3': 1, '4': 1, '5': 12, '10': 'value'},
+    const {'1': 'from_type', '3': 2, '4': 1, '5': 4, '9': 0, '10': 'fromType', '17': true},
+  ],
+  '8': const [
+    const {'1': '_from_type'},
+  ],
+};
+
+/// Descriptor for `CountLWWElementReferences`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List countLWWElementReferencesDescriptor = $convert.base64Decode('ChlDb3VudExXV0VsZW1lbnRSZWZlcmVuY2VzEhQKBXZhbHVlGAEgASgMUgV2YWx1ZRIgCglmcm9tX3R5cGUYAiABKARIAFIIZnJvbVR5cGWIAQFCDAoKX2Zyb21fdHlwZQ==');
+@$core.Deprecated('Use countReferencesDescriptor instead')
+const CountReferences$json = const {
+  '1': 'CountReferences',
+  '2': const [
+    const {'1': 'from_type', '3': 1, '4': 1, '5': 4, '9': 0, '10': 'fromType', '17': true},
+  ],
+  '8': const [
+    const {'1': '_from_type'},
+  ],
+};
+
+/// Descriptor for `CountReferences`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List countReferencesDescriptor = $convert.base64Decode('Cg9Db3VudFJlZmVyZW5jZXMSIAoJZnJvbV90eXBlGAEgASgESABSCGZyb21UeXBliAEBQgwKCl9mcm9tX3R5cGU=');
+@$core.Deprecated('Use queryReferencesRequestDescriptor instead')
+const QueryReferencesRequest$json = const {
+  '1': 'QueryReferencesRequest',
+  '2': const [
+    const {'1': 'reference', '3': 1, '4': 1, '5': 11, '6': '.userpackage.Reference', '10': 'reference'},
+    const {'1': 'cursor', '3': 2, '4': 1, '5': 12, '9': 0, '10': 'cursor', '17': true},
+    const {'1': 'from_type', '3': 3, '4': 1, '5': 4, '9': 1, '10': 'fromType', '17': true},
+    const {'1': 'count_lww_element_references', '3': 4, '4': 3, '5': 11, '6': '.userpackage.CountLWWElementReferences', '10': 'countLwwElementReferences'},
+    const {'1': 'count_references', '3': 5, '4': 3, '5': 11, '6': '.userpackage.CountReferences', '10': 'countReferences'},
+  ],
+  '8': const [
+    const {'1': '_cursor'},
+    const {'1': '_from_type'},
+  ],
+};
+
+/// Descriptor for `QueryReferencesRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List queryReferencesRequestDescriptor = $convert.base64Decode('ChZRdWVyeVJlZmVyZW5jZXNSZXF1ZXN0EjQKCXJlZmVyZW5jZRgBIAEoCzIWLnVzZXJwYWNrYWdlLlJlZmVyZW5jZVIJcmVmZXJlbmNlEhsKBmN1cnNvchgCIAEoDEgAUgZjdXJzb3KIAQESIAoJZnJvbV90eXBlGAMgASgESAFSCGZyb21UeXBliAEBEmcKHGNvdW50X2x3d19lbGVtZW50X3JlZmVyZW5jZXMYBCADKAsyJi51c2VycGFja2FnZS5Db3VudExXV0VsZW1lbnRSZWZlcmVuY2VzUhljb3VudEx3d0VsZW1lbnRSZWZlcmVuY2VzEkcKEGNvdW50X3JlZmVyZW5jZXMYBSADKAsyHC51c2VycGFja2FnZS5Db3VudFJlZmVyZW5jZXNSD2NvdW50UmVmZXJlbmNlc0IJCgdfY3Vyc29yQgwKCl9mcm9tX3R5cGU=');
+@$core.Deprecated('Use queryReferencesResponseItemDescriptor instead')
+const QueryReferencesResponseItem$json = const {
+  '1': 'QueryReferencesResponseItem',
+  '2': const [
+    const {'1': 'event', '3': 1, '4': 1, '5': 11, '6': '.userpackage.SignedEvent', '10': 'event'},
+    const {'1': 'counts', '3': 2, '4': 3, '5': 4, '10': 'counts'},
+  ],
+};
+
+/// Descriptor for `QueryReferencesResponseItem`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List queryReferencesResponseItemDescriptor = $convert.base64Decode('ChtRdWVyeVJlZmVyZW5jZXNSZXNwb25zZUl0ZW0SLgoFZXZlbnQYASABKAsyGC51c2VycGFja2FnZS5TaWduZWRFdmVudFIFZXZlbnQSFgoGY291bnRzGAIgAygEUgZjb3VudHM=');
+@$core.Deprecated('Use queryReferencesResponseDescriptor instead')
+const QueryReferencesResponse$json = const {
+  '1': 'QueryReferencesResponse',
+  '2': const [
+    const {'1': 'items', '3': 1, '4': 3, '5': 11, '6': '.userpackage.QueryReferencesResponseItem', '10': 'items'},
+    const {'1': 'related_events', '3': 2, '4': 3, '5': 11, '6': '.userpackage.SignedEvent', '10': 'relatedEvents'},
+    const {'1': 'cursor', '3': 3, '4': 1, '5': 12, '9': 0, '10': 'cursor', '17': true},
+  ],
+  '8': const [
+    const {'1': '_cursor'},
+  ],
+};
+
+/// Descriptor for `QueryReferencesResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List queryReferencesResponseDescriptor = $convert.base64Decode('ChdRdWVyeVJlZmVyZW5jZXNSZXNwb25zZRI+CgVpdGVtcxgBIAMoCzIoLnVzZXJwYWNrYWdlLlF1ZXJ5UmVmZXJlbmNlc1Jlc3BvbnNlSXRlbVIFaXRlbXMSPwoOcmVsYXRlZF9ldmVudHMYAiADKAsyGC51c2VycGFja2FnZS5TaWduZWRFdmVudFINcmVsYXRlZEV2ZW50cxIbCgZjdXJzb3IYAyABKAxIAFIGY3Vyc29yiAEBQgkKB19jdXJzb3I=');
+@$core.Deprecated('Use uRLInfoDescriptor instead')
+const URLInfo$json = const {
+  '1': 'URLInfo',
+  '2': const [
+    const {'1': 'url_type', '3': 1, '4': 1, '5': 4, '10': 'urlType'},
+    const {'1': 'body', '3': 2, '4': 1, '5': 12, '10': 'body'},
+  ],
+};
+
+/// Descriptor for `URLInfo`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List uRLInfoDescriptor = $convert.base64Decode('CgdVUkxJbmZvEhkKCHVybF90eXBlGAEgASgEUgd1cmxUeXBlEhIKBGJvZHkYAiABKAxSBGJvZHk=');
+@$core.Deprecated('Use uRLInfoSystemLinkDescriptor instead')
+const URLInfoSystemLink$json = const {
+  '1': 'URLInfoSystemLink',
+  '2': const [
+    const {'1': 'system', '3': 1, '4': 1, '5': 11, '6': '.userpackage.PublicKey', '10': 'system'},
+    const {'1': 'servers', '3': 2, '4': 3, '5': 9, '10': 'servers'},
+  ],
+};
+
+/// Descriptor for `URLInfoSystemLink`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List uRLInfoSystemLinkDescriptor = $convert.base64Decode('ChFVUkxJbmZvU3lzdGVtTGluaxIuCgZzeXN0ZW0YASABKAsyFi51c2VycGFja2FnZS5QdWJsaWNLZXlSBnN5c3RlbRIYCgdzZXJ2ZXJzGAIgAygJUgdzZXJ2ZXJz');
+@$core.Deprecated('Use uRLInfoEventLinkDescriptor instead')
+const URLInfoEventLink$json = const {
+  '1': 'URLInfoEventLink',
+  '2': const [
+    const {'1': 'system', '3': 1, '4': 1, '5': 11, '6': '.userpackage.PublicKey', '10': 'system'},
+    const {'1': 'process', '3': 2, '4': 1, '5': 11, '6': '.userpackage.Process', '10': 'process'},
+    const {'1': 'logical_clock', '3': 3, '4': 1, '5': 4, '10': 'logicalClock'},
+    const {'1': 'servers', '3': 4, '4': 3, '5': 9, '10': 'servers'},
+  ],
+};
+
+/// Descriptor for `URLInfoEventLink`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List uRLInfoEventLinkDescriptor = $convert.base64Decode('ChBVUkxJbmZvRXZlbnRMaW5rEi4KBnN5c3RlbRgBIAEoCzIWLnVzZXJwYWNrYWdlLlB1YmxpY0tleVIGc3lzdGVtEi4KB3Byb2Nlc3MYAiABKAsyFC51c2VycGFja2FnZS5Qcm9jZXNzUgdwcm9jZXNzEiMKDWxvZ2ljYWxfY2xvY2sYAyABKARSDGxvZ2ljYWxDbG9jaxIYCgdzZXJ2ZXJzGAQgAygJUgdzZXJ2ZXJz');

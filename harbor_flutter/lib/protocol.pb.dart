@@ -643,6 +643,7 @@ class Event extends $pb.GeneratedMessage {
     ..aOM<LWWElementSet>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lwwElementSet', subBuilder: LWWElementSet.create)
     ..aOM<LWWElement>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lwwElement', subBuilder: LWWElement.create)
     ..pc<Reference>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'references', $pb.PbFieldType.PM, subBuilder: Reference.create)
+    ..a<$fixnum.Int64>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'unixMilliseconds', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
     ..hasRequiredFields = false
   ;
 
@@ -658,6 +659,7 @@ class Event extends $pb.GeneratedMessage {
     LWWElementSet? lwwElementSet,
     LWWElement? lwwElement,
     $core.Iterable<Reference>? references,
+    $fixnum.Int64? unixMilliseconds,
   }) {
     final _result = create();
     if (system != null) {
@@ -689,6 +691,9 @@ class Event extends $pb.GeneratedMessage {
     }
     if (references != null) {
       _result.references.addAll(references);
+    }
+    if (unixMilliseconds != null) {
+      _result.unixMilliseconds = unixMilliseconds;
     }
     return _result;
   }
@@ -808,6 +813,15 @@ class Event extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(10)
   $core.List<Reference> get references => $_getList(9);
+
+  @$pb.TagNumber(11)
+  $fixnum.Int64 get unixMilliseconds => $_getI64(10);
+  @$pb.TagNumber(11)
+  set unixMilliseconds($fixnum.Int64 v) { $_setInt64(10, v); }
+  @$pb.TagNumber(11)
+  $core.bool hasUnixMilliseconds() => $_has(10);
+  @$pb.TagNumber(11)
+  void clearUnixMilliseconds() => clearField(11);
 }
 
 class Digest extends $pb.GeneratedMessage {
@@ -1245,93 +1259,6 @@ class RangesForSystem extends $pb.GeneratedMessage {
   $core.List<RangesForProcess> get rangesForProcesses => $_getList(0);
 }
 
-class URLInfo extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'URLInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'userpackage'), createEmptyInstance: create)
-    ..aOM<PublicKey>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'system', subBuilder: PublicKey.create)
-    ..aOM<Process>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'process', subBuilder: Process.create)
-    ..a<$fixnum.Int64>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'logicalClock', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
-    ..pPS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'servers')
-    ..hasRequiredFields = false
-  ;
-
-  URLInfo._() : super();
-  factory URLInfo({
-    PublicKey? system,
-    Process? process,
-    $fixnum.Int64? logicalClock,
-    $core.Iterable<$core.String>? servers,
-  }) {
-    final _result = create();
-    if (system != null) {
-      _result.system = system;
-    }
-    if (process != null) {
-      _result.process = process;
-    }
-    if (logicalClock != null) {
-      _result.logicalClock = logicalClock;
-    }
-    if (servers != null) {
-      _result.servers.addAll(servers);
-    }
-    return _result;
-  }
-  factory URLInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory URLInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  URLInfo clone() => URLInfo()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  URLInfo copyWith(void Function(URLInfo) updates) => super.copyWith((message) => updates(message as URLInfo)) as URLInfo; // ignore: deprecated_member_use
-  $pb.BuilderInfo get info_ => _i;
-  @$core.pragma('dart2js:noInline')
-  static URLInfo create() => URLInfo._();
-  URLInfo createEmptyInstance() => create();
-  static $pb.PbList<URLInfo> createRepeated() => $pb.PbList<URLInfo>();
-  @$core.pragma('dart2js:noInline')
-  static URLInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<URLInfo>(create);
-  static URLInfo? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  PublicKey get system => $_getN(0);
-  @$pb.TagNumber(1)
-  set system(PublicKey v) { setField(1, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasSystem() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearSystem() => clearField(1);
-  @$pb.TagNumber(1)
-  PublicKey ensureSystem() => $_ensure(0);
-
-  @$pb.TagNumber(2)
-  Process get process => $_getN(1);
-  @$pb.TagNumber(2)
-  set process(Process v) { setField(2, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasProcess() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearProcess() => clearField(2);
-  @$pb.TagNumber(2)
-  Process ensureProcess() => $_ensure(1);
-
-  @$pb.TagNumber(3)
-  $fixnum.Int64 get logicalClock => $_getI64(2);
-  @$pb.TagNumber(3)
-  set logicalClock($fixnum.Int64 v) { $_setInt64(2, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasLogicalClock() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearLogicalClock() => clearField(3);
-
-  @$pb.TagNumber(4)
-  $core.List<$core.String> get servers => $_getList(3);
-}
-
 class PrivateKey extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'PrivateKey', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'userpackage'), createEmptyInstance: create)
     ..a<$fixnum.Int64>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'keyType', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
@@ -1537,7 +1464,7 @@ class ResultEventsAndRelatedEventsAndCursor extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ResultEventsAndRelatedEventsAndCursor', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'userpackage'), createEmptyInstance: create)
     ..aOM<Events>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'resultEvents', subBuilder: Events.create)
     ..aOM<Events>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'relatedEvents', subBuilder: Events.create)
-    ..a<$fixnum.Int64>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'cursor', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'cursor', $pb.PbFieldType.OY)
     ..hasRequiredFields = false
   ;
 
@@ -1545,7 +1472,7 @@ class ResultEventsAndRelatedEventsAndCursor extends $pb.GeneratedMessage {
   factory ResultEventsAndRelatedEventsAndCursor({
     Events? resultEvents,
     Events? relatedEvents,
-    $fixnum.Int64? cursor,
+    $core.List<$core.int>? cursor,
   }) {
     final _result = create();
     if (resultEvents != null) {
@@ -1603,9 +1530,9 @@ class ResultEventsAndRelatedEventsAndCursor extends $pb.GeneratedMessage {
   Events ensureRelatedEvents() => $_ensure(1);
 
   @$pb.TagNumber(3)
-  $fixnum.Int64 get cursor => $_getI64(2);
+  $core.List<$core.int> get cursor => $_getN(2);
   @$pb.TagNumber(3)
-  set cursor($fixnum.Int64 v) { $_setInt64(2, v); }
+  set cursor($core.List<$core.int> v) { $_setBytes(2, v); }
   @$pb.TagNumber(3)
   $core.bool hasCursor() => $_has(2);
   @$pb.TagNumber(3)
@@ -1677,7 +1604,6 @@ class Post extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Post', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'userpackage'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'content')
     ..aOM<Pointer>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'image', subBuilder: Pointer.create)
-    ..aOM<Pointer>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'boost', subBuilder: Pointer.create)
     ..hasRequiredFields = false
   ;
 
@@ -1685,7 +1611,6 @@ class Post extends $pb.GeneratedMessage {
   factory Post({
     $core.String? content,
     Pointer? image,
-    Pointer? boost,
   }) {
     final _result = create();
     if (content != null) {
@@ -1693,9 +1618,6 @@ class Post extends $pb.GeneratedMessage {
     }
     if (image != null) {
       _result.image = image;
-    }
-    if (boost != null) {
-      _result.boost = boost;
     }
     return _result;
   }
@@ -1739,17 +1661,6 @@ class Post extends $pb.GeneratedMessage {
   void clearImage() => clearField(2);
   @$pb.TagNumber(2)
   Pointer ensureImage() => $_ensure(1);
-
-  @$pb.TagNumber(3)
-  Pointer get boost => $_getN(2);
-  @$pb.TagNumber(3)
-  set boost(Pointer v) { setField(3, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasBoost() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearBoost() => clearField(3);
-  @$pb.TagNumber(3)
-  Pointer ensureBoost() => $_ensure(2);
 }
 
 class Claim extends $pb.GeneratedMessage {
@@ -2425,5 +2336,531 @@ class RepeatedUInt64 extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.List<$fixnum.Int64> get numbers => $_getList(0);
+}
+
+class CountLWWElementReferences extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CountLWWElementReferences', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'userpackage'), createEmptyInstance: create)
+    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'value', $pb.PbFieldType.OY)
+    ..a<$fixnum.Int64>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fromType', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..hasRequiredFields = false
+  ;
+
+  CountLWWElementReferences._() : super();
+  factory CountLWWElementReferences({
+    $core.List<$core.int>? value,
+    $fixnum.Int64? fromType,
+  }) {
+    final _result = create();
+    if (value != null) {
+      _result.value = value;
+    }
+    if (fromType != null) {
+      _result.fromType = fromType;
+    }
+    return _result;
+  }
+  factory CountLWWElementReferences.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory CountLWWElementReferences.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  CountLWWElementReferences clone() => CountLWWElementReferences()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  CountLWWElementReferences copyWith(void Function(CountLWWElementReferences) updates) => super.copyWith((message) => updates(message as CountLWWElementReferences)) as CountLWWElementReferences; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static CountLWWElementReferences create() => CountLWWElementReferences._();
+  CountLWWElementReferences createEmptyInstance() => create();
+  static $pb.PbList<CountLWWElementReferences> createRepeated() => $pb.PbList<CountLWWElementReferences>();
+  @$core.pragma('dart2js:noInline')
+  static CountLWWElementReferences getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CountLWWElementReferences>(create);
+  static CountLWWElementReferences? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<$core.int> get value => $_getN(0);
+  @$pb.TagNumber(1)
+  set value($core.List<$core.int> v) { $_setBytes(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasValue() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearValue() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get fromType => $_getI64(1);
+  @$pb.TagNumber(2)
+  set fromType($fixnum.Int64 v) { $_setInt64(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasFromType() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearFromType() => clearField(2);
+}
+
+class CountReferences extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CountReferences', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'userpackage'), createEmptyInstance: create)
+    ..a<$fixnum.Int64>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fromType', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..hasRequiredFields = false
+  ;
+
+  CountReferences._() : super();
+  factory CountReferences({
+    $fixnum.Int64? fromType,
+  }) {
+    final _result = create();
+    if (fromType != null) {
+      _result.fromType = fromType;
+    }
+    return _result;
+  }
+  factory CountReferences.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory CountReferences.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  CountReferences clone() => CountReferences()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  CountReferences copyWith(void Function(CountReferences) updates) => super.copyWith((message) => updates(message as CountReferences)) as CountReferences; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static CountReferences create() => CountReferences._();
+  CountReferences createEmptyInstance() => create();
+  static $pb.PbList<CountReferences> createRepeated() => $pb.PbList<CountReferences>();
+  @$core.pragma('dart2js:noInline')
+  static CountReferences getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CountReferences>(create);
+  static CountReferences? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $fixnum.Int64 get fromType => $_getI64(0);
+  @$pb.TagNumber(1)
+  set fromType($fixnum.Int64 v) { $_setInt64(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasFromType() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearFromType() => clearField(1);
+}
+
+class QueryReferencesRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'QueryReferencesRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'userpackage'), createEmptyInstance: create)
+    ..aOM<Reference>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'reference', subBuilder: Reference.create)
+    ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'cursor', $pb.PbFieldType.OY)
+    ..a<$fixnum.Int64>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fromType', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..pc<CountLWWElementReferences>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'countLwwElementReferences', $pb.PbFieldType.PM, subBuilder: CountLWWElementReferences.create)
+    ..pc<CountReferences>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'countReferences', $pb.PbFieldType.PM, subBuilder: CountReferences.create)
+    ..hasRequiredFields = false
+  ;
+
+  QueryReferencesRequest._() : super();
+  factory QueryReferencesRequest({
+    Reference? reference,
+    $core.List<$core.int>? cursor,
+    $fixnum.Int64? fromType,
+    $core.Iterable<CountLWWElementReferences>? countLwwElementReferences,
+    $core.Iterable<CountReferences>? countReferences,
+  }) {
+    final _result = create();
+    if (reference != null) {
+      _result.reference = reference;
+    }
+    if (cursor != null) {
+      _result.cursor = cursor;
+    }
+    if (fromType != null) {
+      _result.fromType = fromType;
+    }
+    if (countLwwElementReferences != null) {
+      _result.countLwwElementReferences.addAll(countLwwElementReferences);
+    }
+    if (countReferences != null) {
+      _result.countReferences.addAll(countReferences);
+    }
+    return _result;
+  }
+  factory QueryReferencesRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory QueryReferencesRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  QueryReferencesRequest clone() => QueryReferencesRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  QueryReferencesRequest copyWith(void Function(QueryReferencesRequest) updates) => super.copyWith((message) => updates(message as QueryReferencesRequest)) as QueryReferencesRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static QueryReferencesRequest create() => QueryReferencesRequest._();
+  QueryReferencesRequest createEmptyInstance() => create();
+  static $pb.PbList<QueryReferencesRequest> createRepeated() => $pb.PbList<QueryReferencesRequest>();
+  @$core.pragma('dart2js:noInline')
+  static QueryReferencesRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<QueryReferencesRequest>(create);
+  static QueryReferencesRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  Reference get reference => $_getN(0);
+  @$pb.TagNumber(1)
+  set reference(Reference v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasReference() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearReference() => clearField(1);
+  @$pb.TagNumber(1)
+  Reference ensureReference() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  $core.List<$core.int> get cursor => $_getN(1);
+  @$pb.TagNumber(2)
+  set cursor($core.List<$core.int> v) { $_setBytes(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasCursor() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearCursor() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $fixnum.Int64 get fromType => $_getI64(2);
+  @$pb.TagNumber(3)
+  set fromType($fixnum.Int64 v) { $_setInt64(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasFromType() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearFromType() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.List<CountLWWElementReferences> get countLwwElementReferences => $_getList(3);
+
+  @$pb.TagNumber(5)
+  $core.List<CountReferences> get countReferences => $_getList(4);
+}
+
+class QueryReferencesResponseItem extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'QueryReferencesResponseItem', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'userpackage'), createEmptyInstance: create)
+    ..aOM<SignedEvent>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'event', subBuilder: SignedEvent.create)
+    ..p<$fixnum.Int64>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'counts', $pb.PbFieldType.KU6)
+    ..hasRequiredFields = false
+  ;
+
+  QueryReferencesResponseItem._() : super();
+  factory QueryReferencesResponseItem({
+    SignedEvent? event,
+    $core.Iterable<$fixnum.Int64>? counts,
+  }) {
+    final _result = create();
+    if (event != null) {
+      _result.event = event;
+    }
+    if (counts != null) {
+      _result.counts.addAll(counts);
+    }
+    return _result;
+  }
+  factory QueryReferencesResponseItem.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory QueryReferencesResponseItem.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  QueryReferencesResponseItem clone() => QueryReferencesResponseItem()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  QueryReferencesResponseItem copyWith(void Function(QueryReferencesResponseItem) updates) => super.copyWith((message) => updates(message as QueryReferencesResponseItem)) as QueryReferencesResponseItem; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static QueryReferencesResponseItem create() => QueryReferencesResponseItem._();
+  QueryReferencesResponseItem createEmptyInstance() => create();
+  static $pb.PbList<QueryReferencesResponseItem> createRepeated() => $pb.PbList<QueryReferencesResponseItem>();
+  @$core.pragma('dart2js:noInline')
+  static QueryReferencesResponseItem getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<QueryReferencesResponseItem>(create);
+  static QueryReferencesResponseItem? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  SignedEvent get event => $_getN(0);
+  @$pb.TagNumber(1)
+  set event(SignedEvent v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasEvent() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearEvent() => clearField(1);
+  @$pb.TagNumber(1)
+  SignedEvent ensureEvent() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  $core.List<$fixnum.Int64> get counts => $_getList(1);
+}
+
+class QueryReferencesResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'QueryReferencesResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'userpackage'), createEmptyInstance: create)
+    ..pc<QueryReferencesResponseItem>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'items', $pb.PbFieldType.PM, subBuilder: QueryReferencesResponseItem.create)
+    ..pc<SignedEvent>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'relatedEvents', $pb.PbFieldType.PM, subBuilder: SignedEvent.create)
+    ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'cursor', $pb.PbFieldType.OY)
+    ..hasRequiredFields = false
+  ;
+
+  QueryReferencesResponse._() : super();
+  factory QueryReferencesResponse({
+    $core.Iterable<QueryReferencesResponseItem>? items,
+    $core.Iterable<SignedEvent>? relatedEvents,
+    $core.List<$core.int>? cursor,
+  }) {
+    final _result = create();
+    if (items != null) {
+      _result.items.addAll(items);
+    }
+    if (relatedEvents != null) {
+      _result.relatedEvents.addAll(relatedEvents);
+    }
+    if (cursor != null) {
+      _result.cursor = cursor;
+    }
+    return _result;
+  }
+  factory QueryReferencesResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory QueryReferencesResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  QueryReferencesResponse clone() => QueryReferencesResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  QueryReferencesResponse copyWith(void Function(QueryReferencesResponse) updates) => super.copyWith((message) => updates(message as QueryReferencesResponse)) as QueryReferencesResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static QueryReferencesResponse create() => QueryReferencesResponse._();
+  QueryReferencesResponse createEmptyInstance() => create();
+  static $pb.PbList<QueryReferencesResponse> createRepeated() => $pb.PbList<QueryReferencesResponse>();
+  @$core.pragma('dart2js:noInline')
+  static QueryReferencesResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<QueryReferencesResponse>(create);
+  static QueryReferencesResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<QueryReferencesResponseItem> get items => $_getList(0);
+
+  @$pb.TagNumber(2)
+  $core.List<SignedEvent> get relatedEvents => $_getList(1);
+
+  @$pb.TagNumber(3)
+  $core.List<$core.int> get cursor => $_getN(2);
+  @$pb.TagNumber(3)
+  set cursor($core.List<$core.int> v) { $_setBytes(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasCursor() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearCursor() => clearField(3);
+}
+
+class URLInfo extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'URLInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'userpackage'), createEmptyInstance: create)
+    ..a<$fixnum.Int64>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'urlType', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'body', $pb.PbFieldType.OY)
+    ..hasRequiredFields = false
+  ;
+
+  URLInfo._() : super();
+  factory URLInfo({
+    $fixnum.Int64? urlType,
+    $core.List<$core.int>? body,
+  }) {
+    final _result = create();
+    if (urlType != null) {
+      _result.urlType = urlType;
+    }
+    if (body != null) {
+      _result.body = body;
+    }
+    return _result;
+  }
+  factory URLInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory URLInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  URLInfo clone() => URLInfo()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  URLInfo copyWith(void Function(URLInfo) updates) => super.copyWith((message) => updates(message as URLInfo)) as URLInfo; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static URLInfo create() => URLInfo._();
+  URLInfo createEmptyInstance() => create();
+  static $pb.PbList<URLInfo> createRepeated() => $pb.PbList<URLInfo>();
+  @$core.pragma('dart2js:noInline')
+  static URLInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<URLInfo>(create);
+  static URLInfo? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $fixnum.Int64 get urlType => $_getI64(0);
+  @$pb.TagNumber(1)
+  set urlType($fixnum.Int64 v) { $_setInt64(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUrlType() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUrlType() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.List<$core.int> get body => $_getN(1);
+  @$pb.TagNumber(2)
+  set body($core.List<$core.int> v) { $_setBytes(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasBody() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearBody() => clearField(2);
+}
+
+class URLInfoSystemLink extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'URLInfoSystemLink', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'userpackage'), createEmptyInstance: create)
+    ..aOM<PublicKey>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'system', subBuilder: PublicKey.create)
+    ..pPS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'servers')
+    ..hasRequiredFields = false
+  ;
+
+  URLInfoSystemLink._() : super();
+  factory URLInfoSystemLink({
+    PublicKey? system,
+    $core.Iterable<$core.String>? servers,
+  }) {
+    final _result = create();
+    if (system != null) {
+      _result.system = system;
+    }
+    if (servers != null) {
+      _result.servers.addAll(servers);
+    }
+    return _result;
+  }
+  factory URLInfoSystemLink.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory URLInfoSystemLink.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  URLInfoSystemLink clone() => URLInfoSystemLink()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  URLInfoSystemLink copyWith(void Function(URLInfoSystemLink) updates) => super.copyWith((message) => updates(message as URLInfoSystemLink)) as URLInfoSystemLink; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static URLInfoSystemLink create() => URLInfoSystemLink._();
+  URLInfoSystemLink createEmptyInstance() => create();
+  static $pb.PbList<URLInfoSystemLink> createRepeated() => $pb.PbList<URLInfoSystemLink>();
+  @$core.pragma('dart2js:noInline')
+  static URLInfoSystemLink getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<URLInfoSystemLink>(create);
+  static URLInfoSystemLink? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  PublicKey get system => $_getN(0);
+  @$pb.TagNumber(1)
+  set system(PublicKey v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasSystem() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSystem() => clearField(1);
+  @$pb.TagNumber(1)
+  PublicKey ensureSystem() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  $core.List<$core.String> get servers => $_getList(1);
+}
+
+class URLInfoEventLink extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'URLInfoEventLink', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'userpackage'), createEmptyInstance: create)
+    ..aOM<PublicKey>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'system', subBuilder: PublicKey.create)
+    ..aOM<Process>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'process', subBuilder: Process.create)
+    ..a<$fixnum.Int64>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'logicalClock', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..pPS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'servers')
+    ..hasRequiredFields = false
+  ;
+
+  URLInfoEventLink._() : super();
+  factory URLInfoEventLink({
+    PublicKey? system,
+    Process? process,
+    $fixnum.Int64? logicalClock,
+    $core.Iterable<$core.String>? servers,
+  }) {
+    final _result = create();
+    if (system != null) {
+      _result.system = system;
+    }
+    if (process != null) {
+      _result.process = process;
+    }
+    if (logicalClock != null) {
+      _result.logicalClock = logicalClock;
+    }
+    if (servers != null) {
+      _result.servers.addAll(servers);
+    }
+    return _result;
+  }
+  factory URLInfoEventLink.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory URLInfoEventLink.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  URLInfoEventLink clone() => URLInfoEventLink()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  URLInfoEventLink copyWith(void Function(URLInfoEventLink) updates) => super.copyWith((message) => updates(message as URLInfoEventLink)) as URLInfoEventLink; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static URLInfoEventLink create() => URLInfoEventLink._();
+  URLInfoEventLink createEmptyInstance() => create();
+  static $pb.PbList<URLInfoEventLink> createRepeated() => $pb.PbList<URLInfoEventLink>();
+  @$core.pragma('dart2js:noInline')
+  static URLInfoEventLink getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<URLInfoEventLink>(create);
+  static URLInfoEventLink? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  PublicKey get system => $_getN(0);
+  @$pb.TagNumber(1)
+  set system(PublicKey v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasSystem() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSystem() => clearField(1);
+  @$pb.TagNumber(1)
+  PublicKey ensureSystem() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  Process get process => $_getN(1);
+  @$pb.TagNumber(2)
+  set process(Process v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasProcess() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearProcess() => clearField(2);
+  @$pb.TagNumber(2)
+  Process ensureProcess() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  $fixnum.Int64 get logicalClock => $_getI64(2);
+  @$pb.TagNumber(3)
+  set logicalClock($fixnum.Int64 v) { $_setInt64(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasLogicalClock() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearLogicalClock() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.List<$core.String> get servers => $_getList(3);
 }
 

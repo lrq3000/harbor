@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:fixnum/fixnum.dart' as fixnum;
+
+import 'protocol.pb.dart' as protocol;
 
 class ContentType {
   static final contentTypeDelete = fixnum.Int64(1);
@@ -10,4 +14,42 @@ class ContentType {
   static final contentTypeServer = fixnum.Int64(10);
   static final contentTypeClaim = fixnum.Int64(12);
   static final contentTypeVouch = fixnum.Int64(13);
+}
+
+class URLInfoType {
+  static final urlInfoTypeSystemLink = fixnum.Int64(1);
+  static final urlInfoTypeEventLink = fixnum.Int64(2);
+  static final urlInfoTypeExportBundle = fixnum.Int64(3);
+}
+
+protocol.ExportBundle urlInfoGetExportBundle(
+  protocol.URLInfo proto,
+) {
+  if (!(proto.urlType == URLInfoType.urlInfoTypeExportBundle)) {
+    throw "expected urlInfoTypeExportBundle";
+  }
+
+  return protocol.ExportBundle.fromBuffer(proto.body);
+}
+
+protocol.URLInfo urlInfoFromLink(String text) {
+    const prefix = "polycentric://";
+
+    if (!text.startsWith(prefix)) {
+      throw const FormatException();
+    }
+
+    text = text.substring(prefix.length);
+
+    while ((text.length % 4) != 0) {
+      text = "$text=";
+    }
+
+    return protocol.URLInfo.fromBuffer(
+      base64.decode(text),
+    );
+}
+
+String urlInfoToLink(protocol.URLInfo proto) {
+  return "polycentric://${base64Url.encode(proto.writeToBuffer())}";
 }

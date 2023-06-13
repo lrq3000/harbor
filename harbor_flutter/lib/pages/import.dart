@@ -1,13 +1,11 @@
-import 'dart:convert';
-
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' as services;
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import '../logger.dart';
-import '../protocol.pb.dart' as protocol;
 import '../main.dart' as main;
+import '../models.dart' as models;
 import '../shared_ui.dart' as shared_ui;
 import 'new_or_import_profile.dart';
 
@@ -17,22 +15,10 @@ Future<void> importFromBase64(
   String text,
 ) async {
   try {
-    const prefix = "polycentric://";
+    final urlInfo = models.urlInfoFromLink(text);
+    final exportBundle = models.urlInfoGetExportBundle(urlInfo);
 
-    if (!text.startsWith(prefix)) {
-      throw const FormatException();
-    }
-
-    text = text.substring(prefix.length);
-
-    while ((text.length % 4) != 0) {
-      text = "$text=";
-    }
-
-    final decoded = protocol.ExportBundle.fromBuffer(
-      base64.decode(text),
-    );
-    await main.importExportBundle(state.db, decoded);
+    await main.importExportBundle(state.db, exportBundle);
     await state.mLoadIdentities();
 
     if (context.mounted) {
