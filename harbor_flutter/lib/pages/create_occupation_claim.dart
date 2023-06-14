@@ -37,6 +37,13 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
             ),
             child: const Text("Save"),
             onPressed: () async {
+              if (textControllerOrganization.text.isEmpty &&
+                  textControllerRole.text.isEmpty &&
+                  textControllerLocation.text.isEmpty) {
+                shared_ui.showSnackBar(context, "You must fill out a field");
+                return;
+              }
+
               await state.db.transaction((transaction) async {
                 await main.makeOccupationClaim(
                   transaction,

@@ -56,6 +56,7 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
               onPressed: () async {
                 if (!handle_validation.isHandleValid(
                     widget.claimType, textController.text)) {
+                  shared_ui.showSnackBar(context, "Invalid handle");
                   return;
                 }
 

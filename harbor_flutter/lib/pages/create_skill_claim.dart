@@ -35,6 +35,7 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
             child: const Text("Save"),
             onPressed: () async {
               if (textController.text.isEmpty) {
+                shared_ui.showSnackBar(context, "You must set a skill");
                 return;
               }
 

@@ -508,6 +508,16 @@ Future<void> errorDialog(
       });
 }
 
+void showSnackBar(BuildContext context, String text) {
+  final snackBar = SnackBar(
+    content: Text(text),
+    duration: const Duration(milliseconds: 1000),
+    backgroundColor: buttonColor,
+  );
+
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+}
+
 List<Widget> renderClaim(main.ClaimInfo claim) {
   if (claim.claimOccupation != null) {
     return [

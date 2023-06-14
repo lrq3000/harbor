@@ -35,6 +35,7 @@ class _CreateGenericClaimPageState extends State<CreateGenericClaimPage> {
             child: const Text("Save"),
             onPressed: () async {
               if (textController.text.isEmpty) {
+                shared_ui.showSnackBar(context, "You must input a claim");
                 return;
               }
 

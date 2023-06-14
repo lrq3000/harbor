@@ -37,6 +37,7 @@ class _NewProfilePageState extends State<NewProfilePage> {
               text: 'Create Profile',
               onPressed: () async {
                 if (textController.text.isEmpty) {
+                  shared_ui.showSnackBar(context, "You must set a username");
                   return;
                 }
                 final identity = await main.createNewIdentity(state.db);
