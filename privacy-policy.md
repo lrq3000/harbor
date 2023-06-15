@@ -9,11 +9,11 @@ Enumerated FUTO applications and services this policy is applicable for:
 * polycentric.io website
 * polycentric desktop application
 
-This privacy policy describes how the enumerated FUTO applications and services ("our", "we", "us") collect, protect and uses the personally identifiable information you may provide through our applications or services. The policy also describes the choices available to you regarding our use of your personal information and how you can access and update this information. This policy does not apply to the practices of companies that FUTO does not own or control, or to individuals that FUTO does not employ or manage.
+This privacy policy describes how the enumerated FUTO applications and services ("our", "we", "us") collect, protect and use the personally identifiable information you may provide through our applications or services. The policy also describes the choices available to you regarding our use of your personal information and how you can access and update this information. This policy does not apply to the practices of companies that FUTO does not own or control, or to individuals that FUTO does not employ or manage.
 
 ## What information do we collect?
 
-* Basic account information: If you register on this server, you may be asked to enter a username, an e-mail address and a password. You may also enter additional profile information such as a display name and biography, and upload a profile picture and header image. The username, display name, biography, profile picture and header image are always listed publicly.
+* Basic account information: If you register on this server, you may be asked to enter a username. You may also enter additional profile information such as a display name and biography, and upload a profile picture and header image. The username, display name, biography, profile picture and header image are always listed publicly.
 
 * Posts, following and other public information: The list of people you follow is listed publicly, the same is true for your followers. When you submit a message, the date and time is stored. Messages may contain media attachments, such as pictures and videos. Public and unlisted posts are available publicly. When you feature a post on your profile, that is also publicly available information. Your posts are delivered to your followers. When you delete posts, this is likewise delivered to your followers. The action of boosting or leaving an opinion on another post is always public.
 
@@ -25,6 +25,7 @@ Any of the information we collect from you may be used in the following ways:
 
 * To provide the core functionality of FUTO services / applications.
 * To aid moderation of the community, for example comparing your IP address with other known ones to determine ban evasion or other violations.
+* To detect malicious behavior, improve performance, and optimize the user experience.
 
 ## How do we protect your information?
 
@@ -48,11 +49,13 @@ Your public content may be downloaded by other users in the network.
 
 ## Usage by children
 
-If this user / service in the EU or the EEA: Our site, products and services are all directed to people who are at least 16 years old. If you are under the age of 16, per the requirements of the GDPR (General Data Protection Regulation) do not use this site.
+If this user / service is in the EU or the EEA: Our site, products and services are all directed to people who are at least 16 years old. If you are under the age of 16, per the requirements of the GDPR (General Data Protection Regulation) do not use this site.
 
 If this user / service is in the USA: Our site, products and services are all directed to people who are at least 13 years old. If you are under the age of 13, per the requirements of COPPA (Children's Online Privacy Protection Act) do not use this site.
 
 Law requirements can be different if this user / service is in another jurisdiction.
+
+FUTO will delete any accounts belonging to users in violation of this policy.
 
 This document is CC-BY-SA. Originally adapted from the [mastodon.social privacy policy](https://mastodon.social/privacy-policy).
 
