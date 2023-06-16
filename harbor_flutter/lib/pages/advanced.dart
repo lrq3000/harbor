@@ -8,6 +8,7 @@ import '../shared_ui.dart' as shared_ui;
 import '../queries.dart' as queries;
 import '../protocol.pb.dart' as protocol;
 import '../version.dart' as version;
+import '../logger.dart';
 import 'new_or_import_profile.dart';
 import 'backup.dart';
 
@@ -110,8 +111,14 @@ class _AdvancedPageState extends State<AdvancedPage> {
                 child: Text("Submit",
                     style: Theme.of(context).textTheme.bodyMedium),
                 onPressed: () async {
-                  if (newServerController.text.isEmpty) {
-                    return;
+                  try {
+                    if (!Uri.parse(newServerController.text).isAbsolute) {
+                      shared_ui.showSnackBar(context, 'Invalid URI');
+
+                      return;
+                    }
+                  } catch (err) {
+                    logger.w(err);
                   }
 
                   await state.db.transaction((transaction) async {
