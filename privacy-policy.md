@@ -1,6 +1,6 @@
 # Privacy Policy
 
-Last updated June 15th, 2023
+Last updated June 19th, 2023
 
 Enumerated FUTO Holdings Inc. (“FUTO”) applications and services this policy is applicable for:
 
