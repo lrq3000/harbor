@@ -23,9 +23,10 @@ This privacy policy describes how the enumerated FUTO applications and services 
 
 Any of the information we collect from you may be used in the following ways:
 
-* To provide the core functionality of FUTO services / applications.
-* To aid moderation of the community, for example comparing your IP address with other known ones to determine ban evasion or other violations.
-* To detect malicious behavior, improve performance, and optimize the user experience.
+* To detect malicious, illegal, or fraudulent use of the service; and to prosecute such misuse.
+* To maintain, operate, analyze, plan, and grow our infrastructure to keep up with demand.
+* To respond to reports of abusive, illegal, or otherwise inappropriate content.
+* To understand how users experience the service. What features do users benefit from? What works well, and what doesn’t?
 
 ## How do we protect your information?
 
