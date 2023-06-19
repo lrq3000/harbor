@@ -2,7 +2,7 @@
 
 Last updated June 15th, 2023
 
-Enumerated FUTO applications and services this policy is applicable for:
+Enumerated FUTO Holdings Inc. (“FUTO”) applications and services this policy is applicable for:
 
 * harbor.social website
 * harbor Android / iOS appplication
@@ -56,6 +56,24 @@ If this user / service is in the USA: Our site, products and services are all di
 Law requirements can be different if this user / service is in another jurisdiction.
 
 FUTO will delete any accounts belonging to users in violation of this policy.
+
+## Changes to this Statement
+
+FUTO reserves the right to change this Privacy Policy from time to time. Your continued use of the applications and/or Services available after such modifications will constitute your: (a) acknowledgment of the modified Privacy Policy; and (b) agreement to abide and be bound by that Policy.
+
+## Contact Information
+
+FUTO Holdings Inc
+
+1044 Liberty Park Drive
+
+Austin, TX 78746
+
+United States of America
+
+legal@futo.org
+
+## Attribution
 
 This document is CC-BY-SA. Originally adapted from the [mastodon.social privacy policy](https://mastodon.social/privacy-policy).
 
