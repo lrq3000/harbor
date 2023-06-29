@@ -29,6 +29,7 @@ dependencies:
   flutter_svg: ^2.0.6
   url_launcher: ^6.1.11
   flutter_native_splash: ^2.3.1
+  image_cropper: ^5.0.0
 
 dev_dependencies:
   test: ^1.0.0

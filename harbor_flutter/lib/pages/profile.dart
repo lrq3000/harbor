@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart' as file_picker;
+import 'package:image_cropper/image_cropper.dart' as image_cropper;
 
 import '../main.dart' as main;
 import '../protocol.pb.dart' as protocol;
@@ -201,6 +200,54 @@ class _ProfilePageState extends State<ProfilePage> {
         });
   }
 
+  Future<void> updateProfilePicture(
+    BuildContext context,
+    main.PolycentricModel state,
+    main.ProcessInfo identity,
+  ) async {
+    file_picker.FilePickerResult? result =
+        await file_picker.FilePicker.platform.pickFiles(
+      type: file_picker.FileType.custom,
+      allowedExtensions: ['png', 'jpg'],
+    );
+
+    if (result == null || result.files.single.path == null) {
+      return;
+    }
+
+    final croppedFile = await image_cropper.ImageCropper().cropImage(
+      sourcePath: result.files.single.path!,
+      aspectRatioPresets: [
+        image_cropper.CropAspectRatioPreset.square,
+      ],
+      maxWidth: 512,
+      maxHeight: 512,
+    );
+
+    if (croppedFile == null) {
+      return;
+    }
+
+    final bytes = await croppedFile.readAsBytes();
+
+    await state.db.transaction((transaction) async {
+      final pointer = await main.publishBlob(
+        transaction,
+        identity.processSecret,
+        "image/jpeg",
+        bytes,
+      );
+
+      await main.setAvatar(
+        transaction,
+        identity.processSecret,
+        pointer,
+      );
+    });
+
+    await state.mLoadIdentities();
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
@@ -256,32 +303,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           onTap: () async {
-            file_picker.FilePickerResult? result =
-                await file_picker.FilePicker.platform.pickFiles(
-              type: file_picker.FileType.custom,
-              allowedExtensions: ['png', 'jpg'],
-            );
-
-            if (result != null) {
-              final bytes = await File(result.files.single.path!).readAsBytes();
-
-              await state.db.transaction((transaction) async {
-                final pointer = await main.publishBlob(
-                  transaction,
-                  identity.processSecret,
-                  "image/jpeg",
-                  bytes,
-                );
-
-                await main.setAvatar(
-                  transaction,
-                  identity.processSecret,
-                  pointer,
-                );
-              });
-
-              await state.mLoadIdentities();
-            }
+            await updateProfilePicture(context, state, identity);
           },
         ),
       ),
