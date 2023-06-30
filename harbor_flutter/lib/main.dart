@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cryptography_flutter/cryptography_flutter.dart';
 import 'package:cryptography/cryptography.dart' as cryptography;
+import 'package:harbor_flutter/protocol.pbserver.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
@@ -60,10 +61,9 @@ Future<ProcessSecret> importIdentity(
     Uint8List.fromList(process),
   );
 
-  final publicProto = protocol.PublicKey(
-    keyType: fixnum.Int64(1),
-    key: public.bytes,
-  );
+  final publicProto = protocol.PublicKey()
+    ..keyType = fixnum.Int64(1)
+    ..key = public.bytes;
 
   logger.i("imported: ${base64Url.encode(publicProto.writeToBuffer())}");
 
@@ -105,15 +105,13 @@ Future<String> makeSystemLink(
     return await loadServerList(transaction, system.key);
   });
 
-  final systemLink = protocol.URLInfoSystemLink(
-    system: system,
-    servers: servers,
-  );
+  final systemLink = protocol.URLInfoSystemLink()
+    ..system = system
+    ..servers.addAll(servers);
 
-  final urlInfo = protocol.URLInfo(
-    urlType: models.URLInfoType.urlInfoTypeSystemLink,
-    body: systemLink.writeToBuffer(),
-  );
+  final urlInfo = protocol.URLInfo()
+    ..urlType = models.URLInfoType.urlInfoTypeSystemLink
+    ..body = systemLink.writeToBuffer();
 
   return models.urlInfoToLinkSuffix(urlInfo);
 }
@@ -148,19 +146,18 @@ Future<String> makeExportBundle(
     events.events.addAll(serverSignedEvents);
   });
 
-  final exportBundle = protocol.ExportBundle(
-    keyPair: protocol.KeyPair(
-      keyType: fixnum.Int64(1),
-      privateKey: privateKey,
-      publicKey: publicKey,
-    ),
-    events: events,
-  );
+  final keyPair = protocol.KeyPair()
+    ..keyType = fixnum.Int64(1)
+    ..privateKey = privateKey
+    ..publicKey = publicKey;
 
-  final urlInfo = protocol.URLInfo(
-    urlType: models.URLInfoType.urlInfoTypeExportBundle,
-    body: exportBundle.writeToBuffer(),
-  );
+  final exportBundle = protocol.ExportBundle()
+    ..keyPair = keyPair
+    ..events = events;
+
+  final urlInfo = protocol.URLInfo()
+    ..urlType = models.URLInfoType.urlInfoTypeExportBundle
+    ..body = exportBundle.writeToBuffer();
 
   return models.urlInfoToLink(urlInfo);
 }
@@ -248,15 +245,15 @@ Future<protocol.Pointer> signedEventToPointer(
 
   final hash = await cryptography.Sha256().hash(signedEvent.event);
 
-  return protocol.Pointer(
-    system: event.system,
-    process: event.process,
-    logicalClock: event.logicalClock,
-    eventDigest: protocol.Digest(
-      digestType: fixnum.Int64(1),
-      digest: hash.bytes,
-    ),
-  );
+  final digest = protocol.Digest()
+    ..digestType = fixnum.Int64(1)
+    ..digest = hash.bytes;
+
+  return protocol.Pointer()
+    ..system = event.system
+    ..process = event.process
+    ..logicalClock = event.logicalClock
+    ..eventDigest = digest;
 }
 
 Future<List<ClaimInfo>> loadClaims(
@@ -445,14 +442,12 @@ Future<protocol.Pointer> saveEvent(sqflite.Transaction transaction,
     ProcessSecret processInfo, protocol.Event event) async {
   final public = await processInfo.system.extractPublicKey();
 
-  final protocol.PublicKey system = protocol.PublicKey(
-    keyType: fixnum.Int64(1),
-    key: public.bytes,
-  );
+  final protocol.PublicKey system = protocol.PublicKey()
+    ..keyType = fixnum.Int64(1)
+    ..key = public.bytes;
 
-  final protocol.Process process = protocol.Process(
-    process: processInfo.process,
-  );
+  final protocol.Process process = protocol.Process()
+    ..process = processInfo.process;
 
   final clock = await queries.loadLatestClock(
     transaction,
@@ -473,10 +468,9 @@ Future<protocol.Pointer> saveEvent(sqflite.Transaction transaction,
   ))
       .bytes;
 
-  final protocol.SignedEvent signedEvent = protocol.SignedEvent(
-    event: encoded,
-    signature: signature,
-  );
+  final protocol.SignedEvent signedEvent = protocol.SignedEvent()
+    ..event = encoded
+    ..signature = signature;
 
   await ingest(transaction, signedEvent);
 
@@ -501,14 +495,14 @@ Future<void> deleteEvent(
   } else {
     final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
 
-    final protocol.Event deleteEvent = protocol.Event(
-      contentType: models.ContentType.contentTypeDelete,
-      content: protocol.Delete(
-        process: pointer.process,
-        logicalClock: pointer.logicalClock,
-        indices: event.indices,
-      ).writeToBuffer(),
-    );
+    final delete = protocol.Delete()
+      ..process = pointer.process
+      ..logicalClock = pointer.logicalClock
+      ..indices = event.indices;
+
+    final protocol.Event deleteEvent = protocol.Event()
+      ..contentType = models.ContentType.contentTypeDelete
+      ..content = delete.writeToBuffer();
 
     await saveEvent(transaction, processInfo, deleteEvent);
   }
@@ -516,13 +510,13 @@ Future<void> deleteEvent(
 
 Future<protocol.Pointer> publishBlob(sqflite.Transaction transaction,
     ProcessSecret processInfo, String mime, List<int> bytes) async {
-  final protocol.Event blobMetaEvent = protocol.Event(
-    contentType: models.ContentType.contentTypeBlobMeta,
-    content: protocol.BlobMeta(
-      sectionCount: fixnum.Int64(1),
-      mime: mime,
-    ).writeToBuffer(),
-  );
+  final blobMeta = protocol.BlobMeta()
+    ..sectionCount = fixnum.Int64(1)
+    ..mime = mime;
+
+  final protocol.Event blobMetaEvent = protocol.Event()
+    ..contentType = models.ContentType.contentTypeBlobMeta
+    ..content = blobMeta.writeToBuffer();
 
   final blobMetaPointer = await saveEvent(
     transaction,
@@ -530,13 +524,13 @@ Future<protocol.Pointer> publishBlob(sqflite.Transaction transaction,
     blobMetaEvent,
   );
 
-  final blobSectionEvent = protocol.Event(
-    contentType: models.ContentType.contentTypeBlobSection,
-    content: protocol.BlobSection(
-      metaPointer: blobMetaPointer.logicalClock,
-      content: bytes,
-    ).writeToBuffer(),
-  );
+  final blobSection = protocol.BlobSection()
+    ..metaPointer = blobMetaPointer.logicalClock
+    ..content = bytes;
+
+  final blobSectionEvent = protocol.Event()
+    ..contentType = models.ContentType.contentTypeBlobSection
+    ..content = blobSection.writeToBuffer();
 
   await saveEvent(transaction, processInfo, blobSectionEvent);
 
@@ -545,13 +539,13 @@ Future<protocol.Pointer> publishBlob(sqflite.Transaction transaction,
 
 Future<void> setCRDT(sqflite.Transaction transaction, ProcessSecret processInfo,
     fixnum.Int64 contentType, Uint8List bytes) async {
-  final protocol.Event event = protocol.Event(
-    contentType: contentType,
-    lwwElement: protocol.LWWElement(
-      unixMilliseconds: fixnum.Int64(DateTime.now().millisecondsSinceEpoch),
-      value: bytes,
-    ),
-  );
+  final lwwElement = protocol.LWWElement()
+    ..unixMilliseconds = fixnum.Int64(DateTime.now().millisecondsSinceEpoch)
+    ..value = bytes;
+
+  final protocol.Event event = protocol.Event()
+    ..contentType = contentType
+    ..lwwElement = lwwElement;
 
   await saveEvent(transaction, processInfo, event);
 }
@@ -588,15 +582,15 @@ Future<void> setDescription(sqflite.Transaction transaction,
 
 Future<void> makeClaim(sqflite.Transaction transaction,
     ProcessSecret processInfo, String claimText) async {
-  final protocol.Event event = protocol.Event(
-    contentType: models.ContentType.contentTypeClaim,
-    content: protocol.Claim(
-      claimType: "Generic",
-      claim: protocol.ClaimIdentifier(
-        identifier: claimText,
-      ).writeToBuffer(),
-    ).writeToBuffer(),
-  );
+  final claimIdentifier = protocol.ClaimIdentifier()..identifier = claimText;
+
+  final claim = protocol.Claim()
+    ..claimType = "Generic"
+    ..claim = claimIdentifier.writeToBuffer();
+
+  final protocol.Event event = protocol.Event()
+    ..contentType = models.ContentType.contentTypeClaim
+    ..content = claim.writeToBuffer();
 
   await saveEvent(transaction, processInfo, event);
 }
@@ -607,14 +601,14 @@ Future<void> setCRDTSetItem(
     fixnum.Int64 contentType,
     protocol.LWWElementSet_Operation operation,
     Uint8List value) async {
-  final protocol.Event event = protocol.Event(
-    contentType: contentType,
-    lwwElementSet: protocol.LWWElementSet(
-      unixMilliseconds: fixnum.Int64(DateTime.now().millisecondsSinceEpoch),
-      value: value,
-      operation: operation,
-    ),
-  );
+  final lwwElementSet = protocol.LWWElementSet()
+    ..unixMilliseconds = fixnum.Int64(DateTime.now().millisecondsSinceEpoch)
+    ..value = value
+    ..operation = operation;
+
+  final protocol.Event event = protocol.Event()
+    ..contentType = contentType
+    ..lwwElementSet = lwwElementSet;
 
   await saveEvent(transaction, processInfo, event);
 }
@@ -636,15 +630,15 @@ Future<void> setServer(
 
 Future<ClaimInfo> makePlatformClaim(sqflite.Transaction transaction,
     ProcessSecret processInfo, String claimType, String account) async {
-  final protocol.Event event = protocol.Event(
-    contentType: models.ContentType.contentTypeClaim,
-    content: protocol.Claim(
-      claimType: claimType,
-      claim: protocol.ClaimIdentifier(
-        identifier: account,
-      ).writeToBuffer(),
-    ).writeToBuffer(),
-  );
+  final claimIdentifier = protocol.ClaimIdentifier()..identifier = account;
+
+  final claim = protocol.Claim()
+    ..claimType = claimType
+    ..claim = claimIdentifier.writeToBuffer();
+
+  final protocol.Event event = protocol.Event()
+    ..contentType = models.ContentType.contentTypeClaim
+    ..content = claim.writeToBuffer();
 
   final pointer = await saveEvent(transaction, processInfo, event);
 
@@ -657,17 +651,18 @@ Future<ClaimInfo> makeOccupationClaim(
     String organization,
     String role,
     String location) async {
-  final protocol.Event event = protocol.Event(
-    contentType: models.ContentType.contentTypeClaim,
-    content: protocol.Claim(
-      claimType: "Occupation",
-      claim: protocol.ClaimOccupation(
-        organization: organization,
-        role: role,
-        location: location,
-      ).writeToBuffer(),
-    ).writeToBuffer(),
-  );
+  final claimOccupation = protocol.ClaimOccupation()
+    ..organization = organization
+    ..role = role
+    ..location = location;
+
+  final claim = protocol.Claim()
+    ..claimType = "Occupation"
+    ..claim = claimOccupation.writeToBuffer();
+
+  final protocol.Event event = protocol.Event()
+    ..contentType = models.ContentType.contentTypeClaim
+    ..content = claim.writeToBuffer();
 
   final pointer = await saveEvent(transaction, processInfo, event);
 
@@ -676,15 +671,13 @@ Future<ClaimInfo> makeOccupationClaim(
 
 Future<void> makeVouch(sqflite.Transaction transaction,
     ProcessSecret processInfo, protocol.Pointer pointer) async {
-  final protocol.Event event = protocol.Event(
-    contentType: models.ContentType.contentTypeVouch,
-    references: [
-      protocol.Reference(
-        referenceType: fixnum.Int64(2),
-        reference: pointer.writeToBuffer(),
-      ),
-    ],
-  );
+  final reference = protocol.Reference()
+    ..referenceType = fixnum.Int64(2)
+    ..reference = pointer.writeToBuffer();
+
+  final protocol.Event event = protocol.Event()
+    ..contentType = models.ContentType.contentTypeVouch
+    ..references.add(reference);
 
   await saveEvent(transaction, processInfo, event);
 }
@@ -775,10 +768,9 @@ class PolycentricModel extends ChangeNotifier {
             );
       });
 
-      final systemProto = protocol.PublicKey(
-        keyType: fixnum.Int64(1),
-        key: public.bytes,
-      );
+      final systemProto = protocol.PublicKey()
+        ..keyType = fixnum.Int64(1)
+        ..key = public.bytes;
 
       synchronizer.backfillClient(db, systemProto);
       synchronizer.backfillServers(db, systemProto);
