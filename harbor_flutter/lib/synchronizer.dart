@@ -142,7 +142,7 @@ Future<bool> backfillServerSingle(
     final serverNeeds = ranges.subtractRange(clientRanges, serverRanges);
 
     if (serverNeeds.isEmpty) {
-      break;
+      continue;
     }
 
     final protocol.Events payload = protocol.Events();
