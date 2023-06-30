@@ -260,10 +260,9 @@ class _AdvancedPageState extends State<AdvancedPage> {
   ) async {
     final public = await identity.processSecret.system.extractPublicKey();
 
-    final systemProto = protocol.PublicKey(
-      keyType: fixnum.Int64(1),
-      key: public.bytes,
-    );
+    final systemProto = protocol.PublicKey()
+      ..keyType = fixnum.Int64(1)
+      ..key = public.bytes;
 
     final query = await main.makeSystemLink(state.db, systemProto);
 
