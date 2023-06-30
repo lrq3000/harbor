@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cryptography_flutter/cryptography_flutter.dart';
 import 'package:cryptography/cryptography.dart' as cryptography;
-import 'package:harbor_flutter/protocol.pbserver.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
