@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart' as flutter_svg;
+import 'package:tap_debouncer/tap_debouncer.dart' as tap_debouncer;
 
 import './main.dart' as main;
 
@@ -150,7 +151,7 @@ class ClaimButtonImage extends StatelessWidget {
 }
 
 class OblongTextButton extends StatelessWidget {
-  final void Function() onPressed;
+  final Future<void> Function() onPressed;
   final String text;
 
   const OblongTextButton(
@@ -159,23 +160,28 @@ class OblongTextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      style: TextButton.styleFrom(
-        backgroundColor: blueButtonColor,
-        shape: const StadiumBorder(),
-      ),
-      onPressed: onPressed,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 16),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w300,
-            color: Colors.white,
+    return tap_debouncer.TapDebouncer(
+      onTap: () async => onPressed.call(),
+      builder: (BuildContext context, tap_debouncer.TapDebouncerFunc? onTap) {
+        return TextButton(
+          style: TextButton.styleFrom(
+            backgroundColor: blueButtonColor,
+            shape: const StadiumBorder(),
           ),
-        ),
-      ),
+          onPressed: onTap,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16),
+            child: Text(
+              text,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w300,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -184,8 +190,8 @@ class StandardButtonGeneric extends StatelessWidget {
   final String actionText;
   final String actionDescription;
   final Widget left;
-  final void Function() onPressed;
-  final void Function()? onDelete;
+  final Future<void> Function() onPressed;
+  final Future<void> Function()? onDelete;
 
   const StandardButtonGeneric({
     Key? key,
@@ -234,25 +240,30 @@ class StandardButtonGeneric extends StatelessWidget {
         SizedBox(
           height: 50,
           width: 50,
-          child: TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: deleteColor,
-                textStyle: const TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w300,
-                ),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.zero,
-                    bottomLeft: Radius.zero,
-                    topRight: Radius.circular(2),
-                    bottomRight: Radius.circular(2),
-                  ),
-                ),
-              ),
-              onPressed: onDelete,
-              child: const Text("Delete")),
+          child: tap_debouncer.TapDebouncer(
+              onTap: () async => onDelete?.call(),
+              builder: (BuildContext context,
+                  tap_debouncer.TapDebouncerFunc? onTap) {
+                return TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: deleteColor,
+                      textStyle: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w300,
+                      ),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.zero,
+                          bottomLeft: Radius.zero,
+                          topRight: Radius.circular(2),
+                          bottomRight: Radius.circular(2),
+                        ),
+                      ),
+                    ),
+                    onPressed: onTap,
+                    child: const Text("Delete"));
+              }),
         ),
       );
     }
@@ -263,17 +274,23 @@ class StandardButtonGeneric extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                backgroundColor: buttonColor,
-                foregroundColor: Colors.black,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                padding: EdgeInsets.zero,
-              ),
-              onPressed: onPressed,
-              child: Row(
-                children: rowChildren,
-              ),
+            child: tap_debouncer.TapDebouncer(
+              onTap: () async => onPressed.call(),
+              builder: (BuildContext context,
+                  tap_debouncer.TapDebouncerFunc? onTap) {
+                return OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: buttonColor,
+                    foregroundColor: Colors.black,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    padding: EdgeInsets.zero,
+                  ),
+                  onPressed: onTap,
+                  child: Row(
+                    children: rowChildren,
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -286,7 +303,7 @@ class StandardButton extends StatelessWidget {
   final String actionText;
   final String actionDescription;
   final IconData icon;
-  final void Function() onPressed;
+  final Future<void> Function() onPressed;
 
   const StandardButton({
     Key? key,
@@ -308,6 +325,30 @@ class StandardButton extends StatelessWidget {
         semanticLabel: actionText,
         color: Colors.white,
       ),
+    );
+  }
+}
+
+class StandardDialogButton extends StatelessWidget {
+  final String text;
+  final Future<void> Function() onPressed;
+
+  const StandardDialogButton({
+    Key? key,
+    required this.text,
+    required this.onPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return tap_debouncer.TapDebouncer(
+      onTap: () async => onPressed.call(),
+      builder: (BuildContext context, tap_debouncer.TapDebouncerFunc? onTap) {
+        return TextButton(
+          onPressed: onTap,
+          child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
+        );
+      },
     );
   }
 }

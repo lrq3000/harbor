@@ -114,7 +114,7 @@ class PresentPage extends StatelessWidget {
           actionDescription: 'Share this unique code with others to verify',
           left: shared_ui.makeSVG('content_copy.svg', 'Copy'),
           onPressed: () async {
-            handlePresentClipboard(encodedClaim);
+            await handlePresentClipboard(encodedClaim);
           },
         ),
         shared_ui.StandardButtonGeneric(

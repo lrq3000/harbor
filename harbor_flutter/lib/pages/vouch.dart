@@ -134,14 +134,14 @@ class VouchPage extends StatelessWidget {
             actionDescription: 'Paste an exported claim',
             left: shared_ui.makeSVG('content_copy.svg', 'copy'),
             onPressed: () async {
-              handleText(context, state);
+              await handleText(context, state);
             }),
         shared_ui.StandardButtonGeneric(
           actionText: 'QR Code',
           actionDescription: 'Scan a claim',
           left: shared_ui.makeSVG('qr_code_2.svg', 'Scan'),
           onPressed: () async {
-            handleScan(context, state);
+            await handleScan(context, state);
           },
         ),
       ],

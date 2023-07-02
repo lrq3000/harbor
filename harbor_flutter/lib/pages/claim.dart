@@ -106,7 +106,7 @@ class _ClaimPageState extends State<ClaimPage> {
             actionDescription:
                 'Get an automated authority to vouch for this claim',
             left: shared_ui.makeSVG('smart_toy.svg', 'Automated'),
-            onPressed: () {
+            onPressed: () async {
               Navigator.push(context,
                   MaterialPageRoute<AddTokenPage>(builder: (context) {
                 return AddTokenPage(

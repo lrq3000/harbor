@@ -30,7 +30,7 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
                   foregroundImage: identities[i].avatar!.image,
                 ))
             : shared_ui.makeSVG('account_circle.svg', 'Use'),
-        onPressed: () {
+        onPressed: () async {
           Navigator.push(context,
               MaterialPageRoute<ProfilePage>(builder: (context) {
             return ProfilePage(
@@ -58,7 +58,7 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
           actionText: 'New Profile',
           actionDescription: 'Generate a new Polycentric Identity',
           left: shared_ui.makeSVG('person_add.svg', 'Create'),
-          onPressed: () {
+          onPressed: () async {
             Navigator.push(context,
                 MaterialPageRoute<NewProfilePage>(builder: (context) {
               return const NewProfilePage();
@@ -69,7 +69,7 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
           actionText: 'Import Existing Profile',
           actionDescription: 'Use an existing Polycentric Identity',
           left: shared_ui.makeSVG('arrow_downward.svg', 'Import'),
-          onPressed: () {
+          onPressed: () async {
             Navigator.push(context,
                 MaterialPageRoute<ImportPage>(builder: (context) {
               return const ImportPage();

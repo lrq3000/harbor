@@ -151,7 +151,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
           child: shared_ui.OblongTextButton(
             text: 'Retry verification',
             onPressed: () async {
-              doVerification(context);
+              await doVerification(context);
             },
           ),
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart' as file_picker;
 import 'package:image_cropper/image_cropper.dart' as image_cropper;
+import 'package:tap_debouncer/tap_debouncer.dart' as tap_debouncer;
 
 import '../main.dart' as main;
 import '../protocol.pb.dart' as protocol;
@@ -56,16 +57,14 @@ class _ProfilePageState extends State<ProfilePage> {
               controller: usernameController,
             ),
             actions: [
-              TextButton(
-                child: Text("Cancel",
-                    style: Theme.of(context).textTheme.bodyMedium),
-                onPressed: () {
+              shared_ui.StandardDialogButton(
+                text: "cancel",
+                onPressed: () async {
                   Navigator.of(context).pop();
                 },
               ),
-              TextButton(
-                child: Text("Submit",
-                    style: Theme.of(context).textTheme.bodyMedium),
+              shared_ui.StandardDialogButton(
+                text: "Submit",
                 onPressed: () async {
                   if (usernameController.text.isEmpty) {
                     return;
@@ -124,16 +123,14 @@ class _ProfilePageState extends State<ProfilePage> {
               controller: descriptionController,
             ),
             actions: [
-              TextButton(
-                child: Text("Cancel",
-                    style: Theme.of(context).textTheme.bodyMedium),
-                onPressed: () {
+              shared_ui.StandardDialogButton(
+                text: "Cancel",
+                onPressed: () async {
                   Navigator.of(context).pop();
                 },
               ),
-              TextButton(
-                child: Text("Submit",
-                    style: Theme.of(context).textTheme.bodyMedium),
+              shared_ui.StandardDialogButton(
+                text: "Submit",
                 onPressed: () async {
                   if (descriptionController.text.isEmpty) {
                     return;
@@ -173,16 +170,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 "This action cannot be undone.",
                 style: Theme.of(context).textTheme.bodyMedium),
             actions: [
-              TextButton(
-                child: Text("Cancel",
-                    style: Theme.of(context).textTheme.bodyMedium),
-                onPressed: () {
+              shared_ui.StandardDialogButton(
+                text: "Cancel",
+                onPressed: () async {
                   Navigator.of(context).pop();
                 },
               ),
-              TextButton(
-                  child: Text("Delete",
-                      style: Theme.of(context).textTheme.bodyMedium),
+              shared_ui.StandardDialogButton(
+                  text: "Delete",
                   onPressed: () async {
                     await state.db.transaction((transaction) async {
                       await main.deleteEvent(
@@ -266,7 +261,7 @@ class _ProfilePageState extends State<ProfilePage> {
             margin: const EdgeInsets.only(top: 5, bottom: 5),
             child: shared_ui.claimTypeToVisual(claims[i].claimType),
           ),
-          onPressed: () {
+          onPressed: () async {
             Navigator.push(context,
                 MaterialPageRoute<ClaimPage>(builder: (context) {
               return ClaimPage(
@@ -276,7 +271,8 @@ class _ProfilePageState extends State<ProfilePage> {
             }));
           },
           onDelete: () async {
-            deleteClaimDialog(context, state, identity, claims[i].pointer);
+            await deleteClaimDialog(
+                context, state, identity, claims[i].pointer);
           },
         ));
       }
@@ -286,24 +282,30 @@ class _ProfilePageState extends State<ProfilePage> {
 
     List<Widget> listViewChildren = [
       Center(
-        child: InkWell(
-          child: Container(
-            margin: const EdgeInsets.only(top: 50),
-            child: CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 50,
-              foregroundImage:
-                  identity.avatar != null ? identity.avatar!.image : null,
-              child: (identity.avatar == null)
-                  ? const Text(
-                      'Tap to set avatar',
-                      textAlign: TextAlign.center,
-                    )
-                  : null,
-            ),
-          ),
+        child: tap_debouncer.TapDebouncer(
           onTap: () async {
             await updateProfilePicture(context, state, identity);
+          },
+          builder:
+              (BuildContext context, tap_debouncer.TapDebouncerFunc? onTap) {
+            return InkWell(
+              onTap: onTap,
+              child: Container(
+                margin: const EdgeInsets.only(top: 50),
+                child: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  radius: 50,
+                  foregroundImage:
+                      identity.avatar != null ? identity.avatar!.image : null,
+                  child: (identity.avatar == null)
+                      ? const Text(
+                          'Tap to set avatar',
+                          textAlign: TextAlign.center,
+                        )
+                      : null,
+                ),
+              ),
+            );
           },
         ),
       ),
@@ -321,15 +323,21 @@ class _ProfilePageState extends State<ProfilePage> {
               color: Colors.white,
             ),
           ),
-          OutlinedButton(
-            child: const Icon(
-              Icons.edit_outlined,
-              size: 20,
-              semanticLabel: "edit",
-              color: Colors.white,
-            ),
-            onPressed: () {
-              editUsername(context, state, identity);
+          tap_debouncer.TapDebouncer(
+            onTap: () async {
+              await editUsername(context, state, identity);
+            },
+            builder:
+                (BuildContext context, tap_debouncer.TapDebouncerFunc? onTap) {
+              return OutlinedButton(
+                onPressed: onTap,
+                child: const Icon(
+                  Icons.edit_outlined,
+                  size: 20,
+                  semanticLabel: "edit",
+                  color: Colors.white,
+                ),
+              );
             },
           ),
         ],
@@ -347,40 +355,45 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
       const SizedBox(height: 10),
-      OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          backgroundColor: shared_ui.tokenColor,
-          foregroundColor: Colors.black,
-        ),
-        child: Stack(children: [
-          Column(
-            children: [
-              const SizedBox(height: 10),
-              Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: Text(identity.description,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.white,
-                    )),
-              ),
-              const SizedBox(height: 10),
-            ],
-          ),
-          const Positioned(
-            right: 0,
-            bottom: 10,
-            child: Icon(
-              Icons.edit_outlined,
-              size: 15,
-              semanticLabel: "edit",
-              color: Colors.white,
+      tap_debouncer.TapDebouncer(
+        onTap: () async {
+          await editDescription(context, state, identity);
+        },
+        builder: (BuildContext context, tap_debouncer.TapDebouncerFunc? onTap) {
+          return OutlinedButton(
+            style: OutlinedButton.styleFrom(
+              backgroundColor: shared_ui.tokenColor,
+              foregroundColor: Colors.black,
             ),
-          ),
-        ]),
-        onPressed: () {
-          editDescription(context, state, identity);
+            onPressed: onTap,
+            child: Stack(children: [
+              Column(
+                children: [
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(identity.description,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white,
+                        )),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
+              const Positioned(
+                right: 0,
+                bottom: 10,
+                child: Icon(
+                  Icons.edit_outlined,
+                  size: 15,
+                  semanticLabel: "edit",
+                  color: Colors.white,
+                ),
+              ),
+            ]),
+          );
         },
       ),
     ];
@@ -420,7 +433,7 @@ class _ProfilePageState extends State<ProfilePage> {
         actionText: 'Make a claim',
         actionDescription: 'Make a new claim for your profile',
         left: shared_ui.makeSVG('add_circle.svg', 'Claim'),
-        onPressed: () {
+        onPressed: () async {
           Navigator.push(context,
               MaterialPageRoute<CreateClaimPage>(builder: (context) {
             return CreateClaimPage(identityIndex: widget.identityIndex);
@@ -431,7 +444,7 @@ class _ProfilePageState extends State<ProfilePage> {
         actionText: 'Vouch for a claim',
         actionDescription: 'Vouch for someone elses claim',
         left: shared_ui.makeSVG('check_box.svg', 'Vouch'),
-        onPressed: () {
+        onPressed: () async {
           Navigator.push(context,
               MaterialPageRoute<VouchPage>(builder: (context) {
             return VouchPage(processSecret: identity.processSecret);
@@ -442,7 +455,7 @@ class _ProfilePageState extends State<ProfilePage> {
         actionText: 'Change account',
         actionDescription: 'Switch to a different account',
         left: shared_ui.makeSVG('switch_account.svg', 'Switch'),
-        onPressed: () {
+        onPressed: () async {
           Navigator.push(context,
               MaterialPageRoute<NewOrImportProfilePage>(builder: (context) {
             return const NewOrImportProfilePage();

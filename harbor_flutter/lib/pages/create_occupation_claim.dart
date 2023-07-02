@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tap_debouncer/tap_debouncer.dart' as tap_debouncer;
 
 import '../main.dart' as main;
 import '../shared_ui.dart' as shared_ui;
@@ -26,44 +27,52 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
     final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[widget.identityIndex];
 
+    Future<void> onPressed() async {
+      if (textControllerOrganization.text.isEmpty &&
+          textControllerRole.text.isEmpty &&
+          textControllerLocation.text.isEmpty) {
+        shared_ui.showSnackBar(context, "You must fill out a field");
+        return;
+      }
+
+      await state.db.transaction((transaction) async {
+        await main.makeOccupationClaim(
+          transaction,
+          identity.processSecret,
+          textControllerOrganization.text,
+          textControllerRole.text,
+          textControllerLocation.text,
+        );
+      });
+
+      await state.mLoadIdentities();
+
+      if (context.mounted) {
+        Navigator.push(context,
+            MaterialPageRoute<ProfilePage>(builder: (context) {
+          return ProfilePage(
+            identityIndex: widget.identityIndex,
+          );
+        }));
+      }
+    }
+
     return shared_ui.StandardScaffold(
       appBar: AppBar(
         title: shared_ui.makeAppBarTitleText('Occupation'),
         actions: [
-          TextButton(
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.blue,
-              textStyle: const TextStyle(fontSize: 20),
-            ),
-            child: const Text("Save"),
-            onPressed: () async {
-              if (textControllerOrganization.text.isEmpty &&
-                  textControllerRole.text.isEmpty &&
-                  textControllerLocation.text.isEmpty) {
-                shared_ui.showSnackBar(context, "You must fill out a field");
-                return;
-              }
-
-              await state.db.transaction((transaction) async {
-                await main.makeOccupationClaim(
-                  transaction,
-                  identity.processSecret,
-                  textControllerOrganization.text,
-                  textControllerRole.text,
-                  textControllerLocation.text,
-                );
-              });
-
-              await state.mLoadIdentities();
-
-              if (context.mounted) {
-                Navigator.push(context,
-                    MaterialPageRoute<ProfilePage>(builder: (context) {
-                  return ProfilePage(
-                    identityIndex: widget.identityIndex,
-                  );
-                }));
-              }
+          tap_debouncer.TapDebouncer(
+            onTap: () async => onPressed.call(),
+            builder:
+                (BuildContext context, tap_debouncer.TapDebouncerFunc? onTap) {
+              return TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.blue,
+                  textStyle: const TextStyle(fontSize: 20),
+                ),
+                onPressed: onTap,
+                child: const Text("Save"),
+              );
             },
           ),
         ],

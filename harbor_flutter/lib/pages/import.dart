@@ -72,16 +72,14 @@ class ImportPage extends StatelessWidget {
               controller: textController,
             ),
             actions: [
-              TextButton(
-                child: Text("Cancel",
-                    style: Theme.of(context).textTheme.bodyMedium),
-                onPressed: () {
+              shared_ui.StandardDialogButton(
+                text: "Cancel",
+                onPressed: () async {
                   Navigator.of(context).pop();
                 },
               ),
-              TextButton(
-                child: Text("Submit",
-                    style: Theme.of(context).textTheme.bodyMedium),
+              shared_ui.StandardDialogButton(
+                text: "Submit",
                 onPressed: () async {
                   if (textController.text.isEmpty) {
                     return;
