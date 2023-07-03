@@ -17,7 +17,14 @@ Future<bool> importFromBase64(
     final urlInfo = models.urlInfoFromLink(text);
     final exportBundle = models.urlInfoGetExportBundle(urlInfo);
 
-    await main.importExportBundle(state.db, exportBundle);
+    final success = await main.importExportBundle(state.db, exportBundle);
+
+    if (success == false && context.mounted) {
+      shared_ui.errorDialog(context, 'Identity already exists on this device');
+
+      return false;
+    }
+
     await state.mLoadIdentities();
 
     if (context.mounted) {

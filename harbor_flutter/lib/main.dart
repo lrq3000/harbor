@@ -161,7 +161,10 @@ Future<String> makeExportBundle(
   return models.urlInfoToLink(urlInfo);
 }
 
-Future<void> importExportBundle(
+// returns false if identity already exists
+// returns true on success
+// throws on other error
+Future<bool> importExportBundle(
   sqflite.Database db,
   protocol.ExportBundle exportBundle,
 ) async {
@@ -176,12 +179,23 @@ Future<void> importExportBundle(
     type: cryptography.KeyPairType.ed25519,
   );
 
-  await db.transaction((transaction) async {
+  return await db.transaction((transaction) async {
+    final exists = await queries.doesProcessSecretExistForSystem(
+      transaction,
+      exportBundle.keyPair,
+    );
+
+    if (exists == true) {
+      return false;
+    }
+
     await importIdentity(transaction, keyPair);
 
     for (final event in exportBundle.events.events) {
       await ingest(transaction, event);
     }
+
+    return true;
   });
 }
 
