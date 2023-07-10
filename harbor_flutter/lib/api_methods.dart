@@ -73,14 +73,17 @@ Future<protocol.Events> getEvents(
   return protocol.Events.fromBuffer(response.bodyBytes);
 }
 
-Future<void> requestVerification(
-  protocol.Pointer pointer,
-  String claimType,
-) async {
-  final url = "https://verifiers.grayjay.app/"
+Future<void> requestVerification(protocol.Pointer pointer, String claimType,
+    {String? challengeResponse}) async {
+  var url = "https://verifiers.grayjay.app/"
       "${claimType.toLowerCase()}"
       "/api/v1/vouch";
 
+  var url = "http://10.10.11.11:3003/api/v1/vouch";
+
+  if (challengeResponse != null) {
+    url += "?challengeResponse=$challengeResponse";
+  }
   final response = await http.post(
     Uri.parse(url),
     headers: <String, String>{
@@ -90,4 +93,41 @@ Future<void> requestVerification(
   );
 
   checkResponse('requestVerification', response);
+}
+
+Future<String> getOAuthURL(
+  String claimType,
+) async {
+  final url = "https://verifiers.grayjay.app/"
+      "${claimType.toLowerCase()}"
+      "/api/v1/oauth";
+  
+  //final url = "http://10.10.11.11:3003/api/v1/oauth";
+ 
+  final response = await http.get(
+    Uri.parse(url),
+  );
+
+  checkResponse('getOAuthURL', response);
+
+  final oAuthUrl = convert.jsonDecode(response.body)["url"];
+  return oAuthUrl;
+}
+
+Future<dynamic> getOAuthUsername(
+  String token,
+  String claimType,
+) async {
+  final url = "https://verifiers.grayjay.app/"
+      "${claimType.toLowerCase()}"
+      "/api/v1/oauth";
+  //final url = "http://10.10.11.11:3003/api/v1/oauth_handle?token=" + token;
+
+  final response = await http.get(
+    Uri.parse(url),
+  );
+
+  checkResponse('getOAuthURL', response);
+
+  return convert.jsonDecode(response.body);
 }
