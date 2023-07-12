@@ -473,6 +473,7 @@ Future<protocol.Pointer> saveEvent(sqflite.Transaction transaction,
   event.logicalClock = fixnum.Int64(clock);
   event.vectorClock = protocol.VectorClock();
   event.indices = protocol.Indices();
+  event.unixMilliseconds = fixnum.Int64(DateTime.now().millisecondsSinceEpoch);
 
   final encoded = event.writeToBuffer();
   final signature = (await cryptography.Ed25519().sign(
@@ -511,7 +512,9 @@ Future<void> deleteEvent(
     final delete = protocol.Delete()
       ..process = pointer.process
       ..logicalClock = pointer.logicalClock
-      ..indices = event.indices;
+      ..indices = event.indices
+      ..unixMilliseconds = event.unixMilliseconds
+      ..contentType = event.contentType;
 
     final protocol.Event deleteEvent = protocol.Event()
       ..contentType = models.ContentType.contentTypeDelete
