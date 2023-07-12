@@ -17,10 +17,7 @@ import 'queries.dart' as queries;
 import 'shared_ui.dart' as shared_ui;
 import 'logger.dart';
 
-const Set<String> oAuthClaimTypes = {
-  "Discord",
-  "Instagram",
-};
+const Set<String> oAuthClaimTypes = {"Discord", "Instagram", "Twitter"};
 
 class ProcessSecret {
   cryptography.SimpleKeyPair system;
