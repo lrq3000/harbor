@@ -278,7 +278,7 @@ class _AdvancedPageState extends State<AdvancedPage> {
         title: shared_ui.makeAppBarTitleText("Advanced"),
       ),
       children: [
-        const SizedBox(height: 10),
+        const SizedBox(height: 20),
         const Align(
           alignment: AlignmentDirectional.centerStart,
           child: Text(

@@ -71,25 +71,34 @@ class ClaimButtonGeneric extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+    final buttonShape = isIOS
+        ? RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          )
+        // On android, fall back to material default
+        : null;
+
     return Container(
-      margin: const EdgeInsets.all(5.0),
+      margin: const EdgeInsets.all(3.0),
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          backgroundColor: buttonColor,
-          foregroundColor: Colors.black,
-        ),
+            backgroundColor: buttonColor,
+            foregroundColor: Colors.black,
+            shape: buttonShape),
         onPressed: onPressed,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             top,
+            const SizedBox(height: 10),
             Text(
               nameText,
               style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: Colors.white,
+                fontSize: 14.5,
+                fontWeight: FontWeight.w600,
+                color: Colors.white70,
               ),
             ),
           ],
@@ -220,14 +229,14 @@ class StandardButtonGeneric extends StatelessWidget {
             children: [
               Text(actionText,
                   style: const TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 18,
                       color: Colors.white)),
               Text(actionDescription,
                   style: const TextStyle(
                     fontWeight: FontWeight.w200,
-                    fontSize: 12,
-                    color: Colors.grey,
+                    fontSize: 16,
+                    color: Colors.white54,
                   )),
             ],
           ),
@@ -236,10 +245,11 @@ class StandardButtonGeneric extends StatelessWidget {
     ];
 
     if (onDelete != null) {
-      rowChildren.add(
-        SizedBox(
-          height: 50,
-          width: 50,
+      rowChildren.add(Padding(
+        padding: const EdgeInsets.only(right: 10),
+        child: SizedBox(
+          height: 35,
+          width: 35,
           child: tap_debouncer.TapDebouncer(
               onTap: () async => onDelete?.call(),
               builder: (BuildContext context,
@@ -253,20 +263,23 @@ class StandardButtonGeneric extends StatelessWidget {
                         fontWeight: FontWeight.w300,
                       ),
                       shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.zero,
-                          bottomLeft: Radius.zero,
-                          topRight: Radius.circular(2),
-                          bottomRight: Radius.circular(2),
-                        ),
-                      ),
+                          borderRadius: BorderRadius.all(Radius.circular(100))),
                     ),
                     onPressed: onTap,
-                    child: const Text("Delete"));
+                    child: const Icon(Icons.delete_forever_rounded,
+                        size: 20, color: Colors.white70));
               }),
         ),
-      );
+      ));
     }
+
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+    final buttonShape = isIOS
+        ? RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          )
+        // On android, fall back to material default
+        : null;
 
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -283,7 +296,9 @@ class StandardButtonGeneric extends StatelessWidget {
                     backgroundColor: buttonColor,
                     foregroundColor: Colors.black,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    padding: EdgeInsets.zero,
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
+                    shape: buttonShape,
                   ),
                   onPressed: onTap,
                   child: Row(
@@ -367,12 +382,24 @@ Image makeButtonImage(String path) {
 }
 
 Widget makeSVG(String fileName, String label) {
-  return flutter_svg.SvgPicture.asset(
+  final asset = flutter_svg.SvgPicture.asset(
     'assets/$fileName',
     colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
     semanticsLabel: label,
     height: 48,
     width: 48,
+  );
+
+  // This is a workaround for iOS, where SVGs need to be rendered at double size to look correct.
+  // https://github.com/dnfield/flutter_svg/issues/668#issuecomment-1614419653
+  // This currently applies for all platforms, but could be changed to only apply for iOS.
+  return Transform.scale(
+    filterQuality: FilterQuality.medium,
+    scale: 0.5,
+    child: Transform.scale(
+      scale: 2,
+      child: asset,
+    ),
   );
 }
 
@@ -440,7 +467,7 @@ Text makeAppBarTitleText(String text) {
     text,
     style: const TextStyle(
       fontSize: 24,
-      fontWeight: FontWeight.w200,
+      fontWeight: FontWeight.w300,
       color: Colors.white,
     ),
   );
@@ -473,18 +500,18 @@ class LabeledTextField extends StatelessWidget {
           color: Colors.white,
         ),
       ),
-      const SizedBox(height: 8),
+      const SizedBox(height: 15),
       TextField(
         controller: controller,
         autofocus: autofocus != null ? autofocus! : false,
         maxLines: 1,
         cursorColor: Colors.white,
-        style: const TextStyle(color: Colors.white, fontSize: 13),
+        style: const TextStyle(color: Colors.white, fontSize: 18),
         decoration: InputDecoration(
           filled: true,
           isDense: true,
           contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           fillColor: formColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20.0),
@@ -503,23 +530,38 @@ class LabeledTextField extends StatelessWidget {
 class StandardScaffold extends StatelessWidget {
   final List<Widget> children;
   final AppBar? appBar;
+  final ScrollPhysics physics;
 
-  const StandardScaffold({Key? key, this.appBar, required this.children})
+  const StandardScaffold(
+      {Key? key,
+      this.appBar,
+      required this.children,
+      this.physics = const AlwaysScrollableScrollPhysics()})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar,
-      body: Container(
-        padding: scaffoldPadding,
-        width: double.infinity,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: children,
-          ),
-        ),
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints viewportConstraints) {
+          return SingleChildScrollView(
+            physics: physics,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: viewportConstraints.maxHeight,
+              ),
+              child: Container(
+                padding: scaffoldPadding,
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: children,
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
