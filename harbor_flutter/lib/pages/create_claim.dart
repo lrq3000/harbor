@@ -39,19 +39,24 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
         title: shared_ui.makeAppBarTitleText("Make Claim"),
       ),
       children: [
-        const SizedBox(height: 20),
-        const Text(
-          "Common",
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w300,
-            color: Colors.white,
+        const SizedBox(height: 10),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+          child: Text(
+            "Common",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: Colors.white70,
+            ),
+            // padding
           ),
         ),
         GridView.count(
           crossAxisCount: 3,
           shrinkWrap: true,
-          childAspectRatio: 123.0 / 106.0,
+          childAspectRatio: 1,
+          physics: const NeverScrollableScrollPhysics(),
           children: [
             shared_ui.ClaimButtonGeneric(
               nameText: "Occupation",
@@ -92,18 +97,24 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
             ),
           ],
         ),
-        const Text(
-          "Platforms",
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w300,
-            color: Colors.white,
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
+          child: Text(
+            "Platforms",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: Colors.white70,
+            ),
+            // padding
           ),
         ),
         GridView.count(
           crossAxisCount: 3,
           shrinkWrap: true,
-          childAspectRatio: 123.0 / 106.0,
+          childAspectRatio: 1,
+          // dont scroll
+          physics: const NeverScrollableScrollPhysics(),
           children: [
             makePlatformButton("YouTube"),
             makePlatformButton("Odysee"),

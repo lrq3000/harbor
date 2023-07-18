@@ -31,9 +31,9 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
         title: shared_ui.makeAppBarTitleText('Make Claim'),
       ),
       children: [
-        const SizedBox(height: 75),
+        const SizedBox(height: 105),
         Center(child: shared_ui.claimTypeToVisual(widget.claimType)),
-        const SizedBox(height: 75),
+        const SizedBox(height: 25),
         Center(
             child: Text(
           widget.claimType,

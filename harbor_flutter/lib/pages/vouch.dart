@@ -121,10 +121,11 @@ class VouchPage extends StatelessWidget {
         Container(
           alignment: AlignmentDirectional.centerStart,
           child: const Text(
-            "Choose what method you want to use to vouch for a claim",
+            "Choose which method you want to use to vouch for a claim",
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 18,
               color: Colors.white,
+              fontWeight: FontWeight.w200,
             ),
           ),
         ),

@@ -76,9 +76,8 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
             }));
           },
         ),
-        const SizedBox(height: 50),
+        const SizedBox(height: 140),
         shared_ui.futoLogoAndText,
-        const SizedBox(height: 50),
       ],
     );
   }

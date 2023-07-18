@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:file_picker/file_picker.dart' as file_picker;
+import 'package:image_picker/image_picker.dart' as image_picker;
 import 'package:image_cropper/image_cropper.dart' as image_cropper;
 import 'package:tap_debouncer/tap_debouncer.dart' as tap_debouncer;
 
@@ -36,6 +36,8 @@ class _ProfilePageState extends State<ProfilePage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0))),
             title: Text("Edit Username",
                 style: Theme.of(context).textTheme.bodyMedium),
             content: TextField(
@@ -58,7 +60,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             actions: [
               shared_ui.StandardDialogButton(
-                text: "cancel",
+                text: "Cancel",
                 onPressed: () async {
                   Navigator.of(context).pop();
                 },
@@ -100,6 +102,8 @@ class _ProfilePageState extends State<ProfilePage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0))),
             title: Text("Edit Description",
                 style: Theme.of(context).textTheme.bodyMedium),
             content: TextField(
@@ -200,18 +204,16 @@ class _ProfilePageState extends State<ProfilePage> {
     main.PolycentricModel state,
     main.ProcessInfo identity,
   ) async {
-    file_picker.FilePickerResult? result =
-        await file_picker.FilePicker.platform.pickFiles(
-      type: file_picker.FileType.custom,
-      allowedExtensions: ['png', 'jpg'],
-    );
+    final picker = image_picker.ImagePicker();
+    final pickedImage = await picker.pickImage(
+        source: image_picker.ImageSource.gallery, requestFullMetadata: false);
 
-    if (result == null || result.files.single.path == null) {
+    if (pickedImage == null) {
       return;
     }
 
     final croppedFile = await image_cropper.ImageCropper().cropImage(
-      sourcePath: result.files.single.path!,
+      sourcePath: pickedImage.path,
       aspectRatioPresets: [
         image_cropper.CropAspectRatioPreset.square,
       ],
@@ -247,6 +249,14 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[widget.identityIndex];
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
+    final aboutTextFieldBorderRadius = isIOS
+        ? RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          )
+        : null;
+    final nameFontWeight = isIOS ? FontWeight.w600 : FontWeight.w300;
 
     List<StatelessWidget> renderClaims(
       List<main.ClaimInfo> claims,
@@ -317,8 +327,8 @@ class _ProfilePageState extends State<ProfilePage> {
           Text(
             identity.username,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontWeight: FontWeight.w300,
+            style: TextStyle(
+              fontWeight: nameFontWeight,
               fontSize: 32,
               color: Colors.white,
             ),
@@ -362,9 +372,11 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (BuildContext context, tap_debouncer.TapDebouncerFunc? onTap) {
           return OutlinedButton(
             style: OutlinedButton.styleFrom(
-              backgroundColor: shared_ui.tokenColor,
-              foregroundColor: Colors.black,
-            ),
+                backgroundColor: shared_ui.tokenColor,
+                foregroundColor: Colors.black,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                shape: aboutTextFieldBorderRadius),
             onPressed: onTap,
             child: Stack(children: [
               Column(
@@ -374,7 +386,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     alignment: AlignmentDirectional.centerStart,
                     child: Text(identity.description,
                         style: const TextStyle(
-                          fontSize: 14,
+                          fontSize: 15,
                           fontWeight: FontWeight.w400,
                           color: Colors.white,
                         )),

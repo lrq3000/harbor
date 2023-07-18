@@ -4,6 +4,7 @@ import 'package:cryptography/cryptography.dart' as cryptography;
 import 'package:sqflite/sqflite.dart' as sqflite;
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'dart:math';
 import 'package:fixnum/fixnum.dart' as fixnum;
@@ -701,6 +702,9 @@ Future<void> makeVouch(sqflite.Transaction transaction,
 Future<void> main() async {
   FlutterCryptography.enable();
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle.light); // light color time text
 
   final provider = await setupModel();
   await provider.mLoadIdentities();
@@ -832,7 +836,7 @@ class NeopassApp extends StatelessWidget {
             ),
           ),
         ),
-        home: initialPage,
+        home: SafeArea(child: initialPage),
       ),
     );
   }
