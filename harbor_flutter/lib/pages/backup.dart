@@ -10,9 +10,15 @@ import '../shared_ui.dart' as shared_ui;
 Future<void> handleShareClipboard(
   main.PolycentricModel state,
   main.ProcessSecret processSecret,
+  BuildContext context,
 ) async {
   final exportBundle = await main.makeExportBundle(state.db, processSecret);
+
   await services.Clipboard.setData(services.ClipboardData(text: exportBundle));
+
+  if (context.mounted) {
+    shared_ui.showSnackBar(context, 'Copied to clipboard');
+  }
 }
 
 Future<void> handleShareQR(
@@ -104,7 +110,7 @@ class BackupPage extends StatelessWidget {
             actionDescription: 'Copy your identity to clipboard',
             left: shared_ui.makeSVG('content_copy.svg', 'Copy'),
             onPressed: () async {
-              await handleShareClipboard(state, processSecret);
+              await handleShareClipboard(state, processSecret, context);
             }),
         shared_ui.StandardButtonGeneric(
           actionText: 'QR Code',
