@@ -807,7 +807,7 @@ class PolycentricModel extends ChangeNotifier {
           public.bytes,
         );
 
-        final store = await loadLatestDescription(
+        final store = await loadLatestStore(
           transaction,
           public.bytes,
         );
