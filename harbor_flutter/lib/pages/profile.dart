@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart' as image_picker;
 import 'package:image_cropper/image_cropper.dart' as image_cropper;
 import 'package:tap_debouncer/tap_debouncer.dart' as tap_debouncer;
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 import '../main.dart' as main;
 import '../protocol.pb.dart' as protocol;
@@ -12,6 +13,7 @@ import 'create_claim.dart';
 import 'new_or_import_profile.dart';
 import 'vouch.dart';
 import 'advanced.dart';
+import '../logger.dart';
 
 class ProfilePage extends StatefulWidget {
   final int identityIndex;
@@ -143,6 +145,82 @@ class _ProfilePageState extends State<ProfilePage> {
                   await state.db.transaction((transaction) async {
                     await main.setDescription(transaction,
                         identity.processSecret, descriptionController.text);
+                  });
+
+                  await state.mLoadIdentities();
+
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  Future<void> editStore(
+    BuildContext context,
+    main.PolycentricModel state,
+    main.ProcessInfo identity,
+  ) async {
+    final TextEditingController controller = TextEditingController(
+      text: identity.store,
+    );
+
+    await showDialog<AlertDialog>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0))),
+            title: Text("Edit Store",
+                style: Theme.of(context).textTheme.bodyMedium),
+            content: TextField(
+              autofocus: true,
+              minLines: 1,
+              maxLines: 5,
+              decoration: const InputDecoration(
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              style: Theme.of(context).textTheme.bodyMedium,
+              cursorColor: Colors.white,
+              controller: controller,
+            ),
+            actions: [
+              shared_ui.StandardDialogButton(
+                text: "Cancel",
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                },
+              ),
+              shared_ui.StandardDialogButton(
+                text: "Submit",
+                onPressed: () async {
+                  if (controller.text.isNotEmpty) {
+                    try {
+                      if (!Uri.parse(controller.text).isAbsolute) {
+                        shared_ui.showSnackBar(context, 'Invalid URI');
+
+                        return;
+                      }
+                    } catch (err) {
+                      logger.w(err);
+                    }
+                  }
+
+                  await state.db.transaction((transaction) async {
+                    await main.setStore(
+                        transaction, identity.processSecret, controller.text);
                   });
 
                   await state.mLoadIdentities();
@@ -410,6 +488,34 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     ];
 
+    if (identity.store.isNotEmpty) {
+      listViewChildren.addAll([
+        const SizedBox(height: 10),
+        const Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: Text(
+            'Store',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        shared_ui.StandardButtonGeneric(
+          actionText: 'Store',
+          actionDescription: identity.store,
+          left: shared_ui.makeSVG('shopping_cart.svg', 'Store'),
+          onPressed: () async {
+            await url_launcher.launchUrl(
+              Uri.parse(identity.store),
+              mode: url_launcher.LaunchMode.externalApplication,
+            );
+          },
+        ),
+      ]);
+    }
+
     if (identity.claims.isNotEmpty) {
       listViewChildren.addAll([
         const SizedBox(height: 10),
@@ -461,6 +567,14 @@ class _ProfilePageState extends State<ProfilePage> {
               MaterialPageRoute<VouchPage>(builder: (context) {
             return VouchPage(processSecret: identity.processSecret);
           }));
+        },
+      ),
+      shared_ui.StandardButtonGeneric(
+        actionText: 'Set Store',
+        actionDescription: 'Link to a store on the web',
+        left: shared_ui.makeSVG('shopping_cart.svg', 'Store'),
+        onPressed: () async {
+          await editStore(context, state, identity);
         },
       ),
       shared_ui.StandardButtonGeneric(

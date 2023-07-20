@@ -14,6 +14,8 @@ class ContentType {
   static final contentTypeServer = fixnum.Int64(10);
   static final contentTypeClaim = fixnum.Int64(12);
   static final contentTypeVouch = fixnum.Int64(13);
+  static final contentTypeBanner = fixnum.Int64(14);
+  static final contentTypeStore = fixnum.Int64(15);
 }
 
 class URLInfoType {
