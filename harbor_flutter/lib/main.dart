@@ -371,6 +371,25 @@ Future<String> loadLatestDescription(
   }
 }
 
+Future<String> loadLatestStore(
+  sqflite.Transaction transaction,
+  List<int> system,
+) async {
+  final signedEvent = await queries.loadLatestCRDTByContentType(
+    transaction,
+    system,
+    models.ContentType.contentTypeStore,
+  );
+
+  if (signedEvent == null) {
+    return '';
+  } else {
+    final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
+
+    return utf8.decode(event.lwwElement.value);
+  }
+}
+
 Future<Image?> loadImage(
   sqflite.Transaction transaction,
   protocol.Pointer pointer,
@@ -597,6 +616,16 @@ Future<void> setDescription(sqflite.Transaction transaction,
   );
 }
 
+Future<void> setStore(sqflite.Transaction transaction,
+    ProcessSecret processInfo, String storeLink) async {
+  await setCRDT(
+    transaction,
+    processInfo,
+    models.ContentType.contentTypeStore,
+    Uint8List.fromList(utf8.encode(storeLink)),
+  );
+}
+
 Future<void> makeClaim(sqflite.Transaction transaction,
     ProcessSecret processInfo, String claimText) async {
   final claimIdentifier = protocol.ClaimIdentifier()..identifier = claimText;
@@ -743,6 +772,7 @@ class ProcessInfo {
   final List<ClaimInfo> claims;
   final Image? avatar;
   final String description;
+  final String store;
 
   ProcessInfo(
     this.processSecret,
@@ -750,6 +780,7 @@ class ProcessInfo {
     this.claims,
     this.avatar,
     this.description,
+    this.store,
   );
 }
 
@@ -776,6 +807,11 @@ class PolycentricModel extends ChangeNotifier {
           public.bytes,
         );
 
+        final store = await loadLatestDescription(
+          transaction,
+          public.bytes,
+        );
+
         final avatar = await loadLatestAvatar(
           transaction,
           public.bytes,
@@ -784,7 +820,8 @@ class PolycentricModel extends ChangeNotifier {
         final claims = await loadClaims(transaction, public.bytes);
 
         this.identities.add(
-              ProcessInfo(identity, username, claims, avatar, description),
+              ProcessInfo(
+                  identity, username, claims, avatar, description, store),
             );
       });
 
