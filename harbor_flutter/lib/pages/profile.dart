@@ -1,9 +1,13 @@
+import 'package:cryptography/cryptography.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:harbor_flutter/main.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart' as image_picker;
 import 'package:image_cropper/image_cropper.dart' as image_cropper;
 import 'package:tap_debouncer/tap_debouncer.dart' as tap_debouncer;
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
+import 'dart:convert' as convert;
 
 import '../main.dart' as main;
 import '../protocol.pb.dart' as protocol;
@@ -323,6 +327,46 @@ class _ProfilePageState extends State<ProfilePage> {
     await state.mLoadIdentities();
   }
 
+  Widget buildSystemKeyWidget(ProcessInfo identity, BuildContext context) {
+    return FutureBuilder<SimplePublicKey>(
+        future: identity.processSecret.system.extractPublicKey(),
+        builder:
+            (BuildContext context, AsyncSnapshot<SimplePublicKey> snapshot) {
+          var d = snapshot.data;
+          if (snapshot.connectionState != ConnectionState.done ||
+              snapshot.hasError ||
+              d == null) {
+            return const SizedBox();
+          } else {
+            var keyStr = convert.base64Url.encode(d.bytes);
+            return Column(children: [
+              Align(
+                alignment: AlignmentDirectional.center,
+                child: GestureDetector(
+                  onLongPress: () async {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Copied to Clipboard'),
+                        duration: Duration(seconds: 2)));
+
+                    await Clipboard.setData(ClipboardData(text: keyStr));
+                  },
+                  child: Text(
+                    keyStr,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w100,
+                      fontSize: 12,
+                      color: Colors.white70,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20)
+            ]);
+          }
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
@@ -431,6 +475,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
       const SizedBox(height: 10),
+      buildSystemKeyWidget(identity, context),
       const Align(
         alignment: AlignmentDirectional.centerStart,
         child: Text(
