@@ -1,9 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../api_methods.dart' as api_methods;
-import 'add_token.dart';
 import '../main.dart' as main;
 import 'package:fixnum/fixnum.dart' as fixnum;
 import '../shared_ui.dart' as shared_ui;
@@ -12,8 +10,6 @@ import '../synchronizer.dart' as synchronizer;
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
 import 'package:uni_links/uni_links.dart';
-
-bool _initialURILinkHandled = false;
 
 class MakeOAuthPlatformClaimPage extends StatefulWidget {
   final int identityIndex;

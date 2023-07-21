@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:harbor_flutter/pages/make_oauth_platform_claim.dart';
 import 'package:provider/provider.dart';
-
 import 'present.dart';
 import 'add_token.dart';
-import 'make_platform_claim.dart';
 import '../main.dart' as main;
 import '../shared_ui.dart' as shared_ui;
 

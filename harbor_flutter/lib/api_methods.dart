@@ -106,7 +106,7 @@ Future<String> getOAuthURL(
 
   checkResponse('getOAuthURL', response);
 
-  final oAuthUrl = convert.jsonDecode(response.body)["url"];
+  final oAuthUrl = convert.jsonDecode(response.body)["url"] as String;
   return oAuthUrl;
 }
 
