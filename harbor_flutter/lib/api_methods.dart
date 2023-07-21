@@ -116,13 +116,13 @@ Future<dynamic> getOAuthUsername(
 ) async {
   final url = "https://verifiers.grayjay.app/"
       "${claimType.toLowerCase()}"
-      "/api/v1/oauth";
+      "/api/v1/oauth_handle?token=$token";
 
   final response = await http.get(
     Uri.parse(url),
   );
 
-  checkResponse('getOAuthURL', response);
+  checkResponse('getOAuthUsername', response);
 
   return convert.jsonDecode(response.body);
 }
