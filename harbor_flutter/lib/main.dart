@@ -200,10 +200,7 @@ Future<bool> importExportBundle(
   });
 }
 
-Future<void> ingest(
-  sqflite.Transaction transaction,
-  protocol.SignedEvent signedEvent,
-) async {
+Future<protocol.Event> getEventWhenValid(protocol.SignedEvent signedEvent) async {
   final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
 
   final public = cryptography.SimplePublicKey(
@@ -222,9 +219,18 @@ Future<void> ingest(
   );
 
   if (!validSignature) {
-    throw 'invalid signature';
+    throw Exception('Invalid signature');
   }
 
+  return event;
+}
+
+Future<void> ingest(
+  sqflite.Transaction transaction,
+  protocol.SignedEvent signedEvent,
+) async {
+  var event = await getEventWhenValid(signedEvent);
+  
   if (await queries.doesEventExist(transaction, event)) {
     logger.d("event already persisted");
     return;

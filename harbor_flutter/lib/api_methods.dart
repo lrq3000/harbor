@@ -1,4 +1,5 @@
 import 'dart:convert' as convert;
+import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 
@@ -71,6 +72,48 @@ Future<protocol.Events> getEvents(
   checkResponse('getEvents', response);
 
   return protocol.Events.fromBuffer(response.bodyBytes);
+}
+
+Future<protocol.QueryReferencesResponse> getQueryReferences(
+  String server,
+  protocol.Reference reference,
+  Uint8List? cursor,
+  protocol.QueryReferencesRequestEvents? requestEvents,
+  List<protocol.QueryReferencesRequestCountLWWElementReferences>? countLwwElementReferences,
+  List<protocol.QueryReferencesRequestCountReferences>? countReferences,
+) async {
+  final request = protocol.QueryReferencesRequest()
+    ..reference = reference;
+
+  if (requestEvents != null) {
+    request.requestEvents = requestEvents;
+  }
+  
+  if (cursor != null) {
+    request.cursor = cursor;
+  }
+  
+  if (countLwwElementReferences != null) {
+    request.countLwwElementReferences.addAll(countLwwElementReferences);
+  }
+  
+  if (countReferences != null) {
+    request.countReferences.addAll(countReferences);
+  }
+
+  final encodedQuery = convert.base64Url.encode(request.writeToBuffer());
+  final url = "$server/query_references?query=$encodedQuery";
+
+  final response = await http.get(
+    Uri.parse(url),
+    headers: <String, String>{
+      'Content-Type': 'application/octet-stream',
+    }
+  );
+
+  checkResponse('getQueryReferences', response);
+  
+  return protocol.QueryReferencesResponse.fromBuffer(response.bodyBytes);
 }
 
 Future<void> requestVerification(

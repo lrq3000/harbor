@@ -1,10 +1,15 @@
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
+import 'package:harbor_flutter/protocol.pbserver.dart';
 import 'package:provider/provider.dart';
 
+import '../api_methods.dart';
+import '../main.dart';
 import 'present.dart';
 import 'add_token.dart';
 import '../main.dart' as main;
 import '../shared_ui.dart' as shared_ui;
+import 'dart:convert' as convert;
 
 const Set<String> manualVerificationClaimTypes = {
   "Generic",
@@ -25,6 +30,78 @@ class ClaimPage extends StatefulWidget {
 }
 
 class _ClaimPageState extends State<ClaimPage> {
+  Future<List<PublicKey>> getVouchers(ClaimInfo claimInfo) async {
+    final state = Provider.of<main.PolycentricModel>(context, listen: false);
+    final servers = await state.db.transaction((transaction) async {
+      return await main.loadServerList(
+          transaction, claimInfo.pointer.system.key);
+    });
+
+    final reference = Reference()
+      ..reference = claimInfo.pointer.writeToBuffer()
+      ..referenceType = Int64(2);
+
+    final queryReferencesRequestEvents = QueryReferencesRequestEvents()
+      ..fromType = Int64(11);
+
+    final List<SignedEvent> vouchEvents = List.empty(growable: true);
+    for (final server in servers) {
+      //TODO: This should be in parallel
+      final response = await getQueryReferences(
+          server, reference, null, queryReferencesRequestEvents, null, null);
+      vouchEvents.addAll(response.items.map((e) => e.event));
+      //TODO: Handle more than X vouchers by using cursor to get the next page
+    }
+
+    final claimEventPointer = claimInfo.pointer;
+    final vouchers = <PublicKey>[];
+
+    for (final signedEvent in vouchEvents) {
+      var event = await getEventWhenValid(signedEvent);
+      final referenceMatches = event.references
+          .any((r) => claimEventPointer == Pointer.fromBuffer(r.reference));
+
+      if (referenceMatches) {
+        if (!vouchers.contains(event.system)) {
+          vouchers.add(event.system);
+        }
+      }
+    }
+
+    return vouchers;
+  }
+
+  Widget buildVouchersWidget(ClaimInfo claimInfo, BuildContext context) {
+    return FutureBuilder(
+        future: getVouchers(claimInfo),
+        builder:
+            (BuildContext context, AsyncSnapshot<List<PublicKey>> snapshot) {
+          final Iterable<Widget> ws;
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            ws = [ const SizedBox(height: 4), const Center(child: CircularProgressIndicator(color: Colors.white70))];
+          } else if (snapshot.hasError) {
+            ws = [ const SizedBox(height: 4), Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.red)) ];
+          } else {
+            var d = snapshot.data;
+            if (d == null || d.isEmpty) {
+              ws = [ const SizedBox(height: 4), const Text("Nobody has vouched for this claim", style: TextStyle(color: Colors.white70))];
+            } else {
+              ws = [ const SizedBox(height: 4), ... d.map((e) => Text(convert.base64Url.encode(e.key))) ];
+            }
+          }
+
+          return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text("Vouchers",
+                style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 16,
+                  color: Colors.white,
+                )),
+            ...ws
+          ]);
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
@@ -130,6 +207,8 @@ class _ClaimPageState extends State<ClaimPage> {
             }));
           },
         ),
+        const SizedBox(height: 10),
+        buildVouchersWidget(claim, context)
       ],
     );
   }
