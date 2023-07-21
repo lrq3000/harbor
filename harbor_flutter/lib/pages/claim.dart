@@ -78,15 +78,15 @@ class _ClaimPageState extends State<ClaimPage> {
             (BuildContext context, AsyncSnapshot<List<PublicKey>> snapshot) {
           final Iterable<Widget> ws;
           if (snapshot.connectionState == ConnectionState.waiting) {
-            ws = [ const SizedBox(height: 4), const Center(child: CircularProgressIndicator(color: Colors.white70))];
+            ws = [ const Center(child: CircularProgressIndicator(color: Colors.white70))];
           } else if (snapshot.hasError) {
-            ws = [ const SizedBox(height: 4), Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.red)) ];
+            ws = [ Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.red)) ];
           } else {
             var d = snapshot.data;
             if (d == null || d.isEmpty) {
-              ws = [ const SizedBox(height: 4), const Text("Nobody has vouched for this claim", style: TextStyle(color: Colors.white70))];
+              ws = [ const Text("Nobody has vouched for this claim", style: TextStyle(color: Colors.white70))];
             } else {
-              ws = [ const SizedBox(height: 4), ... d.map((e) => Text(convert.base64Url.encode(e.key))) ];
+              ws = d.map((e) => Text(convert.base64Url.encode(e.key))).toList();
             }
           }
 
@@ -97,6 +97,7 @@ class _ClaimPageState extends State<ClaimPage> {
                   fontSize: 16,
                   color: Colors.white,
                 )),
+            const SizedBox(height: 4),
             ...ws
           ]);
         });
