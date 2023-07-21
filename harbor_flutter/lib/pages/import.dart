@@ -28,12 +28,9 @@ Future<bool> importFromBase64(
     await state.mLoadIdentities();
 
     if (context.mounted) {
-      Navigator.pushAndRemoveUntil(context,
-          MaterialPageRoute<NewOrImportProfilePage>(builder: (context) {
-        return const NewOrImportProfilePage();
-      }), (Route route) => false);
+      Navigator.pop(context);
     }
-
+    
     return true;
   } catch (err) {
     logger.e(err);
