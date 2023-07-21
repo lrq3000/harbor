@@ -50,6 +50,7 @@ class _ClaimPageState extends State<ClaimPage> {
       final response = await getQueryReferences(
           server, reference, null, queryReferencesRequestEvents, null, null);
       vouchEvents.addAll(response.items.map((e) => e.event));
+      //TODO: Can we deduplicate the list early?
       //TODO: Handle more than X vouchers by using cursor to get the next page
     }
 
