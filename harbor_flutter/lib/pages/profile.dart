@@ -370,7 +370,9 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
-    final identity = state.identities[widget.identityIndex];
+    if (widget.identityIndex >= state.identities.length) {
+      return const SizedBox();
+    }
     final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
 
     final aboutTextFieldBorderRadius = isIOS

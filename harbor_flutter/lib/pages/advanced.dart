@@ -271,6 +271,10 @@ class _AdvancedPageState extends State<AdvancedPage> {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
+    if (widget.identityIndex >= state.identities.length) {
+      return const SizedBox();
+    }
+
     final identity = state.identities[widget.identityIndex];
 
     return shared_ui.StandardScaffold(
