@@ -373,6 +373,8 @@ class _ProfilePageState extends State<ProfilePage> {
     if (widget.identityIndex >= state.identities.length) {
       return const SizedBox();
     }
+    
+    final identity = state.identities[widget.identityIndex];
     final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
 
     final aboutTextFieldBorderRadius = isIOS
@@ -444,25 +446,23 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
       const SizedBox(height: 10),
-      Padding(
+      Align(alignment: Alignment.center, child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Flexible(
-              child: Text(
-                identity.username,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: nameFontWeight,
-                  fontSize: 32,
-                  color: Colors.white,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis
+            Flexible(child: Text(
+              identity.username,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontWeight: nameFontWeight,
+                fontSize: 32,
+                color: Colors.white,
               ),
-            ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis
+            )),
             tap_debouncer.TapDebouncer(
               onTap: () async {
                 await editUsername(context, state, identity);
@@ -481,7 +481,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ],
         ),
-      ),
+      )),
       const SizedBox(height: 10),
       buildSystemKeyWidget(identity, context),
       const Align(

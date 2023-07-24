@@ -1,3 +1,4 @@
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:cryptography_flutter/cryptography_flutter.dart';
 import 'package:cryptography/cryptography.dart' as cryptography;
@@ -9,9 +10,11 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:fixnum/fixnum.dart' as fixnum;
 
+import 'api_methods.dart';
 import 'pages/new_or_import_profile.dart';
 import 'models.dart' as models;
 import 'protocol.pb.dart' as protocol;
+import 'protocol.pb.dart';
 import 'synchronizer.dart' as synchronizer;
 import 'queries.dart' as queries;
 import 'shared_ui.dart' as shared_ui;
@@ -200,20 +203,17 @@ Future<bool> importExportBundle(
   });
 }
 
-Future<void> ingest(
-  sqflite.Transaction transaction,
-  protocol.SignedEvent signedEvent,
-) async {
+Future<protocol.Event?> getEventWhenValid(protocol.SignedEvent signedEvent) async {
   final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
 
-  final public = cryptography.SimplePublicKey(
+  final publicKey = cryptography.SimplePublicKey(
     event.system.key,
     type: cryptography.KeyPairType.ed25519,
   );
 
   final signature = cryptography.Signature(
     signedEvent.signature,
-    publicKey: public,
+    publicKey: publicKey,
   );
 
   final validSignature = await cryptography.Ed25519().verify(
@@ -221,10 +221,118 @@ Future<void> ingest(
     signature: signature,
   );
 
-  if (!validSignature) {
-    throw 'invalid signature';
+  return validSignature ? event : null;
+}
+
+Future<protocol.Event> getEventWhenValidCompute(protocol.SignedEvent signedEvent) async {
+  final event = await compute(getEventWhenValid, signedEvent);
+
+  if (event == null) {
+    throw Exception('Invalid signature');
   }
 
+  return event;
+}
+
+class _GetVouchersComputeArgs {
+  final List<String> servers;
+  final Pointer claimPointer;
+  
+  _GetVouchersComputeArgs(this.servers, this.claimPointer);
+}
+
+Future<List<PublicKey>> _getVouchersCompute(_GetVouchersComputeArgs args) async {
+  final List<String> servers = args.servers;
+  final Pointer claimPointer = args.claimPointer;
+
+    final reference = Reference()
+      ..reference = claimPointer.writeToBuffer()
+      ..referenceType = Int64(2);
+
+    final queryReferencesRequestEvents = QueryReferencesRequestEvents()
+      ..fromType = models.ContentType.contentTypeVouch;
+
+    final futures = <Future<QueryReferencesResponse>>[];
+    for (final server in servers) {
+      futures.add(getQueryReferences(server, reference, null, queryReferencesRequestEvents, null, null));
+    }
+
+    final List<SignedEvent> vouchEvents = List.empty(growable: true);
+    final responses = await Future.wait(futures);
+    for (var response in responses) {
+      vouchEvents.addAll(response.items.map((e) => e.event));
+      //TODO: Can we deduplicate the list early?
+      //TODO: Handle more than X vouchers by using cursor to get the next page
+    }
+
+    final vouchers = <PublicKey>[];
+    for (final se in vouchEvents) {
+      final e = await getEventWhenValid(se);
+      if (e == null) {
+        continue;
+      }
+
+      final referenceMatches = e.references.any((r) => claimPointer == Pointer.fromBuffer(r.reference));
+      if (referenceMatches) {
+        if (!vouchers.contains(e.system)) {
+          vouchers.add(e.system);
+        }
+      }
+    }
+
+    return vouchers;
+}
+
+
+
+Future<List<PublicKey>> getVouchersAsync(List<String> servers, Pointer claimPointer) async {
+  _GetVouchersComputeArgs args = _GetVouchersComputeArgs(servers, claimPointer);
+  return compute(_getVouchersCompute, args);
+}
+
+class _GetProfileComputeArgs {
+  final List<String> servers;
+  final PublicKey system;
+  
+  _GetProfileComputeArgs(this.servers, this.system);
+}
+
+Future<models.SystemState> _getProfileCompute(_GetProfileComputeArgs args) async {
+  final futures = <Future<Events>>[];
+  for (final server in args.servers) {
+    futures.add(getQueryLatest(server, args.system, [
+      models.ContentType.contentTypeUsername,
+      models.ContentType.contentTypeAvatar
+    ]));
+  }
+
+  final storageTypeSystemState = models.StorageTypeSystemState();
+  final responses = await Future.wait(futures);
+  for (final response in responses) {
+    for (final se in response.events) {
+      final e = await getEventWhenValid(se);
+      if (e == null) {
+        continue;
+      }
+
+      storageTypeSystemState.update(e);
+    }
+  }
+
+  return models.SystemState.fromStorageTypeSystemState(storageTypeSystemState);
+}
+
+Future<models.SystemState> getProfileAsync(List<String> servers, PublicKey system) async {
+  _GetProfileComputeArgs args = _GetProfileComputeArgs(servers, system);
+  return compute(_getProfileCompute, args);
+}
+
+Future<void> ingest(
+  sqflite.Transaction transaction,
+  protocol.SignedEvent signedEvent,
+) async {
+  var event = await getEventWhenValidCompute(signedEvent);
+  
   if (await queries.doesEventExist(transaction, event)) {
     logger.d("event already persisted");
     return;
@@ -773,6 +881,7 @@ class ProcessInfo {
   final Image? avatar;
   final String description;
   final String store;
+  final List<String> servers;
 
   ProcessInfo(
     this.processSecret,
@@ -781,6 +890,7 @@ class ProcessInfo {
     this.avatar,
     this.description,
     this.store,
+    this.servers
   );
 }
 
@@ -817,11 +927,12 @@ class PolycentricModel extends ChangeNotifier {
           public.bytes,
         );
 
+        final servers = await loadServerList(transaction, public.bytes);
         final claims = await loadClaims(transaction, public.bytes);
 
         this.identities.add(
               ProcessInfo(
-                  identity, username, claims, avatar, description, store),
+                  identity, username, claims, avatar, description, store, servers),
             );
       });
 

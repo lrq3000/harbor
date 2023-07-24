@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart' as flutter_svg;
+import 'package:harbor_flutter/logger.dart';
 import 'package:tap_debouncer/tap_debouncer.dart' as tap_debouncer;
 
 import './main.dart' as main;
@@ -196,19 +197,23 @@ class OblongTextButton extends StatelessWidget {
 }
 
 class StandardButtonGeneric extends StatelessWidget {
-  final String actionText;
-  final String actionDescription;
+  final String? actionText;
+  final String? actionDescription;
+  final Widget? primary;
+  final Widget? secondary;
   final Widget left;
-  final Future<void> Function() onPressed;
+  final Future<void> Function()? onPressed;
   final Future<void> Function()? onDelete;
 
   const StandardButtonGeneric({
     Key? key,
-    required this.actionText,
-    required this.actionDescription,
+    this.actionText,
+    this.actionDescription,
     required this.left,
-    required this.onPressed,
+    this.onPressed,
     this.onDelete,
+    this.primary,
+    this.secondary
   }) : super(key: key);
 
   @override
@@ -227,12 +232,14 @@ class StandardButtonGeneric extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(actionText,
+              if (primary != null) primary!,
+              if (actionText != null) Text(actionText!,
                   style: const TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 18,
                       color: Colors.white)),
-              Text(actionDescription,
+              if (secondary != null) secondary!,
+              if (actionDescription != null) Text(actionDescription!,
                   style: const TextStyle(
                     fontWeight: FontWeight.w200,
                     fontSize: 16,
@@ -265,7 +272,7 @@ class StandardButtonGeneric extends StatelessWidget {
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(100))),
                     ),
-                    onPressed: onTap,
+                    onPressed: () { onTap?.call(); },
                     child: const Icon(Icons.delete_forever_rounded,
                         size: 20, color: Colors.white70));
               }),
@@ -288,7 +295,7 @@ class StandardButtonGeneric extends StatelessWidget {
         children: [
           Expanded(
             child: tap_debouncer.TapDebouncer(
-              onTap: () async => onPressed.call(),
+              onTap: () async => await onPressed?.call(),
               builder: (BuildContext context,
                   tap_debouncer.TapDebouncerFunc? onTap) {
                 return OutlinedButton(
@@ -459,7 +466,8 @@ Widget claimTypeToVisual(String claimType) {
       }
   }
 
-  throw Exception("unknown claim type");
+  logger.e("unknown claim type: " + claimType);
+  return makeSVG('question_mark.svg', 'Substack');
 }
 
 Text makeAppBarTitleText(String text) {
