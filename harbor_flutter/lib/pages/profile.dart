@@ -370,7 +370,9 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
-    final identity = state.identities[widget.identityIndex];
+    if (widget.identityIndex >= state.identities.length) {
+      return const SizedBox();
+    }
     final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
 
     final aboutTextFieldBorderRadius = isIOS
@@ -442,37 +444,43 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
       const SizedBox(height: 10),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(width: 30),
-          Text(
-            identity.username,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: nameFontWeight,
-              fontSize: 32,
-              color: Colors.white,
-            ),
-          ),
-          tap_debouncer.TapDebouncer(
-            onTap: () async {
-              await editUsername(context, state, identity);
-            },
-            builder:
-                (BuildContext context, tap_debouncer.TapDebouncerFunc? onTap) {
-              return OutlinedButton(
-                onPressed: onTap,
-                child: const Icon(
-                  Icons.edit_outlined,
-                  size: 20,
-                  semanticLabel: "edit",
+      Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: Text(
+                identity.username,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: nameFontWeight,
+                  fontSize: 32,
                   color: Colors.white,
                 ),
-              );
-            },
-          ),
-        ],
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis
+              ),
+            ),
+            tap_debouncer.TapDebouncer(
+              onTap: () async {
+                await editUsername(context, state, identity);
+              },
+              builder: (BuildContext context, tap_debouncer.TapDebouncerFunc? onTap) {
+                return OutlinedButton(
+                  onPressed: onTap,
+                  child: const Icon(
+                    Icons.edit_outlined,
+                    size: 20,
+                    semanticLabel: "edit",
+                    color: Colors.white,
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
       const SizedBox(height: 10),
       buildSystemKeyWidget(identity, context),
