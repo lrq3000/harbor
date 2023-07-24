@@ -156,6 +156,25 @@ Future<protocol.RangesForSystem> rangesForSystem(
   return result;
 }
 
+Future<bool> doesProcessSecretExistForSystem(
+  sqflite.Transaction transaction,
+  protocol.KeyPair system,
+) async {
+  const query = '''
+        SELECT 1 FROM process_secrets
+        WHERE system_key_type = ?
+        AND system_key = ?
+        LIMIT 1;
+    ''';
+
+  final rows = await transaction.rawQuery(query, [
+    system.keyType.toInt(),
+    Uint8List.fromList(system.privateKey),
+  ]);
+
+  return rows.isNotEmpty;
+}
+
 Future<bool> isEventDeleted(
   sqflite.Transaction transaction,
   protocol.Event event,

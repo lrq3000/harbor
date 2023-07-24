@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart' as flutter_svg;
+import 'package:harbor_flutter/logger.dart';
+import 'package:tap_debouncer/tap_debouncer.dart' as tap_debouncer;
 
 import './main.dart' as main;
 
@@ -70,25 +72,34 @@ class ClaimButtonGeneric extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+    final buttonShape = isIOS
+        ? RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          )
+        // On android, fall back to material default
+        : null;
+
     return Container(
-      margin: const EdgeInsets.all(5.0),
+      margin: const EdgeInsets.all(3.0),
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          backgroundColor: buttonColor,
-          foregroundColor: Colors.black,
-        ),
+            backgroundColor: buttonColor,
+            foregroundColor: Colors.black,
+            shape: buttonShape),
         onPressed: onPressed,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             top,
+            const SizedBox(height: 10),
             Text(
               nameText,
               style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: Colors.white,
+                fontSize: 14.5,
+                fontWeight: FontWeight.w600,
+                color: Colors.white70,
               ),
             ),
           ],
@@ -150,7 +161,7 @@ class ClaimButtonImage extends StatelessWidget {
 }
 
 class OblongTextButton extends StatelessWidget {
-  final void Function() onPressed;
+  final Future<void> Function() onPressed;
   final String text;
 
   const OblongTextButton(
@@ -159,42 +170,51 @@ class OblongTextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      style: TextButton.styleFrom(
-        backgroundColor: blueButtonColor,
-        shape: const StadiumBorder(),
-      ),
-      onPressed: onPressed,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 16),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w300,
-            color: Colors.white,
+    return tap_debouncer.TapDebouncer(
+      onTap: () async => onPressed.call(),
+      builder: (BuildContext context, tap_debouncer.TapDebouncerFunc? onTap) {
+        return TextButton(
+          style: TextButton.styleFrom(
+            backgroundColor: blueButtonColor,
+            shape: const StadiumBorder(),
           ),
-        ),
-      ),
+          onPressed: onTap,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16),
+            child: Text(
+              text,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w300,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
 
 class StandardButtonGeneric extends StatelessWidget {
-  final String actionText;
-  final String actionDescription;
+  final String? actionText;
+  final String? actionDescription;
+  final Widget? primary;
+  final Widget? secondary;
   final Widget left;
-  final void Function() onPressed;
-  final void Function()? onDelete;
+  final Future<void> Function()? onPressed;
+  final Future<void> Function()? onDelete;
 
-  const StandardButtonGeneric({
-    Key? key,
-    required this.actionText,
-    required this.actionDescription,
-    required this.left,
-    required this.onPressed,
-    this.onDelete,
-  }) : super(key: key);
+  const StandardButtonGeneric(
+      {Key? key,
+      this.actionText,
+      this.actionDescription,
+      required this.left,
+      this.onPressed,
+      this.onDelete,
+      this.primary,
+      this.secondary})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -212,17 +232,21 @@ class StandardButtonGeneric extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(actionText,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 14,
-                      color: Colors.white)),
-              Text(actionDescription,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w200,
-                    fontSize: 12,
-                    color: Colors.grey,
-                  )),
+              if (primary != null) primary!,
+              if (actionText != null)
+                Text(actionText!,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 18,
+                        color: Colors.white)),
+              if (secondary != null) secondary!,
+              if (actionDescription != null)
+                Text(actionDescription!,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w200,
+                      fontSize: 16,
+                      color: Colors.white54,
+                    )),
             ],
           ),
         ),
@@ -230,32 +254,43 @@ class StandardButtonGeneric extends StatelessWidget {
     ];
 
     if (onDelete != null) {
-      rowChildren.add(
-        SizedBox(
-          height: 50,
-          width: 50,
-          child: TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: deleteColor,
-                textStyle: const TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w300,
-                ),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.zero,
-                    bottomLeft: Radius.zero,
-                    topRight: Radius.circular(2),
-                    bottomRight: Radius.circular(2),
-                  ),
-                ),
-              ),
-              onPressed: onDelete,
-              child: const Text("Delete")),
+      rowChildren.add(Padding(
+        padding: const EdgeInsets.only(right: 10),
+        child: SizedBox(
+          height: 35,
+          width: 35,
+          child: tap_debouncer.TapDebouncer(
+              onTap: () async => onDelete?.call(),
+              builder: (BuildContext context,
+                  tap_debouncer.TapDebouncerFunc? onTap) {
+                return TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: deleteColor,
+                      textStyle: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w300,
+                      ),
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(100))),
+                    ),
+                    onPressed: () {
+                      onTap?.call();
+                    },
+                    child: const Icon(Icons.delete_forever_rounded,
+                        size: 20, color: Colors.white70));
+              }),
         ),
-      );
+      ));
     }
+
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+    final buttonShape = isIOS
+        ? RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          )
+        // On android, fall back to material default
+        : null;
 
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -263,17 +298,25 @@ class StandardButtonGeneric extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                backgroundColor: buttonColor,
-                foregroundColor: Colors.black,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                padding: EdgeInsets.zero,
-              ),
-              onPressed: onPressed,
-              child: Row(
-                children: rowChildren,
-              ),
+            child: tap_debouncer.TapDebouncer(
+              onTap: () async => await onPressed?.call(),
+              builder: (BuildContext context,
+                  tap_debouncer.TapDebouncerFunc? onTap) {
+                return OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: buttonColor,
+                    foregroundColor: Colors.black,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
+                    shape: buttonShape,
+                  ),
+                  onPressed: onTap,
+                  child: Row(
+                    children: rowChildren,
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -286,7 +329,7 @@ class StandardButton extends StatelessWidget {
   final String actionText;
   final String actionDescription;
   final IconData icon;
-  final void Function() onPressed;
+  final Future<void> Function() onPressed;
 
   const StandardButton({
     Key? key,
@@ -312,6 +355,30 @@ class StandardButton extends StatelessWidget {
   }
 }
 
+class StandardDialogButton extends StatelessWidget {
+  final String text;
+  final Future<void> Function() onPressed;
+
+  const StandardDialogButton({
+    Key? key,
+    required this.text,
+    required this.onPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return tap_debouncer.TapDebouncer(
+      onTap: () async => onPressed.call(),
+      builder: (BuildContext context, tap_debouncer.TapDebouncerFunc? onTap) {
+        return TextButton(
+          onPressed: onTap,
+          child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
+        );
+      },
+    );
+  }
+}
+
 Icon makeButtonIcon(IconData icon, String actionText) {
   return Icon(
     icon,
@@ -326,12 +393,24 @@ Image makeButtonImage(String path) {
 }
 
 Widget makeSVG(String fileName, String label) {
-  return flutter_svg.SvgPicture.asset(
+  final asset = flutter_svg.SvgPicture.asset(
     'assets/$fileName',
     colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
     semanticsLabel: label,
     height: 48,
     width: 48,
+  );
+
+  // This is a workaround for iOS, where SVGs need to be rendered at double size to look correct.
+  // https://github.com/dnfield/flutter_svg/issues/668#issuecomment-1614419653
+  // This currently applies for all platforms, but could be changed to only apply for iOS.
+  return Transform.scale(
+    filterQuality: FilterQuality.medium,
+    scale: 0.5,
+    child: Transform.scale(
+      scale: 2,
+      child: asset,
+    ),
   );
 }
 
@@ -391,7 +470,8 @@ Widget claimTypeToVisual(String claimType) {
       }
   }
 
-  throw Exception("unknown claim type");
+  logger.e("unknown claim type: $claimType");
+  return makeSVG('question_mark.svg', 'Substack');
 }
 
 Text makeAppBarTitleText(String text) {
@@ -399,7 +479,7 @@ Text makeAppBarTitleText(String text) {
     text,
     style: const TextStyle(
       fontSize: 24,
-      fontWeight: FontWeight.w200,
+      fontWeight: FontWeight.w300,
       color: Colors.white,
     ),
   );
@@ -432,18 +512,18 @@ class LabeledTextField extends StatelessWidget {
           color: Colors.white,
         ),
       ),
-      const SizedBox(height: 8),
+      const SizedBox(height: 15),
       TextField(
         controller: controller,
         autofocus: autofocus != null ? autofocus! : false,
         maxLines: 1,
         cursorColor: Colors.white,
-        style: const TextStyle(color: Colors.white, fontSize: 13),
+        style: const TextStyle(color: Colors.white, fontSize: 18),
         decoration: InputDecoration(
           filled: true,
           isDense: true,
           contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           fillColor: formColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20.0),
@@ -462,23 +542,38 @@ class LabeledTextField extends StatelessWidget {
 class StandardScaffold extends StatelessWidget {
   final List<Widget> children;
   final AppBar? appBar;
+  final ScrollPhysics physics;
 
-  const StandardScaffold({Key? key, this.appBar, required this.children})
+  const StandardScaffold(
+      {Key? key,
+      this.appBar,
+      required this.children,
+      this.physics = const AlwaysScrollableScrollPhysics()})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar,
-      body: Container(
-        padding: scaffoldPadding,
-        width: double.infinity,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: children,
-          ),
-        ),
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints viewportConstraints) {
+          return SingleChildScrollView(
+            physics: physics,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: viewportConstraints.maxHeight,
+              ),
+              child: Container(
+                padding: scaffoldPadding,
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: children,
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

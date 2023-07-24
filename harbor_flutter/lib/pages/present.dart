@@ -11,8 +11,13 @@ import '../shared_ui.dart' as shared_ui;
 
 Future<void> handlePresentClipboard(
   String encodedClaim,
+  BuildContext context,
 ) async {
   await services.Clipboard.setData(services.ClipboardData(text: encodedClaim));
+
+  if (context.mounted) {
+    shared_ui.showSnackBar(context, 'Copied to clipboard');
+  }
 }
 
 void handlePresentShare(
@@ -114,7 +119,7 @@ class PresentPage extends StatelessWidget {
           actionDescription: 'Share this unique code with others to verify',
           left: shared_ui.makeSVG('content_copy.svg', 'Copy'),
           onPressed: () async {
-            handlePresentClipboard(encodedClaim);
+            await handlePresentClipboard(encodedClaim, context);
           },
         ),
         shared_ui.StandardButtonGeneric(

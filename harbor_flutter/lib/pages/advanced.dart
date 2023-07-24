@@ -58,7 +58,7 @@ class _AdvancedPageState extends State<AdvancedPage> {
         actionText: "Polycentric Address",
         actionDescription: servers[i],
         left: shared_ui.makeSVG('cloud_upload.svg', 'Server'),
-        onPressed: () {},
+        onPressed: () async {},
         onDelete: () async {
           await deleteServerDialog(context, state, identity, servers[i]);
         },
@@ -100,16 +100,14 @@ class _AdvancedPageState extends State<AdvancedPage> {
               controller: newServerController,
             ),
             actions: [
-              TextButton(
-                child: Text("Cancel",
-                    style: Theme.of(context).textTheme.bodyMedium),
-                onPressed: () {
+              shared_ui.StandardDialogButton(
+                text: "Cancel",
+                onPressed: () async {
                   Navigator.of(context).pop();
                 },
               ),
-              TextButton(
-                child: Text("Submit",
-                    style: Theme.of(context).textTheme.bodyMedium),
+              shared_ui.StandardDialogButton(
+                text: "Submit",
                 onPressed: () async {
                   try {
                     if (!Uri.parse(newServerController.text).isAbsolute) {
@@ -159,16 +157,14 @@ class _AdvancedPageState extends State<AdvancedPage> {
             content: Text("Are you sure you want to remove this server?",
                 style: Theme.of(context).textTheme.bodyMedium),
             actions: [
-              TextButton(
-                child: Text("Cancel",
-                    style: Theme.of(context).textTheme.bodyMedium),
-                onPressed: () {
+              shared_ui.StandardDialogButton(
+                text: "Cancel",
+                onPressed: () async {
                   Navigator.of(context).pop();
                 },
               ),
-              TextButton(
-                child: Text("Delete",
-                    style: Theme.of(context).textTheme.bodyMedium),
+              shared_ui.StandardDialogButton(
+                text: "Delete",
                 onPressed: () async {
                   await state.db.transaction((transaction) async {
                     await main.setServer(
@@ -209,16 +205,14 @@ class _AdvancedPageState extends State<AdvancedPage> {
                 "This action cannot be undone.",
                 style: Theme.of(context).textTheme.bodyMedium),
             actions: [
-              TextButton(
-                child: Text("Cancel",
-                    style: Theme.of(context).textTheme.bodyMedium),
-                onPressed: () {
+              shared_ui.StandardDialogButton(
+                text: "Cancel",
+                onPressed: () async {
                   Navigator.of(context).pop();
                 },
               ),
-              TextButton(
-                child: Text("Delete",
-                    style: Theme.of(context).textTheme.bodyMedium),
+              shared_ui.StandardDialogButton(
+                text: "Delete",
                 onPressed: () async {
                   final public =
                       await identity.processSecret.system.extractPublicKey();
@@ -260,10 +254,9 @@ class _AdvancedPageState extends State<AdvancedPage> {
   ) async {
     final public = await identity.processSecret.system.extractPublicKey();
 
-    final systemProto = protocol.PublicKey(
-      keyType: fixnum.Int64(1),
-      key: public.bytes,
-    );
+    final systemProto = protocol.PublicKey()
+      ..keyType = fixnum.Int64(1)
+      ..key = public.bytes;
 
     final query = await main.makeSystemLink(state.db, systemProto);
 
@@ -278,6 +271,10 @@ class _AdvancedPageState extends State<AdvancedPage> {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
+    if (widget.identityIndex >= state.identities.length) {
+      return const SizedBox();
+    }
+
     final identity = state.identities[widget.identityIndex];
 
     return shared_ui.StandardScaffold(
@@ -285,7 +282,7 @@ class _AdvancedPageState extends State<AdvancedPage> {
         title: shared_ui.makeAppBarTitleText("Advanced"),
       ),
       children: [
-        const SizedBox(height: 10),
+        const SizedBox(height: 20),
         const Align(
           alignment: AlignmentDirectional.centerStart,
           child: Text(
@@ -302,14 +299,14 @@ class _AdvancedPageState extends State<AdvancedPage> {
           actionDescription: 'Permanently delete account from this device',
           left: shared_ui.makeSVG('delete.svg', 'Delete'),
           onPressed: () async {
-            deleteAccountDialog(context, state, identity);
+            await deleteAccountDialog(context, state, identity);
           },
         ),
         shared_ui.StandardButtonGeneric(
           actionText: 'Backup',
           actionDescription: 'Make a backup of your identity',
           left: shared_ui.makeSVG('save.svg', 'Backup'),
-          onPressed: () {
+          onPressed: () async {
             Navigator.push(context,
                 MaterialPageRoute<BackupPage>(builder: (context) {
               return BackupPage(processSecret: identity.processSecret);
@@ -350,7 +347,7 @@ class _AdvancedPageState extends State<AdvancedPage> {
           actionDescription: 'Publish your data to another server',
           left: shared_ui.makeSVG('add_circle.svg', 'Add server'),
           onPressed: () async {
-            addServerDialog(context, state, identity.processSecret);
+            await addServerDialog(context, state, identity.processSecret);
           },
         ),
       ],

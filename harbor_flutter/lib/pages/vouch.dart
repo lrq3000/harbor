@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:flutter/services.dart' as services;
 
 import '../logger.dart';
 import '../shared_ui.dart' as shared_ui;
@@ -15,7 +14,7 @@ class VouchPage extends StatelessWidget {
 
   const VouchPage({Key? key, required this.processSecret}) : super(key: key);
 
-  Future<void> handleBase64(
+  Future<bool> handleBase64(
     BuildContext context,
     main.PolycentricModel state,
     String text,
@@ -27,9 +26,13 @@ class VouchPage extends StatelessWidget {
       await state.db.transaction((transaction) async {
         await main.makeVouch(transaction, processSecret, pointer);
       });
+
+      return true;
     } catch (err) {
       logger.e(err);
       shared_ui.errorDialog(context, err.toString());
+
+      return false;
     }
   }
 
@@ -45,15 +48,65 @@ class VouchPage extends StatelessWidget {
     }
   }
 
-  Future<void> handleClipboard(
+  Future<void> handleText(
     BuildContext context,
     main.PolycentricModel state,
   ) async {
-    final clip = (await services.Clipboard.getData('text/plain'))?.text;
+    final TextEditingController textController = TextEditingController(
+      text: '',
+    );
 
-    if (clip != null && context.mounted) {
-      await handleBase64(context, state, clip);
-    }
+    await showDialog<AlertDialog>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Enter Polycentric Link",
+                style: Theme.of(context).textTheme.bodyMedium),
+            content: TextField(
+              autofocus: true,
+              decoration: const InputDecoration(
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              style: Theme.of(context).textTheme.bodyMedium,
+              cursorColor: Colors.white,
+              controller: textController,
+            ),
+            actions: [
+              TextButton(
+                child: Text("Cancel",
+                    style: Theme.of(context).textTheme.bodyMedium),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: Text("Submit",
+                    style: Theme.of(context).textTheme.bodyMedium),
+                onPressed: () async {
+                  if (textController.text.isEmpty) {
+                    return;
+                  }
+
+                  final success =
+                      await handleBase64(context, state, textController.text);
+
+                  if (success && context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
+            ],
+          );
+        });
   }
 
   @override
@@ -68,10 +121,11 @@ class VouchPage extends StatelessWidget {
         Container(
           alignment: AlignmentDirectional.centerStart,
           child: const Text(
-            "Choose what method you want to use to vouch for a claim",
+            "Choose which method you want to use to vouch for a claim",
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 18,
               color: Colors.white,
+              fontWeight: FontWeight.w200,
             ),
           ),
         ),
@@ -81,14 +135,14 @@ class VouchPage extends StatelessWidget {
             actionDescription: 'Paste an exported claim',
             left: shared_ui.makeSVG('content_copy.svg', 'copy'),
             onPressed: () async {
-              handleClipboard(context, state);
+              await handleText(context, state);
             }),
         shared_ui.StandardButtonGeneric(
           actionText: 'QR Code',
           actionDescription: 'Scan a claim',
           left: shared_ui.makeSVG('qr_code_2.svg', 'Scan'),
           onPressed: () async {
-            handleScan(context, state);
+            await handleScan(context, state);
           },
         ),
       ],

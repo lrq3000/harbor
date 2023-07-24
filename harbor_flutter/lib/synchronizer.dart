@@ -61,12 +61,12 @@ Future<bool> backfillClientSingle(
       break;
     }
 
-    final request = protocol.RangesForSystem(rangesForProcesses: [
-      protocol.RangesForProcess(
-        process: serverRangesForProcess.process,
-        ranges: rangesToProtocolRanges(clientNeeds),
-      ),
-    ]);
+    final rangesForProcess = protocol.RangesForProcess()
+      ..process = serverRangesForProcess.process
+      ..ranges.addAll(rangesToProtocolRanges(clientNeeds));
+
+    final request = protocol.RangesForSystem()
+      ..rangesForProcesses.add(rangesForProcess);
 
     final events = await api_methods.getEvents(server, system, request);
 
@@ -142,7 +142,7 @@ Future<bool> backfillServerSingle(
     final serverNeeds = ranges.subtractRange(clientRanges, serverRanges);
 
     if (serverNeeds.isEmpty) {
-      break;
+      continue;
     }
 
     final protocol.Events payload = protocol.Events();

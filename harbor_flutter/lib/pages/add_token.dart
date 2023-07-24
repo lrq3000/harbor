@@ -81,7 +81,7 @@ class AddTokenPage extends StatelessWidget {
           alignment: AlignmentDirectional.center,
           child: shared_ui.OblongTextButton(
               text: 'Verify',
-              onPressed: () {
+              onPressed: () async {
                 Navigator.push(context,
                     MaterialPageRoute<AutomatedVerificationPage>(
                         builder: (BuildContext context) {

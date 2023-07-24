@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fixnum/fixnum.dart' as fixnum;
 
-import 'new_or_import_profile.dart';
+import 'profile.dart';
 import '../main.dart' as main;
 import '../shared_ui.dart' as shared_ui;
 import '../api_methods.dart' as api_methods;
@@ -119,10 +119,12 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
           child: shared_ui.OblongTextButton(
             text: 'Continue',
             onPressed: () async {
-              Navigator.push(context,
-                  MaterialPageRoute<NewOrImportProfilePage>(builder: (context) {
-                return const NewOrImportProfilePage();
-              }));
+              Navigator.pushAndRemoveUntil(context,
+                  MaterialPageRoute<ProfilePage>(builder: (context) {
+                return ProfilePage(
+                  identityIndex: widget.identityIndex,
+                );
+              }), (Route route) => false);
             },
           ),
         ),
@@ -151,7 +153,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
           child: shared_ui.OblongTextButton(
             text: 'Retry verification',
             onPressed: () async {
-              doVerification(context);
+              await doVerification(context);
             },
           ),
         ),

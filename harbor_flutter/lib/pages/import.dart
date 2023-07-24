@@ -1,15 +1,13 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' as services;
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import '../logger.dart';
 import '../main.dart' as main;
 import '../models.dart' as models;
 import '../shared_ui.dart' as shared_ui;
-import 'new_or_import_profile.dart';
 
-Future<void> importFromBase64(
+Future<bool> importFromBase64(
   BuildContext context,
   main.PolycentricModel state,
   String text,
@@ -18,23 +16,90 @@ Future<void> importFromBase64(
     final urlInfo = models.urlInfoFromLink(text);
     final exportBundle = models.urlInfoGetExportBundle(urlInfo);
 
-    await main.importExportBundle(state.db, exportBundle);
+    final success = await main.importExportBundle(state.db, exportBundle);
+
+    if (success == false && context.mounted) {
+      shared_ui.errorDialog(context, 'Identity already exists on this device');
+
+      return false;
+    }
+
     await state.mLoadIdentities();
 
     if (context.mounted) {
-      Navigator.pushAndRemoveUntil(context,
-          MaterialPageRoute<NewOrImportProfilePage>(builder: (context) {
-        return const NewOrImportProfilePage();
-      }), (Route route) => false);
+      Navigator.pop(context);
     }
+
+    return true;
   } catch (err) {
     logger.e(err);
     shared_ui.errorDialog(context, err.toString());
+
+    return false;
   }
 }
 
 class ImportPage extends StatelessWidget {
   const ImportPage({Key? key}) : super(key: key);
+
+  Future<void> textImport(
+    BuildContext context,
+    main.PolycentricModel state,
+  ) async {
+    final TextEditingController textController = TextEditingController(
+      text: '',
+    );
+
+    await showDialog<AlertDialog>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Enter Polycentric Link",
+                style: Theme.of(context).textTheme.bodyMedium),
+            content: TextField(
+              autofocus: true,
+              decoration: const InputDecoration(
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              style: Theme.of(context).textTheme.bodyMedium,
+              cursorColor: Colors.white,
+              controller: textController,
+            ),
+            actions: [
+              shared_ui.StandardDialogButton(
+                text: "Cancel",
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                },
+              ),
+              shared_ui.StandardDialogButton(
+                text: "Submit",
+                onPressed: () async {
+                  if (textController.text.isEmpty) {
+                    return;
+                  }
+
+                  final success = await importFromBase64(
+                      context, state, textController.text);
+
+                  if (success && context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
+            ],
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,11 +117,7 @@ class ImportPage extends StatelessWidget {
             actionDescription: 'Paste an exported identity',
             left: shared_ui.makeSVG('content_copy.svg', 'Copy'),
             onPressed: () async {
-              final clip =
-                  (await services.Clipboard.getData('text/plain'))?.text;
-              if (clip != null && context.mounted) {
-                await importFromBase64(context, state, clip);
-              }
+              await textImport(context, state);
             }),
         shared_ui.StandardButtonGeneric(
           actionText: 'QR Code',

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tap_debouncer/tap_debouncer.dart' as tap_debouncer;
 
 import '../main.dart' as main;
 import '../shared_ui.dart' as shared_ui;
@@ -23,41 +24,49 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
     final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[widget.identityIndex];
 
+    Future<void> onPressed() async {
+      if (textController.text.isEmpty) {
+        shared_ui.showSnackBar(context, "You must set a skill");
+        return;
+      }
+
+      await state.db.transaction((transaction) async {
+        await main.makePlatformClaim(
+          transaction,
+          identity.processSecret,
+          'Skill',
+          textController.text,
+        );
+      });
+
+      await state.mLoadIdentities();
+
+      if (context.mounted) {
+        Navigator.push(context,
+            MaterialPageRoute<ProfilePage>(builder: (context) {
+          return ProfilePage(
+            identityIndex: widget.identityIndex,
+          );
+        }));
+      }
+    }
+
     return shared_ui.StandardScaffold(
       appBar: AppBar(
         title: shared_ui.makeAppBarTitleText('Skill'),
         actions: [
-          TextButton(
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.blue,
-              textStyle: const TextStyle(fontSize: 20),
-            ),
-            child: const Text("Save"),
-            onPressed: () async {
-              if (textController.text.isEmpty) {
-                shared_ui.showSnackBar(context, "You must set a skill");
-                return;
-              }
-
-              await state.db.transaction((transaction) async {
-                await main.makePlatformClaim(
-                  transaction,
-                  identity.processSecret,
-                  'Skill',
-                  textController.text,
-                );
-              });
-
-              await state.mLoadIdentities();
-
-              if (context.mounted) {
-                Navigator.push(context,
-                    MaterialPageRoute<ProfilePage>(builder: (context) {
-                  return ProfilePage(
-                    identityIndex: widget.identityIndex,
-                  );
-                }));
-              }
+          tap_debouncer.TapDebouncer(
+            onTap: () async => onPressed.call(),
+            builder:
+                (BuildContext context, tap_debouncer.TapDebouncerFunc? onTap) {
+              return TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.blue,
+                  textStyle: const TextStyle(fontSize: 20),
+                ),
+                onPressed: onTap,
+                child: const Text("Save"),
+              );
             },
           ),
         ],
