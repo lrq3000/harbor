@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart' as flutter_svg;
 import 'package:harbor_flutter/logger.dart';
-import 'package:harbor_flutter/queries.dart';
 import 'package:tap_debouncer/tap_debouncer.dart' as tap_debouncer;
 
 import './main.dart' as main;

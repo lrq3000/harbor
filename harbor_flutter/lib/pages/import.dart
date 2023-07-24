@@ -6,7 +6,6 @@ import '../logger.dart';
 import '../main.dart' as main;
 import '../models.dart' as models;
 import '../shared_ui.dart' as shared_ui;
-import 'new_or_import_profile.dart';
 
 Future<bool> importFromBase64(
   BuildContext context,
