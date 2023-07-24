@@ -1,9 +1,7 @@
-import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:harbor_flutter/protocol.pbserver.dart';
 import 'package:provider/provider.dart';
 
-import '../api_methods.dart';
 import '../main.dart';
 import '../models.dart' as models;
 import 'present.dart';
@@ -31,69 +29,9 @@ class ClaimPage extends StatefulWidget {
 }
 
 class _ClaimPageState extends State<ClaimPage> {
-  Future<List<PublicKey>> getVouchersAsync(ProcessInfo identity, ClaimInfo claimInfo) async {
-    final reference = Reference()
-      ..reference = claimInfo.pointer.writeToBuffer()
-      ..referenceType = Int64(2);
-
-    final queryReferencesRequestEvents = QueryReferencesRequestEvents()
-      ..fromType = models.ContentType.contentTypeVouch;
-
-    final futures = <Future<QueryReferencesResponse>>[];
-    for (final server in identity.servers) {
-      futures.add(getQueryReferences(server, reference, null, queryReferencesRequestEvents, null, null));
-    }
-
-    final List<SignedEvent> vouchEvents = List.empty(growable: true);
-    final responses = await Future.wait(futures);
-    for (var response in responses) {
-      vouchEvents.addAll(response.items.map((e) => e.event));
-      //TODO: Can we deduplicate the list early?
-      //TODO: Handle more than X vouchers by using cursor to get the next page
-    }
-
-    final claimEventPointer = claimInfo.pointer;
-    final vouchers = <PublicKey>[];
-
-    for (final signedEvent in vouchEvents) {
-      var event = await getEventWhenValid(signedEvent);
-      final referenceMatches = event.references
-          .any((r) => claimEventPointer == Pointer.fromBuffer(r.reference));
-
-      if (referenceMatches) {
-        if (!vouchers.contains(event.system)) {
-          vouchers.add(event.system);
-        }
-      }
-    }
-
-    return vouchers;
-  }
-
-  Future<models.SystemState> getProfileAsync(ProcessInfo identity, PublicKey system) async {
-    final futures = <Future<Events>>[];
-    for (final server in identity.servers) {
-      futures.add(getQueryLatest(server, system, [
-        models.ContentType.contentTypeUsername,
-        models.ContentType.contentTypeAvatar
-      ]));
-    }
-
-    final storageTypeSystemState = models.StorageTypeSystemState();
-    final responses = await Future.wait(futures);
-    for (final response in responses) {
-      for (final se in response.events) {
-        final e = await getEventWhenValid(se);
-        storageTypeSystemState.update(e);
-      }
-    }
-
-    return models.SystemState.fromStorageTypeSystemState(storageTypeSystemState);
-  }
-
   Widget buildVouchersWidget(ProcessInfo identity, ClaimInfo claimInfo, BuildContext context) {
     return FutureBuilder(
-        future: getVouchersAsync(identity, claimInfo),
+        future: getVouchersAsync(identity.servers, claimInfo.pointer),
         builder: (BuildContext context, AsyncSnapshot<List<PublicKey>> snapshot) {
           final Iterable<Widget> ws;
           if (snapshot.hasData) {
@@ -132,7 +70,7 @@ class _ClaimPageState extends State<ClaimPage> {
 
   Widget buildVoucherWidget(ProcessInfo identity, PublicKey system) {
     return FutureBuilder<models.SystemState>(
-        future: getProfileAsync(identity, system),
+        future: getProfileAsync(identity.servers, system),
         builder: (BuildContext context, AsyncSnapshot<models.SystemState> snapshot) {
           if (snapshot.hasData) {
             var data = snapshot.data;
@@ -142,7 +80,12 @@ class _ClaimPageState extends State<ClaimPage> {
             } else {
               return shared_ui.StandardButtonGeneric(
                 actionText: data.username,
-                actionDescription: convert.base64Url.encode(system.key),
+                secondary: Text(convert.base64Url.encode(system.key),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w200,
+                    fontSize: 12,
+                    color: Colors.white54,
+                  )),
                 left: shared_ui.makeSVG(
                     'question_mark.svg', 'Unknown'), //TODO: Replace with Avatar
                 onPressed: () async {
@@ -162,7 +105,12 @@ class _ClaimPageState extends State<ClaimPage> {
                     strokeWidth: 2.0,
                     color: Colors.white70), // use a smaller strokeWidth
               ),
-              actionDescription: convert.base64Url.encode(system.key),
+              secondary: Text(convert.base64Url.encode(system.key),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w200,
+                  fontSize: 12,
+                  color: Colors.white54,
+                )),
               left: shared_ui.makeSVG(
                   'question_mark.svg', 'Unknown'), //TODO: Replace with Avatar
               onPressed: () async {
