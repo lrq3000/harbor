@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:harbor_flutter/protocol.pbserver.dart';
+import 'package:harbor_flutter/pages/make_oauth_platform_claim.dart';
 import 'package:provider/provider.dart';
+import 'package:harbor_flutter/protocol.pbserver.dart';
 
 import '../main.dart';
 import '../models.dart' as models;
@@ -209,13 +210,25 @@ class _ClaimPageState extends State<ClaimPage> {
                 'Get an automated authority to vouch for this claim',
             left: shared_ui.makeSVG('smart_toy.svg', 'Automated'),
             onPressed: () async {
-              Navigator.push(context,
-                  MaterialPageRoute<AddTokenPage>(builder: (context) {
-                return AddTokenPage(
-                  claim: claim,
-                  identityIndex: widget.identityIndex,
-                );
-              }));
+              if (main.isOAuthClaim(claim.claimType)) {
+                Navigator.push(context,
+                    MaterialPageRoute<MakeOAuthPlatformClaimPage>(
+                        builder: (context) {
+                  return MakeOAuthPlatformClaimPage(
+                    identityIndex: widget.identityIndex,
+                    claimType: claim.claimType,
+                    inProgressClaim: claim,
+                  );
+                }));
+              } else {
+                Navigator.push(context,
+                    MaterialPageRoute<AddTokenPage>(builder: (context) {
+                  return AddTokenPage(
+                    claim: claim,
+                    identityIndex: widget.identityIndex,
+                  );
+                }));
+              }
             },
           ),
         shared_ui.StandardButtonGeneric(

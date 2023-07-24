@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'dart:math';
+import 'dart:async';
 import 'package:fixnum/fixnum.dart' as fixnum;
 
 import 'api_methods.dart';
@@ -20,11 +21,17 @@ import 'queries.dart' as queries;
 import 'shared_ui.dart' as shared_ui;
 import 'logger.dart';
 
+const Set<String> oAuthClaimTypes = {"Discord", "Instagram", "Twitter"};
+
 class ProcessSecret {
   cryptography.SimpleKeyPair system;
   List<int> process;
 
   ProcessSecret(this.system, this.process);
+}
+
+bool isOAuthClaim(String claimType) {
+  return oAuthClaimTypes.contains(claimType);
 }
 
 Future<ProcessSecret> createNewIdentity(sqflite.Database db) async {

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'make_platform_claim.dart';
+import 'make_oauth_platform_claim.dart';
 import 'create_skill_claim.dart';
 import 'create_occupation_claim.dart';
 import 'create_generic_claim.dart';
 import '../shared_ui.dart' as shared_ui;
+import '../main.dart' as main;
 
 class CreateClaimPage extends StatefulWidget {
   final int identityIndex;
@@ -23,13 +25,24 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
         nameText: claimType,
         top: shared_ui.claimTypeToVisual(claimType),
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute<MakePlatformClaimPage>(builder: (context) {
-            return MakePlatformClaimPage(
-              identityIndex: widget.identityIndex,
-              claimType: claimType,
-            );
-          }));
+          if (main.isOAuthClaim(claimType)) {
+            Navigator.push(context,
+                MaterialPageRoute<MakeOAuthPlatformClaimPage>(
+                    builder: (context) {
+              return MakeOAuthPlatformClaimPage(
+                identityIndex: widget.identityIndex,
+                claimType: claimType,
+              );
+            }));
+          } else {
+            Navigator.push(context,
+                MaterialPageRoute<MakePlatformClaimPage>(builder: (context) {
+              return MakePlatformClaimPage(
+                identityIndex: widget.identityIndex,
+                claimType: claimType,
+              );
+            }));
+          }
         },
       );
     }
