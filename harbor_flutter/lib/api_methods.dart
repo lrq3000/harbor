@@ -1,6 +1,7 @@
 import 'dart:convert' as convert;
 import 'dart:typed_data';
 
+import 'package:fixnum/fixnum.dart';
 import 'package:http/http.dart' as http;
 
 import 'protocol.pb.dart' as protocol;
@@ -114,6 +115,24 @@ Future<protocol.QueryReferencesResponse> getQueryReferences(
   checkResponse('getQueryReferences', response);
   
   return protocol.QueryReferencesResponse.fromBuffer(response.bodyBytes);
+}
+
+Future<protocol.Events> getQueryLatest(String server, protocol.PublicKey system, List<Int64> eventTypes) async {
+  final systemQuery = convert.base64Url.encode(system.writeToBuffer());
+  
+  final eventTypesBuilder = protocol.RepeatedUInt64()
+    ..numbers.addAll(eventTypes);
+
+  final eventTypesQuery = convert.base64Url.encode(eventTypesBuilder.writeToBuffer());
+
+  final url = "$server/query_latest?system=$systemQuery&event_types=$eventTypesQuery";
+  final response = await http.get(Uri.parse(url), headers: <String, String>{
+    'Content-Type': 'application/octet-stream'
+  });
+
+  checkResponse('getQueryLatest', response);
+  
+  return protocol.Events.fromBuffer(response.bodyBytes);
 }
 
 Future<void> requestVerification(

@@ -779,6 +779,7 @@ class ProcessInfo {
   final Image? avatar;
   final String description;
   final String store;
+  final List<String> servers;
 
   ProcessInfo(
     this.processSecret,
@@ -787,6 +788,7 @@ class ProcessInfo {
     this.avatar,
     this.description,
     this.store,
+    this.servers
   );
 }
 
@@ -823,11 +825,12 @@ class PolycentricModel extends ChangeNotifier {
           public.bytes,
         );
 
+        final servers = await loadServerList(transaction, public.bytes);
         final claims = await loadClaims(transaction, public.bytes);
 
         this.identities.add(
               ProcessInfo(
-                  identity, username, claims, avatar, description, store),
+                  identity, username, claims, avatar, description, store, servers),
             );
       });
 
