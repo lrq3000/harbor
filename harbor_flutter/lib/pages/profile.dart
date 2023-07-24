@@ -373,6 +373,8 @@ class _ProfilePageState extends State<ProfilePage> {
     if (widget.identityIndex >= state.identities.length) {
       return const SizedBox();
     }
+    
+    final identity = state.identities[widget.identityIndex];
     final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
 
     final aboutTextFieldBorderRadius = isIOS
