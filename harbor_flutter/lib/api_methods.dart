@@ -80,24 +80,24 @@ Future<protocol.QueryReferencesResponse> getQueryReferences(
   protocol.Reference reference,
   Uint8List? cursor,
   protocol.QueryReferencesRequestEvents? requestEvents,
-  List<protocol.QueryReferencesRequestCountLWWElementReferences>? countLwwElementReferences,
+  List<protocol.QueryReferencesRequestCountLWWElementReferences>?
+      countLwwElementReferences,
   List<protocol.QueryReferencesRequestCountReferences>? countReferences,
 ) async {
-  final request = protocol.QueryReferencesRequest()
-    ..reference = reference;
+  final request = protocol.QueryReferencesRequest()..reference = reference;
 
   if (requestEvents != null) {
     request.requestEvents = requestEvents;
   }
-  
+
   if (cursor != null) {
     request.cursor = cursor;
   }
-  
+
   if (countLwwElementReferences != null) {
     request.countLwwElementReferences.addAll(countLwwElementReferences);
   }
-  
+
   if (countReferences != null) {
     request.countReferences.addAll(countReferences);
   }
@@ -105,33 +105,32 @@ Future<protocol.QueryReferencesResponse> getQueryReferences(
   final encodedQuery = convert.base64Url.encode(request.writeToBuffer());
   final url = "$server/query_references?query=$encodedQuery";
 
-  final response = await http.get(
-    Uri.parse(url),
-    headers: <String, String>{
-      'Content-Type': 'application/octet-stream',
-    }
-  );
+  final response = await http.get(Uri.parse(url), headers: <String, String>{
+    'Content-Type': 'application/octet-stream',
+  });
 
   checkResponse('getQueryReferences', response);
-  
+
   return protocol.QueryReferencesResponse.fromBuffer(response.bodyBytes);
 }
 
-Future<protocol.Events> getQueryLatest(String server, protocol.PublicKey system, List<Int64> eventTypes) async {
+Future<protocol.Events> getQueryLatest(
+    String server, protocol.PublicKey system, List<Int64> eventTypes) async {
   final systemQuery = convert.base64Url.encode(system.writeToBuffer());
-  
+
   final eventTypesBuilder = protocol.RepeatedUInt64()
     ..numbers.addAll(eventTypes);
 
-  final eventTypesQuery = convert.base64Url.encode(eventTypesBuilder.writeToBuffer());
+  final eventTypesQuery =
+      convert.base64Url.encode(eventTypesBuilder.writeToBuffer());
 
-  final url = "$server/query_latest?system=$systemQuery&event_types=$eventTypesQuery";
-  final response = await http.get(Uri.parse(url), headers: <String, String>{
-    'Content-Type': 'application/octet-stream'
-  });
+  final url =
+      "$server/query_latest?system=$systemQuery&event_types=$eventTypesQuery";
+  final response = await http.get(Uri.parse(url),
+      headers: <String, String>{'Content-Type': 'application/octet-stream'});
 
   checkResponse('getQueryLatest', response);
-  
+
   return protocol.Events.fromBuffer(response.bodyBytes);
 }
 

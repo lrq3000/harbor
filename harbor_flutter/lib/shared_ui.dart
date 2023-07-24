@@ -205,16 +205,16 @@ class StandardButtonGeneric extends StatelessWidget {
   final Future<void> Function()? onPressed;
   final Future<void> Function()? onDelete;
 
-  const StandardButtonGeneric({
-    Key? key,
-    this.actionText,
-    this.actionDescription,
-    required this.left,
-    this.onPressed,
-    this.onDelete,
-    this.primary,
-    this.secondary
-  }) : super(key: key);
+  const StandardButtonGeneric(
+      {Key? key,
+      this.actionText,
+      this.actionDescription,
+      required this.left,
+      this.onPressed,
+      this.onDelete,
+      this.primary,
+      this.secondary})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -233,18 +233,20 @@ class StandardButtonGeneric extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (primary != null) primary!,
-              if (actionText != null) Text(actionText!,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 18,
-                      color: Colors.white)),
+              if (actionText != null)
+                Text(actionText!,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 18,
+                        color: Colors.white)),
               if (secondary != null) secondary!,
-              if (actionDescription != null) Text(actionDescription!,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w200,
-                    fontSize: 16,
-                    color: Colors.white54,
-                  )),
+              if (actionDescription != null)
+                Text(actionDescription!,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w200,
+                      fontSize: 16,
+                      color: Colors.white54,
+                    )),
             ],
           ),
         ),
@@ -272,7 +274,9 @@ class StandardButtonGeneric extends StatelessWidget {
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(100))),
                     ),
-                    onPressed: () { onTap?.call(); },
+                    onPressed: () {
+                      onTap?.call();
+                    },
                     child: const Icon(Icons.delete_forever_rounded,
                         size: 20, color: Colors.white70));
               }),
@@ -466,7 +470,7 @@ Widget claimTypeToVisual(String claimType) {
       }
   }
 
-  logger.e("unknown claim type: " + claimType);
+  logger.e("unknown claim type: $claimType");
   return makeSVG('question_mark.svg', 'Substack');
 }
 

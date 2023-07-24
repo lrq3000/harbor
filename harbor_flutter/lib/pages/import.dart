@@ -29,7 +29,7 @@ Future<bool> importFromBase64(
     if (context.mounted) {
       Navigator.pop(context);
     }
-    
+
     return true;
   } catch (err) {
     logger.e(err);

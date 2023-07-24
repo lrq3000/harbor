@@ -29,27 +29,32 @@ class ClaimPage extends StatefulWidget {
 }
 
 class _ClaimPageState extends State<ClaimPage> {
-  Widget buildVouchersWidget(ProcessInfo identity, ClaimInfo claimInfo, BuildContext context) {
+  Widget buildVouchersWidget(
+      ProcessInfo identity, ClaimInfo claimInfo, BuildContext context) {
     return FutureBuilder(
         future: getVouchersAsync(identity.servers, claimInfo.pointer),
-        builder: (BuildContext context, AsyncSnapshot<List<PublicKey>> snapshot) {
+        builder:
+            (BuildContext context, AsyncSnapshot<List<PublicKey>> snapshot) {
           final Iterable<Widget> ws;
           if (snapshot.hasData) {
             var d = snapshot.data;
             if (d == null || d.isEmpty) {
               ws = [
-                const Text("Nobody has vouched for this claim", style: TextStyle(color: Colors.white70))
+                const Text("Nobody has vouched for this claim",
+                    style: TextStyle(color: Colors.white70))
               ];
             } else {
               ws = d.map((e) => buildVoucherWidget(identity, e)).toList();
             }
           } else if (snapshot.hasError) {
             ws = [
-              Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.red))
+              Text('Error: ${snapshot.error}',
+                  style: const TextStyle(color: Colors.red))
             ];
           } else {
             ws = [
-              const Center(child: CircularProgressIndicator(color: Colors.white70))
+              const Center(
+                  child: CircularProgressIndicator(color: Colors.white70))
             ];
           }
 
@@ -71,7 +76,8 @@ class _ClaimPageState extends State<ClaimPage> {
   Widget buildVoucherWidget(ProcessInfo identity, PublicKey system) {
     return FutureBuilder<models.SystemState>(
         future: getProfileAsync(identity.servers, system),
-        builder: (BuildContext context, AsyncSnapshot<models.SystemState> snapshot) {
+        builder:
+            (BuildContext context, AsyncSnapshot<models.SystemState> snapshot) {
           if (snapshot.hasData) {
             var data = snapshot.data;
             if (data == null) {
@@ -81,11 +87,11 @@ class _ClaimPageState extends State<ClaimPage> {
               return shared_ui.StandardButtonGeneric(
                 actionText: data.username,
                 secondary: Text(convert.base64Url.encode(system.key),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w200,
-                    fontSize: 12,
-                    color: Colors.white54,
-                  )),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w200,
+                      fontSize: 12,
+                      color: Colors.white54,
+                    )),
                 left: shared_ui.makeSVG(
                     'question_mark.svg', 'Unknown'), //TODO: Replace with Avatar
                 onPressed: () async {
@@ -106,11 +112,11 @@ class _ClaimPageState extends State<ClaimPage> {
                     color: Colors.white70), // use a smaller strokeWidth
               ),
               secondary: Text(convert.base64Url.encode(system.key),
-                style: const TextStyle(
-                  fontWeight: FontWeight.w200,
-                  fontSize: 12,
-                  color: Colors.white54,
-                )),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w200,
+                    fontSize: 12,
+                    color: Colors.white54,
+                  )),
               left: shared_ui.makeSVG(
                   'question_mark.svg', 'Unknown'), //TODO: Replace with Avatar
               onPressed: () async {

@@ -203,7 +203,8 @@ Future<bool> importExportBundle(
   });
 }
 
-Future<protocol.Event?> getEventWhenValid(protocol.SignedEvent signedEvent) async {
+Future<protocol.Event?> getEventWhenValid(
+    protocol.SignedEvent signedEvent) async {
   final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
 
   final publicKey = cryptography.SimplePublicKey(
@@ -224,7 +225,8 @@ Future<protocol.Event?> getEventWhenValid(protocol.SignedEvent signedEvent) asyn
   return validSignature ? event : null;
 }
 
-Future<protocol.Event> getEventWhenValidCompute(protocol.SignedEvent signedEvent) async {
+Future<protocol.Event> getEventWhenValidCompute(
+    protocol.SignedEvent signedEvent) async {
   final event = await compute(getEventWhenValid, signedEvent);
 
   if (event == null) {
@@ -237,55 +239,57 @@ Future<protocol.Event> getEventWhenValidCompute(protocol.SignedEvent signedEvent
 class _GetVouchersComputeArgs {
   final List<String> servers;
   final Pointer claimPointer;
-  
+
   _GetVouchersComputeArgs(this.servers, this.claimPointer);
 }
 
-Future<List<PublicKey>> _getVouchersCompute(_GetVouchersComputeArgs args) async {
+Future<List<PublicKey>> _getVouchersCompute(
+    _GetVouchersComputeArgs args) async {
   final List<String> servers = args.servers;
   final Pointer claimPointer = args.claimPointer;
 
-    final reference = Reference()
-      ..reference = claimPointer.writeToBuffer()
-      ..referenceType = Int64(2);
+  final reference = Reference()
+    ..reference = claimPointer.writeToBuffer()
+    ..referenceType = Int64(2);
 
-    final queryReferencesRequestEvents = QueryReferencesRequestEvents()
-      ..fromType = models.ContentType.contentTypeVouch;
+  final queryReferencesRequestEvents = QueryReferencesRequestEvents()
+    ..fromType = models.ContentType.contentTypeVouch;
 
-    final futures = <Future<QueryReferencesResponse>>[];
-    for (final server in servers) {
-      futures.add(getQueryReferences(server, reference, null, queryReferencesRequestEvents, null, null));
+  final futures = <Future<QueryReferencesResponse>>[];
+  for (final server in servers) {
+    futures.add(getQueryReferences(
+        server, reference, null, queryReferencesRequestEvents, null, null));
+  }
+
+  final List<SignedEvent> vouchEvents = List.empty(growable: true);
+  final responses = await Future.wait(futures);
+  for (var response in responses) {
+    vouchEvents.addAll(response.items.map((e) => e.event));
+    //TODO: Can we deduplicate the list early?
+    //TODO: Handle more than X vouchers by using cursor to get the next page
+  }
+
+  final vouchers = <PublicKey>[];
+  for (final se in vouchEvents) {
+    final e = await getEventWhenValid(se);
+    if (e == null) {
+      continue;
     }
 
-    final List<SignedEvent> vouchEvents = List.empty(growable: true);
-    final responses = await Future.wait(futures);
-    for (var response in responses) {
-      vouchEvents.addAll(response.items.map((e) => e.event));
-      //TODO: Can we deduplicate the list early?
-      //TODO: Handle more than X vouchers by using cursor to get the next page
-    }
-
-    final vouchers = <PublicKey>[];
-    for (final se in vouchEvents) {
-      final e = await getEventWhenValid(se);
-      if (e == null) {
-        continue;
+    final referenceMatches = e.references
+        .any((r) => claimPointer == Pointer.fromBuffer(r.reference));
+    if (referenceMatches) {
+      if (!vouchers.contains(e.system)) {
+        vouchers.add(e.system);
       }
-
-      final referenceMatches = e.references.any((r) => claimPointer == Pointer.fromBuffer(r.reference));
-      if (referenceMatches) {
-        if (!vouchers.contains(e.system)) {
-          vouchers.add(e.system);
-        }
-      }
     }
+  }
 
-    return vouchers;
+  return vouchers;
 }
 
-
-
-Future<List<PublicKey>> getVouchersAsync(List<String> servers, Pointer claimPointer) async {
+Future<List<PublicKey>> getVouchersAsync(
+    List<String> servers, Pointer claimPointer) async {
   _GetVouchersComputeArgs args = _GetVouchersComputeArgs(servers, claimPointer);
   return compute(_getVouchersCompute, args);
 }
@@ -293,11 +297,12 @@ Future<List<PublicKey>> getVouchersAsync(List<String> servers, Pointer claimPoin
 class _GetProfileComputeArgs {
   final List<String> servers;
   final PublicKey system;
-  
+
   _GetProfileComputeArgs(this.servers, this.system);
 }
 
-Future<models.SystemState> _getProfileCompute(_GetProfileComputeArgs args) async {
+Future<models.SystemState> _getProfileCompute(
+    _GetProfileComputeArgs args) async {
   final futures = <Future<Events>>[];
   for (final server in args.servers) {
     futures.add(getQueryLatest(server, args.system, [
@@ -322,7 +327,8 @@ Future<models.SystemState> _getProfileCompute(_GetProfileComputeArgs args) async
   return models.SystemState.fromStorageTypeSystemState(storageTypeSystemState);
 }
 
-Future<models.SystemState> getProfileAsync(List<String> servers, PublicKey system) async {
+Future<models.SystemState> getProfileAsync(
+    List<String> servers, PublicKey system) async {
   _GetProfileComputeArgs args = _GetProfileComputeArgs(servers, system);
   return compute(_getProfileCompute, args);
 }
@@ -332,7 +338,7 @@ Future<void> ingest(
   protocol.SignedEvent signedEvent,
 ) async {
   var event = await getEventWhenValidCompute(signedEvent);
-  
+
   if (await queries.doesEventExist(transaction, event)) {
     logger.d("event already persisted");
     return;
@@ -883,15 +889,8 @@ class ProcessInfo {
   final String store;
   final List<String> servers;
 
-  ProcessInfo(
-    this.processSecret,
-    this.username,
-    this.claims,
-    this.avatar,
-    this.description,
-    this.store,
-    this.servers
-  );
+  ProcessInfo(this.processSecret, this.username, this.claims, this.avatar,
+      this.description, this.store, this.servers);
 }
 
 class PolycentricModel extends ChangeNotifier {
@@ -931,8 +930,8 @@ class PolycentricModel extends ChangeNotifier {
         final claims = await loadClaims(transaction, public.bytes);
 
         this.identities.add(
-              ProcessInfo(
-                  identity, username, claims, avatar, description, store, servers),
+              ProcessInfo(identity, username, claims, avatar, description,
+                  store, servers),
             );
       });
 
