@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fixnum/fixnum.dart' as fixnum;
-
 import 'profile.dart';
 import '../main.dart' as main;
+import '../web_execption.dart';
 import '../shared_ui.dart' as shared_ui;
 import '../api_methods.dart' as api_methods;
 import '../synchronizer.dart' as synchronizer;
@@ -25,6 +25,7 @@ class AutomatedVerificationPage extends StatefulWidget {
 
 class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
   int page = 0;
+  String errorMessage = "";
 
   @override
   void initState() {
@@ -38,6 +39,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
   Future<void> doVerification(BuildContext context) async {
     setState(() {
       page = 0;
+      errorMessage = "";
     });
 
     try {
@@ -59,14 +61,24 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
       setState(() {
         page = 1;
       });
+    } on WebException catch (err) {
+      logger.e(err);
+
+      setState(() {
+        page = 2;
+        if (err.statusCode == 422) {
+          errorMessage = "The token was not found in your profile. Ensure you're using the correct username or id for your account. Try waiting a few minutes for the change to process and then trying again.";
+        } else {
+          errorMessage = "An unknown error occurred with the verificaiton server.";
+        }
+      });
     } catch (err) {
       logger.e(err);
 
       setState(() {
         page = 2;
+        errorMessage = "An unknown error occurred with the verificaiton server.";
       });
-
-      shared_ui.errorDialog(context, err.toString());
     }
   }
 
@@ -75,7 +87,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
     List<Widget> columnChildren = [
       const SizedBox(height: 100),
       shared_ui.appLogoAndText,
-      const SizedBox(height: 150),
+      const SizedBox(height: 120),
     ];
 
     if (page == 0) {
@@ -142,6 +154,15 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
             child: Text(
           "Verification failed.",
           style: TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 13,
+            color: Colors.white,
+          ),
+        )),
+        Center(
+            child: Text(
+          errorMessage,
+          style: const TextStyle(
             fontWeight: FontWeight.w400,
             fontSize: 13,
             color: Colors.white,
