@@ -9,6 +9,7 @@ import '../api_methods.dart' as api_methods;
 import '../synchronizer.dart' as synchronizer;
 import '../protocol.pb.dart' as protocol;
 import '../logger.dart';
+import 'dart:io';
 
 class AutomatedVerificationPage extends StatefulWidget {
   final main.ClaimInfo claim;
@@ -71,8 +72,13 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
               "The token was not found in your profile. Ensure you're using the correct username or id for your account. Try waiting a few minutes for the change to process and then trying again.";
         } else {
           errorMessage =
-              "An unknown error occurred with the verificaiton server.";
+              "An unknown error occurred with the verification server.";
         }
+      });
+    } on SocketException {
+      setState(() {
+        page = 2;
+        errorMessage = "Unable to connect to the verification server.";
       });
     } catch (err) {
       logger.e(err);
@@ -80,7 +86,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
       setState(() {
         page = 2;
         errorMessage =
-            "An unknown error occurred with the verificaiton server.";
+            "An unknown error occurred with the verification server.";
       });
     }
   }
