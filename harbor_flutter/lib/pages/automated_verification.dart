@@ -67,9 +67,11 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
       setState(() {
         page = 2;
         if (err.statusCode == 422) {
-          errorMessage = "The token was not found in your profile. Ensure you're using the correct username or id for your account. Try waiting a few minutes for the change to process and then trying again.";
+          errorMessage =
+              "The token was not found in your profile. Ensure you're using the correct username or id for your account. Try waiting a few minutes for the change to process and then trying again.";
         } else {
-          errorMessage = "An unknown error occurred with the verificaiton server.";
+          errorMessage =
+              "An unknown error occurred with the verificaiton server.";
         }
       });
     } catch (err) {
@@ -77,7 +79,8 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
 
       setState(() {
         page = 2;
-        errorMessage = "An unknown error occurred with the verificaiton server.";
+        errorMessage =
+            "An unknown error occurred with the verificaiton server.";
       });
     }
   }
