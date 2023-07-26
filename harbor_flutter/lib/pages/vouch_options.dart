@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import '../logger.dart';
+import 'vouch.dart';
 import '../shared_ui.dart' as shared_ui;
 import '../main.dart' as main;
 import '../protocol.pb.dart' as protocol;
@@ -13,31 +14,29 @@ import '../models.dart' as models;
 class VouchOptionsPage extends StatelessWidget {
   final main.ProcessSecret processSecret;
 
-  const VouchOptionsPage({Key? key, required this.processSecret}) : super(key: key);
+  const VouchOptionsPage({Key? key, required this.processSecret})
+      : super(key: key);
 
-  Future<bool> handleBase64(
+  Future<void> handleBase64(
     BuildContext context,
     main.PolycentricModel state,
     String text,
+    bool popBefore,
   ) async {
     try {
       final urlInfo = models.urlInfoFromLink(text);
       final eventLink = models.urlInfoGetEventLink(urlInfo);
 
-      /*
-      final protocol.Pointer pointer = protocol.Pointer.fromBuffer(buffer);
+      if (popBefore && context.mounted) {
+        Navigator.of(context).pop();
+      }
 
-      await state.db.transaction((transaction) async {
-        await main.makeVouch(transaction, processSecret, pointer);
-      });
-      */
-
-      return true;
+      Navigator.push(context, MaterialPageRoute<VouchPage>(builder: (context) {
+        return VouchPage(processSecret: processSecret, link: eventLink);
+      }));
     } catch (err) {
       logger.e(err);
       shared_ui.errorDialog(context, err.toString());
-
-      return false;
     }
   }
 
@@ -49,7 +48,7 @@ class VouchOptionsPage extends StatelessWidget {
         "#ff6666", 'Cancel', false, ScanMode.QR);
 
     if (rawScan != "-1" && context.mounted) {
-      await handleBase64(context, state, rawScan);
+      await handleBase64(context, state, rawScan, false);
     }
   }
 
@@ -101,12 +100,7 @@ class VouchOptionsPage extends StatelessWidget {
                     return;
                   }
 
-                  final success =
-                      await handleBase64(context, state, textController.text);
-
-                  if (success && context.mounted) {
-                    Navigator.of(context).pop();
-                  }
+                  await handleBase64(context, state, textController.text, true);
                 },
               ),
             ],
