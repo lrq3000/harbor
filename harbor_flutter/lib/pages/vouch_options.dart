@@ -8,11 +8,12 @@ import '../logger.dart';
 import '../shared_ui.dart' as shared_ui;
 import '../main.dart' as main;
 import '../protocol.pb.dart' as protocol;
+import '../models.dart' as models;
 
-class VouchPage extends StatelessWidget {
+class VouchOptionsPage extends StatelessWidget {
   final main.ProcessSecret processSecret;
 
-  const VouchPage({Key? key, required this.processSecret}) : super(key: key);
+  const VouchOptionsPage({Key? key, required this.processSecret}) : super(key: key);
 
   Future<bool> handleBase64(
     BuildContext context,
@@ -20,12 +21,16 @@ class VouchPage extends StatelessWidget {
     String text,
   ) async {
     try {
-      final List<int> buffer = base64.decode(text);
+      final urlInfo = models.urlInfoFromLink(text);
+      final eventLink = models.urlInfoGetExportBundle(urlInfo);
+
+      /*
       final protocol.Pointer pointer = protocol.Pointer.fromBuffer(buffer);
 
       await state.db.transaction((transaction) async {
         await main.makeVouch(transaction, processSecret, pointer);
       });
+      */
 
       return true;
     } catch (err) {

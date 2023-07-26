@@ -15,7 +15,7 @@ import '../shared_ui.dart' as shared_ui;
 import 'claim.dart';
 import 'create_claim.dart';
 import 'new_or_import_profile.dart';
-import 'vouch.dart';
+import 'vouch_options.dart';
 import 'advanced.dart';
 import '../logger.dart';
 
@@ -619,8 +619,8 @@ class _ProfilePageState extends State<ProfilePage> {
         left: shared_ui.makeSVG('check_box.svg', 'Vouch'),
         onPressed: () async {
           Navigator.push(context,
-              MaterialPageRoute<VouchPage>(builder: (context) {
-            return VouchPage(processSecret: identity.processSecret);
+              MaterialPageRoute<VouchOptionsPage>(builder: (context) {
+            return VouchOptionsPage(processSecret: identity.processSecret);
           }));
         },
       ),
