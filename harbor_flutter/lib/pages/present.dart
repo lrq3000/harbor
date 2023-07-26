@@ -8,22 +8,31 @@ import 'package:provider/provider.dart';
 
 import '../main.dart' as main;
 import '../shared_ui.dart' as shared_ui;
+import '../protocol.pb.dart' as protocol;
 
 Future<void> handlePresentClipboard(
-  String encodedClaim,
+  main.PolycentricModel state,
+  final protocol.Pointer pointer,
   BuildContext context,
 ) async {
-  await services.Clipboard.setData(services.ClipboardData(text: encodedClaim));
+  final link = await main.makeEventLink(
+      state.db, pointer.system, pointer.process, pointer.logicalClock);
+
+  await services.Clipboard.setData(services.ClipboardData(text: link));
 
   if (context.mounted) {
     shared_ui.showSnackBar(context, 'Copied to clipboard');
   }
 }
 
-void handlePresentShare(
-  String encodedClaim,
-) {
-  share_plus.Share.share(encodedClaim);
+Future<void> handlePresentShare(
+  main.PolycentricModel state,
+  final protocol.Pointer pointer,
+) async {
+  final link = await main.makeEventLink(
+      state.db, pointer.system, pointer.process, pointer.logicalClock);
+
+  share_plus.Share.share(link);
 }
 
 class PresentPage extends StatelessWidget {
@@ -40,6 +49,7 @@ class PresentPage extends StatelessWidget {
     final identity = state.identities[identityIndex];
     final claim = identity.claims[claimIndex];
     final encodedClaim = base64.encode(claim.pointer.writeToBuffer());
+    final pointer = claim.pointer;
 
     return shared_ui.StandardScaffold(
       appBar: AppBar(
@@ -119,7 +129,7 @@ class PresentPage extends StatelessWidget {
           actionDescription: 'Share this unique code with others to verify',
           left: shared_ui.makeSVG('content_copy.svg', 'Copy'),
           onPressed: () async {
-            await handlePresentClipboard(encodedClaim, context);
+            await handlePresentClipboard(state, pointer, context);
           },
         ),
         shared_ui.StandardButtonGeneric(
@@ -127,7 +137,7 @@ class PresentPage extends StatelessWidget {
           actionDescription: 'Share code for verification',
           left: shared_ui.makeSVG('share.svg', 'Share'),
           onPressed: () async {
-            handlePresentShare(encodedClaim);
+            await handlePresentShare(state, pointer);
           },
         ),
         const SizedBox(height: 15),

@@ -146,7 +146,7 @@ Future<String> makeEventLink(
     ..urlType = models.URLInfoType.urlInfoTypeEventLink
     ..body = eventLink.writeToBuffer();
 
-  return models.urlInfoToLinkSuffix(urlInfo);
+  return models.urlInfoToLink(urlInfo);
 }
 
 Future<String> makeExportBundle(
