@@ -3,14 +3,13 @@ import 'dart:typed_data';
 
 import 'package:fixnum/fixnum.dart';
 import 'package:http/http.dart' as http;
-
+import 'web_execption.dart';
 import 'protocol.pb.dart' as protocol;
 import 'logger.dart';
 
 void checkResponse(String name, http.Response response) {
   if (response.statusCode != 200) {
-    final err = "$name, ${response.statusCode}, ${response.body}";
-    throw Exception(err);
+    throw WebException(response.statusCode, name, response.body);
   }
 }
 
