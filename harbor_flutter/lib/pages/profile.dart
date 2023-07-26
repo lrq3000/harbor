@@ -657,8 +657,9 @@ class _ProfilePageState extends State<ProfilePage> {
       const SizedBox(height: 30),
     ]);
 
-    return shared_ui.StandardScaffold(
+    return SafeArea(
+        child: shared_ui.StandardScaffold(
       children: listViewChildren,
-    );
+    ));
   }
 }
