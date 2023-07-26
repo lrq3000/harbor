@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -8,7 +6,6 @@ import '../logger.dart';
 import 'vouch.dart';
 import '../shared_ui.dart' as shared_ui;
 import '../main.dart' as main;
-import '../protocol.pb.dart' as protocol;
 import '../models.dart' as models;
 
 class VouchOptionsPage extends StatelessWidget {

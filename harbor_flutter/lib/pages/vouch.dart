@@ -21,8 +21,8 @@ class VouchPage extends StatefulWidget {
 }
 
 class _VouchPageState extends State<VouchPage> {
-  protocol.Pointer? statePointer = null;
-  protocol.Event? stateEvent = null;
+  protocol.Pointer? statePointer;
+  protocol.Event? stateEvent;
   String stateUsername = "";
 
   @override
@@ -95,7 +95,7 @@ class _VouchPageState extends State<VouchPage> {
       stateUsername = "";
     });
 
-    final state = new models.StorageTypeSystemState();
+    final state = models.StorageTypeSystemState();
 
     for (final server in widget.link.servers) {
       try {
@@ -128,8 +128,6 @@ class _VouchPageState extends State<VouchPage> {
         )),
       ]);
     } else {
-      final protocol.Claim claim =
-          protocol.Claim.fromBuffer(stateEvent!.content);
       final claimInfo = main.ClaimInfo(statePointer!, stateEvent!);
 
       columnChildren.addAll([
