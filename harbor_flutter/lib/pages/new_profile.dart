@@ -20,7 +20,6 @@ class _NewProfilePageState extends State<NewProfilePage> {
     final state = context.watch<main.PolycentricModel>();
 
     return shared_ui.StandardScaffold(
-      physics: const NeverScrollableScrollPhysics(),
       children: [
         const SizedBox(height: 150),
         shared_ui.appLogoAndText,
