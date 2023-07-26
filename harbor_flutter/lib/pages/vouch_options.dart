@@ -22,7 +22,7 @@ class VouchOptionsPage extends StatelessWidget {
   ) async {
     try {
       final urlInfo = models.urlInfoFromLink(text);
-      final eventLink = models.urlInfoGetExportBundle(urlInfo);
+      final eventLink = models.urlInfoGetEventLink(urlInfo);
 
       /*
       final protocol.Pointer pointer = protocol.Pointer.fromBuffer(buffer);
