@@ -23,6 +23,7 @@ class VouchPage extends StatefulWidget {
 class _VouchPageState extends State<VouchPage> {
   protocol.Pointer? statePointer = null;
   protocol.Event? stateEvent = null;
+  String stateUsername = "";
 
   @override
   void initState() {
@@ -68,19 +69,48 @@ class _VouchPageState extends State<VouchPage> {
     }
   }
 
+  Future<void> loadUsername(
+    String server,
+    models.StorageTypeSystemState state,
+  ) async {
+    final events = await api_methods.getQueryLatest(
+      server,
+      widget.link.system,
+      [models.ContentType.contentTypeUsername],
+    );
+
+    for (final signedEvent in events.events) {
+      final event = await main.getEventWhenValid(signedEvent);
+
+      if (event != null) {
+        state.update(event);
+      }
+    }
+  }
+
   Future<void> doVerification(BuildContext context) async {
     setState(() {
       statePointer = null;
       stateEvent = null;
+      stateUsername = "";
     });
+
+    final state = new models.StorageTypeSystemState();
 
     for (final server in widget.link.servers) {
       try {
         await loadClaim(server);
+        await loadUsername(server, state);
       } catch (err) {
         logger.w(err);
       }
     }
+
+    final snapshot = models.SystemState.fromStorageTypeSystemState(state);
+
+    setState(() {
+      stateUsername = snapshot.username;
+    });
   }
 
   @override
@@ -103,6 +133,18 @@ class _VouchPageState extends State<VouchPage> {
       final claimInfo = main.ClaimInfo(statePointer!, stateEvent!);
 
       columnChildren.addAll([
+        Center(
+            child: Container(
+                margin: const EdgeInsets.only(bottom: 10, top: 10),
+                child: Text(
+                  stateUsername,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 32,
+                    color: Colors.white,
+                  ),
+                ))),
         const Center(
             child: Text(
           "Requests you to verify their claim",
