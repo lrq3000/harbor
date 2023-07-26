@@ -186,6 +186,16 @@ protocol.ExportBundle urlInfoGetExportBundle(
   return protocol.ExportBundle.fromBuffer(proto.body);
 }
 
+protocol.URLInfoEventLink urlInfoGetEventLink(
+  protocol.URLInfo proto,
+) {
+  if (!(proto.urlType == URLInfoType.urlInfoTypeEventLink)) {
+    throw "expected urlInfoTypeEventLink";
+  }
+
+  return protocol.URLInfoEventLink.fromBuffer(proto.body);
+}
+
 protocol.URLInfo urlInfoFromLink(String text) {
   const prefix = "polycentric://";
 

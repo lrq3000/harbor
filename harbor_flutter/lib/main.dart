@@ -126,6 +126,29 @@ Future<String> makeSystemLink(
   return models.urlInfoToLinkSuffix(urlInfo);
 }
 
+Future<String> makeEventLink(
+  sqflite.Database db,
+  protocol.PublicKey system,
+  protocol.Process process,
+  fixnum.Int64 logicalClock,
+) async {
+  final servers = await db.transaction((transaction) async {
+    return await loadServerList(transaction, system.key);
+  });
+
+  final eventLink = protocol.URLInfoEventLink()
+    ..system = system
+    ..process = process
+    ..logicalClock = logicalClock
+    ..servers.addAll(servers);
+
+  final urlInfo = protocol.URLInfo()
+    ..urlType = models.URLInfoType.urlInfoTypeEventLink
+    ..body = eventLink.writeToBuffer();
+
+  return models.urlInfoToLink(urlInfo);
+}
+
 Future<String> makeExportBundle(
   sqflite.Database db,
   ProcessSecret processSecret,
