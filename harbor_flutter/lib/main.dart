@@ -19,6 +19,7 @@ import 'protocol.pb.dart';
 import 'synchronizer.dart' as synchronizer;
 import 'queries.dart' as queries;
 import 'shared_ui.dart' as shared_ui;
+import 'ranges.dart' as ranges;
 import 'logger.dart';
 
 const Set<String> oAuthClaimTypes = {"Discord", "Instagram", "Twitter"};
@@ -688,33 +689,23 @@ Future<void> deleteEvent(
   }
 }
 
-Future<protocol.Pointer> publishBlob(sqflite.Transaction transaction,
+Future<List<ranges.Range>> publishBlob(sqflite.Transaction transaction,
     ProcessSecret processInfo, String mime, List<int> bytes) async {
-  final blobMeta = protocol.BlobMeta()
-    ..sectionCount = fixnum.Int64(1)
-    ..mime = mime;
+  final List<ranges.Range> result = [];
 
-  final protocol.Event blobMetaEvent = protocol.Event()
-    ..contentType = models.ContentType.contentTypeBlobMeta
-    ..content = blobMeta.writeToBuffer();
+  final maxBytes = 1024 * 512;
 
-  final blobMetaPointer = await saveEvent(
-    transaction,
-    processInfo,
-    blobMetaEvent,
-  );
+  for (var i = 0; i < bytes.length; i += maxBytes) {
+    final sectionEvent = protocol.Event()
+      ..contentType = models.ContentType.contentTypeBlobSection
+      ..content = bytes.sublist(i, i + maxBytes);
 
-  final blobSection = protocol.BlobSection()
-    ..metaPointer = blobMetaPointer.logicalClock
-    ..content = bytes;
+    final pointer = await saveEvent(transaction, processInfo, sectionEvent);
 
-  final blobSectionEvent = protocol.Event()
-    ..contentType = models.ContentType.contentTypeBlobSection
-    ..content = blobSection.writeToBuffer();
+    ranges.insert(result, pointer.logicalClock);
+  }
 
-  await saveEvent(transaction, processInfo, blobSectionEvent);
-
-  return blobMetaPointer;
+  return result;
 }
 
 Future<void> setCRDT(sqflite.Transaction transaction, ProcessSecret processInfo,

@@ -163,15 +163,46 @@ final $typed_data.Uint8List blobMetaDescriptor = $convert.base64Decode(
 const BlobSection$json = {
   '1': 'BlobSection',
   '2': [
-    {'1': 'meta_pointer', '3': 1, '4': 1, '5': 4, '10': 'metaPointer'},
-    {'1': 'content', '3': 2, '4': 1, '5': 12, '10': 'content'},
+    {'1': 'content', '3': 1, '4': 1, '5': 12, '10': 'content'},
   ],
 };
 
 /// Descriptor for `BlobSection`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List blobSectionDescriptor = $convert.base64Decode(
-    'CgtCbG9iU2VjdGlvbhIhCgxtZXRhX3BvaW50ZXIYASABKARSC21ldGFQb2ludGVyEhgKB2Nvbn'
-    'RlbnQYAiABKAxSB2NvbnRlbnQ=');
+    'CgtCbG9iU2VjdGlvbhIYCgdjb250ZW50GAEgASgMUgdjb250ZW50');
+
+@$core.Deprecated('Use imageManifestDescriptor instead')
+const ImageManifest$json = {
+  '1': 'ImageManifest',
+  '2': [
+    {'1': 'mime', '3': 1, '4': 1, '5': 9, '10': 'mime'},
+    {'1': 'width', '3': 2, '4': 1, '5': 4, '10': 'width'},
+    {'1': 'height', '3': 3, '4': 1, '5': 4, '10': 'height'},
+    {'1': 'byte_count', '3': 4, '4': 1, '5': 4, '10': 'byteCount'},
+    {'1': 'process', '3': 5, '4': 1, '5': 11, '6': '.userpackage.Process', '10': 'process'},
+    {'1': 'sections', '3': 6, '4': 3, '5': 11, '6': '.userpackage.Range', '10': 'sections'},
+  ],
+};
+
+/// Descriptor for `ImageManifest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List imageManifestDescriptor = $convert.base64Decode(
+    'Cg1JbWFnZU1hbmlmZXN0EhIKBG1pbWUYASABKAlSBG1pbWUSFAoFd2lkdGgYAiABKARSBXdpZH'
+    'RoEhYKBmhlaWdodBgDIAEoBFIGaGVpZ2h0Eh0KCmJ5dGVfY291bnQYBCABKARSCWJ5dGVDb3Vu'
+    'dBIuCgdwcm9jZXNzGAUgASgLMhQudXNlcnBhY2thZ2UuUHJvY2Vzc1IHcHJvY2VzcxIuCghzZW'
+    'N0aW9ucxgGIAMoCzISLnVzZXJwYWNrYWdlLlJhbmdlUghzZWN0aW9ucw==');
+
+@$core.Deprecated('Use imageBundleDescriptor instead')
+const ImageBundle$json = {
+  '1': 'ImageBundle',
+  '2': [
+    {'1': 'image_manifests', '3': 1, '4': 3, '5': 11, '6': '.userpackage.ImageManifest', '10': 'imageManifests'},
+  ],
+};
+
+/// Descriptor for `ImageBundle`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List imageBundleDescriptor = $convert.base64Decode(
+    'CgtJbWFnZUJ1bmRsZRJDCg9pbWFnZV9tYW5pZmVzdHMYASADKAsyGi51c2VycGFja2FnZS5JbW'
+    'FnZU1hbmlmZXN0Ug5pbWFnZU1hbmlmZXN0cw==');
 
 @$core.Deprecated('Use eventDescriptor instead')
 const Event$json = {
