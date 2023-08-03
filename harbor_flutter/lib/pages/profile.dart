@@ -8,10 +8,13 @@ import 'package:image_cropper/image_cropper.dart' as image_cropper;
 import 'package:tap_debouncer/tap_debouncer.dart' as tap_debouncer;
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'dart:convert' as convert;
+import 'dart:ui' as dart_ui;
+import 'package:fixnum/fixnum.dart' as fixnum;
 
 import '../main.dart' as main;
 import '../protocol.pb.dart' as protocol;
 import '../shared_ui.dart' as shared_ui;
+import '../synchronizer.dart' as synchronizer;
 import 'claim.dart';
 import 'create_claim.dart';
 import 'new_or_import_profile.dart';
@@ -309,18 +312,60 @@ class _ProfilePageState extends State<ProfilePage> {
 
     final bytes = await croppedFile.readAsBytes();
 
+    final imageBundle = protocol.ImageBundle();
+
+    final resolutions = [256, 128, 32];
+
     await state.db.transaction((transaction) async {
-      final pointer = await main.publishBlob(
-        transaction,
-        identity.processSecret,
-        "image/jpeg",
-        bytes,
-      );
+      for (final resolution in resolutions) {
+        final codec = await dart_ui.instantiateImageCodec(
+          bytes,
+          targetWidth: resolution,
+          targetHeight: resolution,
+        );
+
+        final frame = await codec.getNextFrame();
+
+        final encoded = await frame.image.toByteData(
+          format: dart_ui.ImageByteFormat.png,
+        );
+
+        if (encoded == null) {
+          logger.w("encoded was null");
+
+          return;
+        }
+
+        final raw = encoded.buffer.asUint8List();
+
+        final sections = await main.publishBlob(
+          transaction,
+          identity.processSecret,
+          "image/png",
+          raw,
+        );
+
+        final process = protocol.Process()
+          ..process = identity.processSecret.process;
+
+        final manifest = protocol.ImageManifest()
+          ..mime = "image/png"
+          ..width = fixnum.Int64(resolution)
+          ..height = fixnum.Int64(resolution)
+          ..byteCount = fixnum.Int64(raw.length)
+          ..process = process;
+
+        manifest.sections.addAll(
+          synchronizer.rangesToProtocolRanges(sections),
+        );
+
+        imageBundle.imageManifests.add(manifest);
+      }
 
       await main.setAvatar(
         transaction,
         identity.processSecret,
-        pointer,
+        imageBundle,
       );
     });
 

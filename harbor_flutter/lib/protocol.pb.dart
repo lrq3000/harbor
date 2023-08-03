@@ -503,8 +503,7 @@ class BlobSection extends $pb.GeneratedMessage {
   factory BlobSection.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'BlobSection', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
-    ..a<$fixnum.Int64>(1, _omitFieldNames ? '' : 'metaPointer', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
-    ..a<$core.List<$core.int>>(2, _omitFieldNames ? '' : 'content', $pb.PbFieldType.OY)
+    ..a<$core.List<$core.int>>(1, _omitFieldNames ? '' : 'content', $pb.PbFieldType.OY)
     ..hasRequiredFields = false
   ;
 
@@ -530,22 +529,137 @@ class BlobSection extends $pb.GeneratedMessage {
   static BlobSection? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $fixnum.Int64 get metaPointer => $_getI64(0);
+  $core.List<$core.int> get content => $_getN(0);
   @$pb.TagNumber(1)
-  set metaPointer($fixnum.Int64 v) { $_setInt64(0, v); }
+  set content($core.List<$core.int> v) { $_setBytes(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasMetaPointer() => $_has(0);
+  $core.bool hasContent() => $_has(0);
   @$pb.TagNumber(1)
-  void clearMetaPointer() => clearField(1);
+  void clearContent() => clearField(1);
+}
+
+class ImageManifest extends $pb.GeneratedMessage {
+  factory ImageManifest() => create();
+  ImageManifest._() : super();
+  factory ImageManifest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ImageManifest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ImageManifest', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'mime')
+    ..a<$fixnum.Int64>(2, _omitFieldNames ? '' : 'width', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..a<$fixnum.Int64>(3, _omitFieldNames ? '' : 'height', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..a<$fixnum.Int64>(4, _omitFieldNames ? '' : 'byteCount', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..aOM<Process>(5, _omitFieldNames ? '' : 'process', subBuilder: Process.create)
+    ..pc<Range>(6, _omitFieldNames ? '' : 'sections', $pb.PbFieldType.PM, subBuilder: Range.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ImageManifest clone() => ImageManifest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ImageManifest copyWith(void Function(ImageManifest) updates) => super.copyWith((message) => updates(message as ImageManifest)) as ImageManifest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ImageManifest create() => ImageManifest._();
+  ImageManifest createEmptyInstance() => create();
+  static $pb.PbList<ImageManifest> createRepeated() => $pb.PbList<ImageManifest>();
+  @$core.pragma('dart2js:noInline')
+  static ImageManifest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ImageManifest>(create);
+  static ImageManifest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get mime => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set mime($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasMime() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMime() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.List<$core.int> get content => $_getN(1);
+  $fixnum.Int64 get width => $_getI64(1);
   @$pb.TagNumber(2)
-  set content($core.List<$core.int> v) { $_setBytes(1, v); }
+  set width($fixnum.Int64 v) { $_setInt64(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasContent() => $_has(1);
+  $core.bool hasWidth() => $_has(1);
   @$pb.TagNumber(2)
-  void clearContent() => clearField(2);
+  void clearWidth() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $fixnum.Int64 get height => $_getI64(2);
+  @$pb.TagNumber(3)
+  set height($fixnum.Int64 v) { $_setInt64(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasHeight() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearHeight() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $fixnum.Int64 get byteCount => $_getI64(3);
+  @$pb.TagNumber(4)
+  set byteCount($fixnum.Int64 v) { $_setInt64(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasByteCount() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearByteCount() => clearField(4);
+
+  @$pb.TagNumber(5)
+  Process get process => $_getN(4);
+  @$pb.TagNumber(5)
+  set process(Process v) { setField(5, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasProcess() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearProcess() => clearField(5);
+  @$pb.TagNumber(5)
+  Process ensureProcess() => $_ensure(4);
+
+  @$pb.TagNumber(6)
+  $core.List<Range> get sections => $_getList(5);
+}
+
+class ImageBundle extends $pb.GeneratedMessage {
+  factory ImageBundle() => create();
+  ImageBundle._() : super();
+  factory ImageBundle.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ImageBundle.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ImageBundle', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
+    ..pc<ImageManifest>(1, _omitFieldNames ? '' : 'imageManifests', $pb.PbFieldType.PM, subBuilder: ImageManifest.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ImageBundle clone() => ImageBundle()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ImageBundle copyWith(void Function(ImageBundle) updates) => super.copyWith((message) => updates(message as ImageBundle)) as ImageBundle;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ImageBundle create() => ImageBundle._();
+  ImageBundle createEmptyInstance() => create();
+  static $pb.PbList<ImageBundle> createRepeated() => $pb.PbList<ImageBundle>();
+  @$core.pragma('dart2js:noInline')
+  static ImageBundle getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ImageBundle>(create);
+  static ImageBundle? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<ImageManifest> get imageManifests => $_getList(0);
 }
 
 class Event extends $pb.GeneratedMessage {

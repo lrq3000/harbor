@@ -19,6 +19,7 @@ import 'protocol.pb.dart';
 import 'synchronizer.dart' as synchronizer;
 import 'queries.dart' as queries;
 import 'shared_ui.dart' as shared_ui;
+import 'ranges.dart' as ranges;
 import 'logger.dart';
 
 const Set<String> oAuthClaimTypes = {"Discord", "Instagram", "Twitter"};
@@ -536,82 +537,79 @@ Future<String> loadLatestStore(
 
 Future<Image?> loadImage(
   sqflite.Transaction transaction,
-  protocol.Pointer pointer,
+  String mime,
+  List<int> system,
+  protocol.Process process,
+  List<protocol.Range> sections,
 ) async {
-  final metaSignedEvent = await queries.loadEvent(
-    transaction,
-    pointer.system.key,
-    pointer.process.process,
-    pointer.logicalClock,
-  );
+  final List<int> buffer = [];
 
-  if (metaSignedEvent == null) {
-    return null;
+  for (final section in sections) {
+    for (var i = section.low; i <= section.high; i++) {
+      final signedEvent = await queries.loadEvent(
+        transaction,
+        system,
+        process.process,
+        i,
+      );
+
+      if (signedEvent == null) {
+        return null;
+      }
+
+      final event = protocol.Event.fromBuffer(signedEvent.event);
+
+      if (event.contentType != models.ContentType.contentTypeBlobSection) {
+        logger.d("expected blob section event but got: "
+            "${event.contentType.toString()}");
+
+        return null;
+      }
+
+      buffer.addAll(event.content);
+    }
   }
 
-  final metaEvent = protocol.Event.fromBuffer(metaSignedEvent.event);
-
-  if (metaEvent.contentType != models.ContentType.contentTypeBlobMeta) {
-    logger.d(
-        "expected blob meta event but got: ${metaEvent.contentType.toString()}");
-
-    return null;
-  }
-
-  // final blobMeta = Protocol.BlobMeta.fromBuffer(metaEvent.content);
-
-  final contentSignedEvent = await queries.loadEvent(
-    transaction,
-    metaEvent.system.key,
-    metaEvent.process.process,
-    metaEvent.logicalClock + 1,
-  );
-
-  if (contentSignedEvent == null) {
-    return null;
-  }
-
-  final contentEvent = protocol.Event.fromBuffer(contentSignedEvent.event);
-
-  if (contentEvent.contentType != models.ContentType.contentTypeBlobSection) {
-    logger.d("expected blob section event but got: "
-        "${contentEvent.contentType.toString()}");
-
-    return null;
-  }
-
-  final blobSection = protocol.BlobSection.fromBuffer(contentEvent.content);
-
-  return Image.memory(Uint8List.fromList(blobSection.content));
+  return Image.memory(Uint8List.fromList(buffer));
 }
 
 Future<Image?> loadLatestAvatar(
   sqflite.Transaction transaction,
   List<int> system,
 ) async {
-  final signedEvent = await queries.loadLatestCRDTByContentType(
-    transaction,
-    system,
-    models.ContentType.contentTypeAvatar,
-  );
-
-  if (signedEvent == null) {
-    return null;
-  } else {
-    final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
-
-    if (event.contentType != models.ContentType.contentTypeAvatar) {
-      logger.d("expected blob section event but got: "
-          "${event.contentType.toString()}");
-
-      return null;
-    }
-
-    final protocol.Pointer pointer = protocol.Pointer.fromBuffer(
-      event.lwwElement.value,
+  try {
+    final signedEvent = await queries.loadLatestCRDTByContentType(
+      transaction,
+      system,
+      models.ContentType.contentTypeAvatar,
     );
 
-    return loadImage(transaction, pointer);
+    if (signedEvent == null) {
+      return null;
+    } else {
+      final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
+
+      if (event.contentType != models.ContentType.contentTypeAvatar) {
+        logger.d("expected blob section event but got: "
+            "${event.contentType.toString()}");
+
+        return null;
+      }
+
+      final protocol.ImageBundle bundle = protocol.ImageBundle.fromBuffer(
+        event.lwwElement.value,
+      );
+
+      final protocol.ImageManifest manifest = bundle.imageManifests.firstWhere(
+          (manifest) =>
+              manifest.width == fixnum.Int64(256) &&
+              manifest.height == fixnum.Int64(256));
+
+      return loadImage(transaction, manifest.mime, system, manifest.process,
+          manifest.sections);
+    }
+  } catch (err) {
+    return null;
   }
 }
 
@@ -688,33 +686,23 @@ Future<void> deleteEvent(
   }
 }
 
-Future<protocol.Pointer> publishBlob(sqflite.Transaction transaction,
+Future<List<ranges.Range>> publishBlob(sqflite.Transaction transaction,
     ProcessSecret processInfo, String mime, List<int> bytes) async {
-  final blobMeta = protocol.BlobMeta()
-    ..sectionCount = fixnum.Int64(1)
-    ..mime = mime;
+  final List<ranges.Range> result = [];
 
-  final protocol.Event blobMetaEvent = protocol.Event()
-    ..contentType = models.ContentType.contentTypeBlobMeta
-    ..content = blobMeta.writeToBuffer();
+  const maxBytes = 1024 * 512;
 
-  final blobMetaPointer = await saveEvent(
-    transaction,
-    processInfo,
-    blobMetaEvent,
-  );
+  for (var i = 0; i < bytes.length; i += maxBytes) {
+    final sectionEvent = protocol.Event()
+      ..contentType = models.ContentType.contentTypeBlobSection
+      ..content = bytes.sublist(i, min(i + maxBytes, bytes.length - i));
 
-  final blobSection = protocol.BlobSection()
-    ..metaPointer = blobMetaPointer.logicalClock
-    ..content = bytes;
+    final pointer = await saveEvent(transaction, processInfo, sectionEvent);
 
-  final blobSectionEvent = protocol.Event()
-    ..contentType = models.ContentType.contentTypeBlobSection
-    ..content = blobSection.writeToBuffer();
+    ranges.insert(result, pointer.logicalClock);
+  }
 
-  await saveEvent(transaction, processInfo, blobSectionEvent);
-
-  return blobMetaPointer;
+  return result;
 }
 
 Future<void> setCRDT(sqflite.Transaction transaction, ProcessSecret processInfo,
@@ -731,12 +719,12 @@ Future<void> setCRDT(sqflite.Transaction transaction, ProcessSecret processInfo,
 }
 
 Future<void> setAvatar(sqflite.Transaction transaction,
-    ProcessSecret processInfo, protocol.Pointer pointer) async {
+    ProcessSecret processInfo, protocol.ImageBundle imageBundle) async {
   await setCRDT(
     transaction,
     processInfo,
     models.ContentType.contentTypeAvatar,
-    pointer.writeToBuffer(),
+    imageBundle.writeToBuffer(),
   );
 }
 
