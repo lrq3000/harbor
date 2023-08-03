@@ -577,39 +577,39 @@ Future<Image?> loadLatestAvatar(
   sqflite.Transaction transaction,
   List<int> system,
 ) async {
-  final signedEvent = await queries.loadLatestCRDTByContentType(
-    transaction,
-    system,
-    models.ContentType.contentTypeAvatar,
-  );
-
-  if (signedEvent == null) {
-    return null;
-  } else {
-    final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
-
-    if (event.contentType != models.ContentType.contentTypeAvatar) {
-      logger.d("expected blob section event but got: "
-          "${event.contentType.toString()}");
-
-      return null;
-    }
-
-    final protocol.ImageBundle bundle = protocol.ImageBundle.fromBuffer(
-      event.lwwElement.value,
+  try {
+    final signedEvent = await queries.loadLatestCRDTByContentType(
+      transaction,
+      system,
+      models.ContentType.contentTypeAvatar,
     );
 
-    final protocol.ImageManifest? manifest = bundle.imageManifests.firstWhere(
-        (manifest) =>
-            manifest.width == fixnum.Int64(256) &&
-            manifest.height == fixnum.Int64(256));
-
-    if (manifest == null) {
+    if (signedEvent == null) {
       return null;
-    }
+    } else {
+      final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
 
-    return loadImage(transaction, manifest.mime, system, manifest.process,
-        manifest.sections);
+      if (event.contentType != models.ContentType.contentTypeAvatar) {
+        logger.d("expected blob section event but got: "
+            "${event.contentType.toString()}");
+
+        return null;
+      }
+
+      final protocol.ImageBundle bundle = protocol.ImageBundle.fromBuffer(
+        event.lwwElement.value,
+      );
+
+      final protocol.ImageManifest manifest = bundle.imageManifests.firstWhere(
+          (manifest) =>
+              manifest.width == fixnum.Int64(256) &&
+              manifest.height == fixnum.Int64(256));
+
+      return loadImage(transaction, manifest.mime, system, manifest.process,
+          manifest.sections);
+    }
+  } catch (err) {
+    return null;
   }
 }
 
@@ -690,12 +690,12 @@ Future<List<ranges.Range>> publishBlob(sqflite.Transaction transaction,
     ProcessSecret processInfo, String mime, List<int> bytes) async {
   final List<ranges.Range> result = [];
 
-  final maxBytes = 1024 * 512;
+  const maxBytes = 1024 * 512;
 
   for (var i = 0; i < bytes.length; i += maxBytes) {
     final sectionEvent = protocol.Event()
       ..contentType = models.ContentType.contentTypeBlobSection
-      ..content = bytes.sublist(i, i + maxBytes);
+      ..content = bytes.sublist(i, min(i + maxBytes, bytes.length - i));
 
     final pointer = await saveEvent(transaction, processInfo, sectionEvent);
 
