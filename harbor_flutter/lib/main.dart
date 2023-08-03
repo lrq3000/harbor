@@ -538,58 +538,39 @@ Future<String> loadLatestStore(
 Future<Image?> loadImage(
   sqflite.Transaction transaction,
   String mime,
+  List<int> system,
   protocol.Process process,
   List<protocol.Range> sections,
 ) async {
-  return null;
+  final List<int> buffer = [];
 
-  /*
-  final metaSignedEvent = await queries.loadEvent(
-    transaction,
-    pointer.system.key,
-    pointer.process.process,
-    pointer.logicalClock,
-  );
+  for (final section in sections) {
+    for (var i = section.low; i <= section.high; i++) {
+      final signedEvent = await queries.loadEvent(
+        transaction,
+        system,
+        process.process,
+        i,
+      );
 
-  if (metaSignedEvent == null) {
-    return null;
+      if (signedEvent == null) {
+        return null;
+      }
+
+      final event = protocol.Event.fromBuffer(signedEvent.event);
+
+      if (event.contentType != models.ContentType.contentTypeBlobSection) {
+        logger.d("expected blob section event but got: "
+            "${event.contentType.toString()}");
+
+        return null;
+      }
+
+      buffer.addAll(event.content);
+    }
   }
 
-  final metaEvent = protocol.Event.fromBuffer(metaSignedEvent.event);
-
-  if (metaEvent.contentType != models.ContentType.contentTypeBlobMeta) {
-    logger.d(
-        "expected blob meta event but got: ${metaEvent.contentType.toString()}");
-
-    return null;
-  }
-
-  // final blobMeta = Protocol.BlobMeta.fromBuffer(metaEvent.content);
-
-  final contentSignedEvent = await queries.loadEvent(
-    transaction,
-    metaEvent.system.key,
-    metaEvent.process.process,
-    metaEvent.logicalClock + 1,
-  );
-
-  if (contentSignedEvent == null) {
-    return null;
-  }
-
-  final contentEvent = protocol.Event.fromBuffer(contentSignedEvent.event);
-
-  if (contentEvent.contentType != models.ContentType.contentTypeBlobSection) {
-    logger.d("expected blob section event but got: "
-        "${contentEvent.contentType.toString()}");
-
-    return null;
-  }
-
-  final blobSection = protocol.BlobSection.fromBuffer(contentEvent.content);
-
-  return Image.memory(Uint8List.fromList(blobSection.content));
-  */
+  return Image.memory(Uint8List.fromList(buffer));
 }
 
 Future<Image?> loadLatestAvatar(
@@ -627,8 +608,8 @@ Future<Image?> loadLatestAvatar(
       return null;
     }
 
-    return loadImage(
-        transaction, manifest.mime, manifest.process, manifest.sections);
+    return loadImage(transaction, manifest.mime, system, manifest.process,
+        manifest.sections);
   }
 }
 
