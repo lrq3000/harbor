@@ -537,8 +537,13 @@ Future<String> loadLatestStore(
 
 Future<Image?> loadImage(
   sqflite.Transaction transaction,
-  protocol.Pointer pointer,
+  String mime,
+  protocol.Process process,
+  List<protocol.Range> sections,
 ) async {
+  return null;
+
+  /*
   final metaSignedEvent = await queries.loadEvent(
     transaction,
     pointer.system.key,
@@ -584,6 +589,7 @@ Future<Image?> loadImage(
   final blobSection = protocol.BlobSection.fromBuffer(contentEvent.content);
 
   return Image.memory(Uint8List.fromList(blobSection.content));
+  */
 }
 
 Future<Image?> loadLatestAvatar(
@@ -608,11 +614,21 @@ Future<Image?> loadLatestAvatar(
       return null;
     }
 
-    final protocol.Pointer pointer = protocol.Pointer.fromBuffer(
+    final protocol.ImageBundle bundle = protocol.ImageBundle.fromBuffer(
       event.lwwElement.value,
     );
 
-    return loadImage(transaction, pointer);
+    final protocol.ImageManifest? manifest = bundle.imageManifests.firstWhere(
+        (manifest) =>
+            manifest.width == fixnum.Int64(256) &&
+            manifest.height == fixnum.Int64(256));
+
+    if (manifest == null) {
+      return null;
+    }
+
+    return loadImage(
+        transaction, manifest.mime, manifest.process, manifest.sections);
   }
 }
 
@@ -722,12 +738,12 @@ Future<void> setCRDT(sqflite.Transaction transaction, ProcessSecret processInfo,
 }
 
 Future<void> setAvatar(sqflite.Transaction transaction,
-    ProcessSecret processInfo, protocol.Pointer pointer) async {
+    ProcessSecret processInfo, protocol.ImageBundle imageBundle) async {
   await setCRDT(
     transaction,
     processInfo,
     models.ContentType.contentTypeAvatar,
-    pointer.writeToBuffer(),
+    imageBundle.writeToBuffer(),
   );
 }
 
