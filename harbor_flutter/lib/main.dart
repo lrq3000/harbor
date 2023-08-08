@@ -22,7 +22,11 @@ import 'shared_ui.dart' as shared_ui;
 import 'ranges.dart' as ranges;
 import 'logger.dart';
 
-const Set<String> oAuthClaimTypes = {"Discord", "Instagram", "Twitter"};
+final Set<fixnum.Int64> oAuthClaimTypes = {
+  models.ClaimType.claimTypeDiscord,
+  models.ClaimType.claimTypeInstagram,
+  models.ClaimType.claimTypeTwitter,
+};
 
 class ProcessSecret {
   cryptography.SimpleKeyPair system;
@@ -31,7 +35,7 @@ class ProcessSecret {
   ProcessSecret(this.system, this.process);
 }
 
-bool isOAuthClaim(String claimType) {
+bool isOAuthClaim(fixnum.Int64 claimType) {
   return oAuthClaimTypes.contains(claimType);
 }
 
@@ -763,7 +767,7 @@ Future<void> makeClaim(sqflite.Transaction transaction,
   final claimIdentifier = protocol.ClaimIdentifier()..identifier = claimText;
 
   final claim = protocol.Claim()
-    ..claimType = "Generic"
+    ..claimType = models.ClaimType.claimTypeGeneric
     ..claim = claimIdentifier.writeToBuffer();
 
   final protocol.Event event = protocol.Event()
@@ -807,7 +811,7 @@ Future<void> setServer(
 }
 
 Future<ClaimInfo> makePlatformClaim(sqflite.Transaction transaction,
-    ProcessSecret processInfo, String claimType, String account) async {
+    ProcessSecret processInfo, fixnum.Int64 claimType, String account) async {
   final claimIdentifier = protocol.ClaimIdentifier()..identifier = account;
 
   final claim = protocol.Claim()
@@ -835,7 +839,7 @@ Future<ClaimInfo> makeOccupationClaim(
     ..location = location;
 
   final claim = protocol.Claim()
-    ..claimType = "Occupation"
+    ..claimType = models.ClaimType.claimTypeOccupation
     ..claim = claimOccupation.writeToBuffer();
 
   final protocol.Event event = protocol.Event()
@@ -874,7 +878,7 @@ Future<void> main() async {
 }
 
 class ClaimInfo {
-  String claimType = '';
+  fixnum.Int64 claimType = fixnum.Int64(0);
   String text = '';
   final protocol.Pointer pointer;
   final protocol.Event event;
@@ -885,7 +889,7 @@ class ClaimInfo {
 
     claimType = claim.claimType;
 
-    if (claim.claimType == 'Occupation') {
+    if (claim.claimType == models.ClaimType.claimTypeOccupation) {
       claimOccupation = protocol.ClaimOccupation.fromBuffer(claim.claim);
 
       text = claimOccupation!.organization;

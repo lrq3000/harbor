@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:fixnum/fixnum.dart' as fixnum;
 
 import 'add_token.dart';
 import '../main.dart' as main;
+import '../models.dart' as models;
 import '../shared_ui.dart' as shared_ui;
 import '../handle_validation.dart' as handle_validation;
 
 class MakePlatformClaimPage extends StatefulWidget {
   final int identityIndex;
-  final String claimType;
+  final fixnum.Int64 claimType;
 
   const MakePlatformClaimPage(
       {Key? key, required this.identityIndex, required this.claimType})
@@ -36,7 +38,7 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
         const SizedBox(height: 25),
         Center(
             child: Text(
-          widget.claimType,
+          models.ClaimType.claimTypeToString(widget.claimType),
           style: const TextStyle(
             fontSize: 30,
             color: Colors.white,

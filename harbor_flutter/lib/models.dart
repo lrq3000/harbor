@@ -156,18 +156,27 @@ class ContentType {
 }
 
 class ClaimType {
-  static const claimTypeHackerNews = "HackerNews";
-  static const claimTypeYouTube = "YouTube";
-  static const claimTypeOdysee = "Odysee";
-  static const claimTypeRumble = "Rumble";
-  static const claimTypeTwitter = "Twitter";
-  static const claimTypeBitcoin = "Bitcoin";
-  static const claimTypeGeneric = "Generic";
-  static const claimTypeUrl = "URL";
-  static const claimTypeDiscord = "Discord";
-  static const claimTypeInstagram = "Instagram";
-  static const claimTypeTwitch = "Twitch";
-  static const claimTypePatreon = "Patreon";
+  static final claimTypeHackerNews = fixnum.Int64(1);
+  static final claimTypeYouTube = fixnum.Int64(2);
+  static final claimTypeOdysee = fixnum.Int64(3);
+  static final claimTypeRumble = fixnum.Int64(4);
+  static final claimTypeTwitter = fixnum.Int64(5);
+  static final claimTypeBitcoin = fixnum.Int64(6);
+  static final claimTypeGeneric = fixnum.Int64(7);
+  static final claimTypeDiscord = fixnum.Int64(8);
+  static final claimTypeInstagram = fixnum.Int64(9);
+  static final claimTypeMinds = fixnum.Int64(11);
+  static final claimTypePatreon = fixnum.Int64(12);
+  static final claimTypeSubstack = fixnum.Int64(13);
+  static final claimTypeTwitch = fixnum.Int64(14);
+  static final claimTypeUrl = fixnum.Int64(20);
+  static final claimTypeOccupation = fixnum.Int64(21);
+  static final claimTypeSkill = fixnum.Int64(22);
+
+  @override
+  static String claimTypeToString(fixnum.Int64 claimType) {
+    return 'blah';
+  }
 }
 
 class URLInfoType {

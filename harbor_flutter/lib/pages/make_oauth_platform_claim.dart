@@ -1,19 +1,22 @@
 import 'dart:convert';
+import 'dart:async';
+
+import 'package:fixnum/fixnum.dart' as fixnum;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:uni_links/uni_links.dart';
+
 import '../api_methods.dart' as api_methods;
 import '../main.dart' as main;
-import 'package:fixnum/fixnum.dart' as fixnum;
+import '../models.dart' as models;
 import '../shared_ui.dart' as shared_ui;
 import '../protocol.pb.dart' as protocol;
 import '../synchronizer.dart' as synchronizer;
-import 'package:url_launcher/url_launcher.dart';
-import 'dart:async';
-import 'package:uni_links/uni_links.dart';
 
 class MakeOAuthPlatformClaimPage extends StatefulWidget {
   final int identityIndex;
-  final String claimType;
+  final fixnum.Int64 claimType;
   final main.ClaimInfo? inProgressClaim;
 
   const MakeOAuthPlatformClaimPage(
@@ -132,7 +135,7 @@ class _MakeOAuthPlatformClaimPageState
           const SizedBox(height: 75),
           Center(
               child: Text(
-            widget.claimType,
+            models.ClaimType.claimTypeToString(widget.claimType),
             style: const TextStyle(
               fontSize: 30,
               color: Colors.white,
@@ -152,7 +155,8 @@ class _MakeOAuthPlatformClaimPageState
             alignment: AlignmentDirectional.center,
             child: callbackUrl == null
                 ? shared_ui.OblongTextButton(
-                    text: "Log in with ${widget.claimType}",
+                    text:
+                        "Log in with ${models.ClaimType.claimTypeToString(widget.claimType)}",
                     onPressed: () async {
                       try {
                         final oauthURL =

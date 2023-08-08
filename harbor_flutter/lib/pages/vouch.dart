@@ -155,7 +155,7 @@ class _VouchPageState extends State<VouchPage> {
         const SizedBox(height: 10),
         Center(
             child: Text(
-          claimInfo.claimType,
+          models.ClaimType.claimTypeToString(claimInfo.claimType),
           style: const TextStyle(
             fontWeight: FontWeight.w200,
             fontSize: 24,

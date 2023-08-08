@@ -12,6 +12,7 @@ import 'dart:ui' as dart_ui;
 import 'package:fixnum/fixnum.dart' as fixnum;
 
 import '../main.dart' as main;
+import '../models.dart' as models;
 import '../protocol.pb.dart' as protocol;
 import '../shared_ui.dart' as shared_ui;
 import '../synchronizer.dart' as synchronizer;
@@ -436,7 +437,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
       for (var i = 0; i < claims.length; i++) {
         result.add(shared_ui.StandardButtonGeneric(
-          actionText: claims[i].claimType,
+          actionText: models.ClaimType.claimTypeToString(claims[i].claimType),
           actionDescription: claims[i].text,
           left: Container(
             margin: const EdgeInsets.only(top: 5, bottom: 5),

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart' as flutter_svg;
 import 'package:harbor_flutter/logger.dart';
 import 'package:tap_debouncer/tap_debouncer.dart' as tap_debouncer;
+import 'package:fixnum/fixnum.dart' as fixnum;
 
 import './main.dart' as main;
+import './models.dart' as models;
 
 MaterialColor makeColor(Color color) {
   final Map<int, Color> shades = {};
@@ -414,63 +416,37 @@ Widget makeSVG(String fileName, String label) {
   );
 }
 
-Widget claimTypeToVisual(String claimType) {
-  switch (claimType) {
-    case "Generic":
-      {
-        return makeSVG('format_quote.svg', 'Quote');
-      }
-    case "Skill":
-      {
-        return makeSVG('build.svg', 'Skill');
-      }
-    case "Occupation":
-      {
-        return makeSVG('work.svg', 'Occupation');
-      }
-    case "YouTube":
-      {
-        return makeSVG('youtube.svg', 'YouTube');
-      }
-    case "Odysee":
-      {
-        return makeSVG('odysee.svg', 'Odysee');
-      }
-    case "Rumble":
-      {
-        return makeSVG('rumble.svg', 'Rumble');
-      }
-    case "Twitch":
-      {
-        return makeSVG('twitch.svg', 'Twitch');
-      }
-    case "Instagram":
-      {
-        return makeSVG('instagram.svg', 'Instagram');
-      }
-    case "Minds":
-      {
-        return makeSVG('minds.svg', 'Minds');
-      }
-    case "Twitter":
-      {
-        return makeSVG('twitter.svg', 'Twitter');
-      }
-    case "Discord":
-      {
-        return makeSVG('discord.svg', 'Discord');
-      }
-    case "Patreon":
-      {
-        return makeSVG('patreon.svg', 'Patreon');
-      }
-    case "Substack":
-      {
-        return makeSVG('substack.svg', 'Substack');
-      }
+Widget claimTypeToVisual(fixnum.Int64 claimType) {
+  if (claimType == models.ClaimType.claimTypeGeneric) {
+    return makeSVG('format_quote.svg', 'Quote');
+  } else if (claimType == models.ClaimType.claimTypeSkill) {
+    return makeSVG('build.svg', 'Skill');
+  } else if (claimType == models.ClaimType.claimTypeOccupation) {
+    return makeSVG('work.svg', 'Occupation');
+  } else if (claimType == models.ClaimType.claimTypeYouTube) {
+    return makeSVG('youtube.svg', 'YouTube');
+  } else if (claimType == models.ClaimType.claimTypeOdysee) {
+    return makeSVG('odysee.svg', 'Odysee');
+  } else if (claimType == models.ClaimType.claimTypeRumble) {
+    return makeSVG('rumble.svg', 'Rumble');
+  } else if (claimType == models.ClaimType.claimTypeTwitch) {
+    return makeSVG('twitch.svg', 'Twitch');
+  } else if (claimType == models.ClaimType.claimTypeInstagram) {
+    return makeSVG('instagram.svg', 'Instagram');
+  } else if (claimType == models.ClaimType.claimTypeMinds) {
+    return makeSVG('minds.svg', 'Minds');
+  } else if (claimType == models.ClaimType.claimTypeTwitter) {
+    return makeSVG('twitter.svg', 'Twitter');
+  } else if (claimType == models.ClaimType.claimTypeDiscord) {
+    return makeSVG('discord.svg', 'Discord');
+  } else if (claimType == models.ClaimType.claimTypePatreon) {
+    return makeSVG('patreon.svg', 'Patreon');
+  } else if (claimType == models.ClaimType.claimTypeSubstack) {
+    return makeSVG('substack.svg', 'Substack');
   }
 
   logger.e("unknown claim type: $claimType");
+
   return makeSVG('question_mark.svg', 'Substack');
 }
 

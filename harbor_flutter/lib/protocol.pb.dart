@@ -444,100 +444,6 @@ class Server extends $pb.GeneratedMessage {
   void clearServer() => clearField(1);
 }
 
-class BlobMeta extends $pb.GeneratedMessage {
-  factory BlobMeta() => create();
-  BlobMeta._() : super();
-  factory BlobMeta.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory BlobMeta.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'BlobMeta', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
-    ..a<$fixnum.Int64>(1, _omitFieldNames ? '' : 'sectionCount', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
-    ..aOS(2, _omitFieldNames ? '' : 'mime')
-    ..hasRequiredFields = false
-  ;
-
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  BlobMeta clone() => BlobMeta()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  BlobMeta copyWith(void Function(BlobMeta) updates) => super.copyWith((message) => updates(message as BlobMeta)) as BlobMeta;
-
-  $pb.BuilderInfo get info_ => _i;
-
-  @$core.pragma('dart2js:noInline')
-  static BlobMeta create() => BlobMeta._();
-  BlobMeta createEmptyInstance() => create();
-  static $pb.PbList<BlobMeta> createRepeated() => $pb.PbList<BlobMeta>();
-  @$core.pragma('dart2js:noInline')
-  static BlobMeta getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<BlobMeta>(create);
-  static BlobMeta? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $fixnum.Int64 get sectionCount => $_getI64(0);
-  @$pb.TagNumber(1)
-  set sectionCount($fixnum.Int64 v) { $_setInt64(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasSectionCount() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearSectionCount() => clearField(1);
-
-  @$pb.TagNumber(2)
-  $core.String get mime => $_getSZ(1);
-  @$pb.TagNumber(2)
-  set mime($core.String v) { $_setString(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasMime() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearMime() => clearField(2);
-}
-
-class BlobSection extends $pb.GeneratedMessage {
-  factory BlobSection() => create();
-  BlobSection._() : super();
-  factory BlobSection.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory BlobSection.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'BlobSection', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, _omitFieldNames ? '' : 'content', $pb.PbFieldType.OY)
-    ..hasRequiredFields = false
-  ;
-
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  BlobSection clone() => BlobSection()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  BlobSection copyWith(void Function(BlobSection) updates) => super.copyWith((message) => updates(message as BlobSection)) as BlobSection;
-
-  $pb.BuilderInfo get info_ => _i;
-
-  @$core.pragma('dart2js:noInline')
-  static BlobSection create() => BlobSection._();
-  BlobSection createEmptyInstance() => create();
-  static $pb.PbList<BlobSection> createRepeated() => $pb.PbList<BlobSection>();
-  @$core.pragma('dart2js:noInline')
-  static BlobSection getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<BlobSection>(create);
-  static BlobSection? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $core.List<$core.int> get content => $_getN(0);
-  @$pb.TagNumber(1)
-  set content($core.List<$core.int> v) { $_setBytes(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasContent() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearContent() => clearField(1);
-}
-
 class ImageManifest extends $pb.GeneratedMessage {
   factory ImageManifest() => create();
   ImageManifest._() : super();
@@ -1583,7 +1489,7 @@ class Claim extends $pb.GeneratedMessage {
   factory Claim.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Claim', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'claimType')
+    ..a<$fixnum.Int64>(1, _omitFieldNames ? '' : 'claimType', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
     ..a<$core.List<$core.int>>(2, _omitFieldNames ? '' : 'claim', $pb.PbFieldType.OY)
     ..hasRequiredFields = false
   ;
@@ -1610,9 +1516,9 @@ class Claim extends $pb.GeneratedMessage {
   static Claim? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get claimType => $_getSZ(0);
+  $fixnum.Int64 get claimType => $_getI64(0);
   @$pb.TagNumber(1)
-  set claimType($core.String v) { $_setString(0, v); }
+  set claimType($fixnum.Int64 v) { $_setInt64(0, v); }
   @$pb.TagNumber(1)
   $core.bool hasClaimType() => $_has(0);
   @$pb.TagNumber(1)
@@ -2676,6 +2582,90 @@ class URLInfoEventLink extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(4)
   $core.List<$core.String> get servers => $_getList(3);
+}
+
+class URLInfoDataLink extends $pb.GeneratedMessage {
+  factory URLInfoDataLink() => create();
+  URLInfoDataLink._() : super();
+  factory URLInfoDataLink.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory URLInfoDataLink.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'URLInfoDataLink', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
+    ..aOM<PublicKey>(1, _omitFieldNames ? '' : 'system', subBuilder: PublicKey.create)
+    ..aOM<Process>(2, _omitFieldNames ? '' : 'process', subBuilder: Process.create)
+    ..pPS(3, _omitFieldNames ? '' : 'servers')
+    ..a<$fixnum.Int64>(4, _omitFieldNames ? '' : 'byteCount', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..pc<Range>(5, _omitFieldNames ? '' : 'sections', $pb.PbFieldType.PM, subBuilder: Range.create)
+    ..aOS(6, _omitFieldNames ? '' : 'mime')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  URLInfoDataLink clone() => URLInfoDataLink()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  URLInfoDataLink copyWith(void Function(URLInfoDataLink) updates) => super.copyWith((message) => updates(message as URLInfoDataLink)) as URLInfoDataLink;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static URLInfoDataLink create() => URLInfoDataLink._();
+  URLInfoDataLink createEmptyInstance() => create();
+  static $pb.PbList<URLInfoDataLink> createRepeated() => $pb.PbList<URLInfoDataLink>();
+  @$core.pragma('dart2js:noInline')
+  static URLInfoDataLink getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<URLInfoDataLink>(create);
+  static URLInfoDataLink? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  PublicKey get system => $_getN(0);
+  @$pb.TagNumber(1)
+  set system(PublicKey v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasSystem() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSystem() => clearField(1);
+  @$pb.TagNumber(1)
+  PublicKey ensureSystem() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  Process get process => $_getN(1);
+  @$pb.TagNumber(2)
+  set process(Process v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasProcess() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearProcess() => clearField(2);
+  @$pb.TagNumber(2)
+  Process ensureProcess() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  $core.List<$core.String> get servers => $_getList(2);
+
+  @$pb.TagNumber(4)
+  $fixnum.Int64 get byteCount => $_getI64(3);
+  @$pb.TagNumber(4)
+  set byteCount($fixnum.Int64 v) { $_setInt64(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasByteCount() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearByteCount() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.List<Range> get sections => $_getList(4);
+
+  @$pb.TagNumber(6)
+  $core.String get mime => $_getSZ(5);
+  @$pb.TagNumber(6)
+  set mime($core.String v) { $_setString(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasMime() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearMime() => clearField(6);
 }
 
 
