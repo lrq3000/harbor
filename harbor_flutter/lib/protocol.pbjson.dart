@@ -145,32 +145,6 @@ const Server$json = {
 final $typed_data.Uint8List serverDescriptor = $convert.base64Decode(
     'CgZTZXJ2ZXISFgoGc2VydmVyGAEgASgJUgZzZXJ2ZXI=');
 
-@$core.Deprecated('Use blobMetaDescriptor instead')
-const BlobMeta$json = {
-  '1': 'BlobMeta',
-  '2': [
-    {'1': 'section_count', '3': 1, '4': 1, '5': 4, '10': 'sectionCount'},
-    {'1': 'mime', '3': 2, '4': 1, '5': 9, '10': 'mime'},
-  ],
-};
-
-/// Descriptor for `BlobMeta`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List blobMetaDescriptor = $convert.base64Decode(
-    'CghCbG9iTWV0YRIjCg1zZWN0aW9uX2NvdW50GAEgASgEUgxzZWN0aW9uQ291bnQSEgoEbWltZR'
-    'gCIAEoCVIEbWltZQ==');
-
-@$core.Deprecated('Use blobSectionDescriptor instead')
-const BlobSection$json = {
-  '1': 'BlobSection',
-  '2': [
-    {'1': 'content', '3': 1, '4': 1, '5': 12, '10': 'content'},
-  ],
-};
-
-/// Descriptor for `BlobSection`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List blobSectionDescriptor = $convert.base64Decode(
-    'CgtCbG9iU2VjdGlvbhIYCgdjb250ZW50GAEgASgMUgdjb250ZW50');
-
 @$core.Deprecated('Use imageManifestDescriptor instead')
 const ImageManifest$json = {
   '1': 'ImageManifest',
@@ -462,14 +436,14 @@ final $typed_data.Uint8List postDescriptor = $convert.base64Decode(
 const Claim$json = {
   '1': 'Claim',
   '2': [
-    {'1': 'claim_type', '3': 1, '4': 1, '5': 9, '10': 'claimType'},
+    {'1': 'claim_type', '3': 1, '4': 1, '5': 4, '10': 'claimType'},
     {'1': 'claim', '3': 2, '4': 1, '5': 12, '10': 'claim'},
   ],
 };
 
 /// Descriptor for `Claim`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List claimDescriptor = $convert.base64Decode(
-    'CgVDbGFpbRIdCgpjbGFpbV90eXBlGAEgASgJUgljbGFpbVR5cGUSFAoFY2xhaW0YAiABKAxSBW'
+    'CgVDbGFpbRIdCgpjbGFpbV90eXBlGAEgASgEUgljbGFpbVR5cGUSFAoFY2xhaW0YAiABKAxSBW'
     'NsYWlt');
 
 @$core.Deprecated('Use claimIdentifierDescriptor instead')
@@ -802,4 +776,28 @@ final $typed_data.Uint8List uRLInfoEventLinkDescriptor = $convert.base64Decode(
     'tleVIGc3lzdGVtEi4KB3Byb2Nlc3MYAiABKAsyFC51c2VycGFja2FnZS5Qcm9jZXNzUgdwcm9j'
     'ZXNzEiMKDWxvZ2ljYWxfY2xvY2sYAyABKARSDGxvZ2ljYWxDbG9jaxIYCgdzZXJ2ZXJzGAQgAy'
     'gJUgdzZXJ2ZXJz');
+
+@$core.Deprecated('Use uRLInfoDataLinkDescriptor instead')
+const URLInfoDataLink$json = {
+  '1': 'URLInfoDataLink',
+  '2': [
+    {'1': 'system', '3': 1, '4': 1, '5': 11, '6': '.userpackage.PublicKey', '10': 'system'},
+    {'1': 'process', '3': 2, '4': 1, '5': 11, '6': '.userpackage.Process', '10': 'process'},
+    {'1': 'servers', '3': 3, '4': 3, '5': 9, '10': 'servers'},
+    {'1': 'byte_count', '3': 4, '4': 1, '5': 4, '10': 'byteCount'},
+    {'1': 'sections', '3': 5, '4': 3, '5': 11, '6': '.userpackage.Range', '10': 'sections'},
+    {'1': 'mime', '3': 6, '4': 1, '5': 9, '9': 0, '10': 'mime', '17': true},
+  ],
+  '8': [
+    {'1': '_mime'},
+  ],
+};
+
+/// Descriptor for `URLInfoDataLink`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List uRLInfoDataLinkDescriptor = $convert.base64Decode(
+    'Cg9VUkxJbmZvRGF0YUxpbmsSLgoGc3lzdGVtGAEgASgLMhYudXNlcnBhY2thZ2UuUHVibGljS2'
+    'V5UgZzeXN0ZW0SLgoHcHJvY2VzcxgCIAEoCzIULnVzZXJwYWNrYWdlLlByb2Nlc3NSB3Byb2Nl'
+    'c3MSGAoHc2VydmVycxgDIAMoCVIHc2VydmVycxIdCgpieXRlX2NvdW50GAQgASgEUglieXRlQ2'
+    '91bnQSLgoIc2VjdGlvbnMYBSADKAsyEi51c2VycGFja2FnZS5SYW5nZVIIc2VjdGlvbnMSFwoE'
+    'bWltZRgGIAEoCUgAUgRtaW1liAEBQgcKBV9taW1l');
 

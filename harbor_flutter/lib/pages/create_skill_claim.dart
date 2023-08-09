@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tap_debouncer/tap_debouncer.dart' as tap_debouncer;
 
 import '../main.dart' as main;
+import '../models.dart' as models;
 import '../shared_ui.dart' as shared_ui;
 import 'profile.dart';
 
@@ -34,7 +35,7 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
         await main.makePlatformClaim(
           transaction,
           identity.processSecret,
-          'Skill',
+          models.ClaimType.claimTypeSkill,
           textController.text,
         );
       });

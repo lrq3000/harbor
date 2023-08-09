@@ -1,4 +1,6 @@
+import 'package:fixnum/fixnum.dart' as fixnum;
 import 'package:flutter/material.dart';
+
 import 'make_platform_claim.dart';
 import 'make_oauth_platform_claim.dart';
 import 'create_skill_claim.dart';
@@ -6,6 +8,7 @@ import 'create_occupation_claim.dart';
 import 'create_generic_claim.dart';
 import '../shared_ui.dart' as shared_ui;
 import '../main.dart' as main;
+import '../models.dart' as models;
 
 class CreateClaimPage extends StatefulWidget {
   final int identityIndex;
@@ -20,9 +23,9 @@ class CreateClaimPage extends StatefulWidget {
 class _CreateClaimPageState extends State<CreateClaimPage> {
   @override
   Widget build(BuildContext context) {
-    StatelessWidget makePlatformButton(String claimType) {
+    StatelessWidget makePlatformButton(fixnum.Int64 claimType) {
       return shared_ui.ClaimButtonGeneric(
-        nameText: claimType,
+        nameText: models.ClaimType.claimTypeToString(claimType),
         top: shared_ui.claimTypeToVisual(claimType),
         onPressed: () {
           if (main.isOAuthClaim(claimType)) {
@@ -73,7 +76,8 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
           children: [
             shared_ui.ClaimButtonGeneric(
               nameText: "Occupation",
-              top: shared_ui.claimTypeToVisual("Occupation"),
+              top: shared_ui
+                  .claimTypeToVisual(models.ClaimType.claimTypeOccupation),
               onPressed: () {
                 Navigator.push(context,
                     MaterialPageRoute<CreateOccupationClaimPage>(
@@ -86,7 +90,7 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
             ),
             shared_ui.ClaimButtonGeneric(
               nameText: "Skill",
-              top: shared_ui.claimTypeToVisual("Skill"),
+              top: shared_ui.claimTypeToVisual(models.ClaimType.claimTypeSkill),
               onPressed: () {
                 Navigator.push(context,
                     MaterialPageRoute<CreateSkillClaimPage>(builder: (context) {
@@ -98,7 +102,8 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
             ),
             shared_ui.ClaimButtonGeneric(
               nameText: "Freeform",
-              top: shared_ui.claimTypeToVisual("Generic"),
+              top: shared_ui
+                  .claimTypeToVisual(models.ClaimType.claimTypeGeneric),
               onPressed: () {
                 Navigator.push(context,
                     MaterialPageRoute<CreateSkillClaimPage>(builder: (context) {
@@ -129,16 +134,16 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
           // dont scroll
           physics: const NeverScrollableScrollPhysics(),
           children: [
-            makePlatformButton("YouTube"),
-            makePlatformButton("Odysee"),
-            makePlatformButton("Rumble"),
-            makePlatformButton("Twitch"),
-            makePlatformButton("Instagram"),
-            makePlatformButton("Minds"),
-            makePlatformButton("Twitter"),
-            makePlatformButton("Discord"),
-            makePlatformButton("Patreon"),
-            makePlatformButton("Substack"),
+            makePlatformButton(models.ClaimType.claimTypeYouTube),
+            makePlatformButton(models.ClaimType.claimTypeOdysee),
+            makePlatformButton(models.ClaimType.claimTypeRumble),
+            makePlatformButton(models.ClaimType.claimTypeTwitch),
+            makePlatformButton(models.ClaimType.claimTypeInstagram),
+            makePlatformButton(models.ClaimType.claimTypeMinds),
+            makePlatformButton(models.ClaimType.claimTypeTwitter),
+            makePlatformButton(models.ClaimType.claimTypeDiscord),
+            makePlatformButton(models.ClaimType.claimTypePatreon),
+            makePlatformButton(models.ClaimType.claimTypeSubstack),
           ],
         ),
       ],

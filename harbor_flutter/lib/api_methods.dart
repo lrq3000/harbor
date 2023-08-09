@@ -1,8 +1,8 @@
 import 'dart:convert' as convert;
 import 'dart:typed_data';
-
-import 'package:fixnum/fixnum.dart';
+import 'package:fixnum/fixnum.dart' as fixnum;
 import 'package:http/http.dart' as http;
+
 import 'web_execption.dart';
 import 'protocol.pb.dart' as protocol;
 import 'logger.dart';
@@ -113,8 +113,8 @@ Future<protocol.QueryReferencesResponse> getQueryReferences(
   return protocol.QueryReferencesResponse.fromBuffer(response.bodyBytes);
 }
 
-Future<protocol.Events> getQueryLatest(
-    String server, protocol.PublicKey system, List<Int64> eventTypes) async {
+Future<protocol.Events> getQueryLatest(String server, protocol.PublicKey system,
+    List<fixnum.Int64> eventTypes) async {
   final systemQuery = convert.base64Url.encode(system.writeToBuffer());
 
   final eventTypesBuilder = protocol.RepeatedUInt64()
@@ -133,10 +133,11 @@ Future<protocol.Events> getQueryLatest(
   return protocol.Events.fromBuffer(response.bodyBytes);
 }
 
-Future<void> requestVerification(protocol.Pointer pointer, String claimType,
+Future<void> requestVerification(
+    protocol.Pointer pointer, fixnum.Int64 claimType,
     {String? challengeResponse}) async {
   var url = "https://verifiers.grayjay.app/"
-      "${claimType.toLowerCase()}"
+      "${claimType.toString()}"
       "/api/v1/vouch";
 
   if (challengeResponse != null) {
@@ -154,10 +155,10 @@ Future<void> requestVerification(protocol.Pointer pointer, String claimType,
 }
 
 Future<String> getOAuthURL(
-  String claimType,
+  fixnum.Int64 claimType,
 ) async {
   final url = "https://verifiers.grayjay.app/"
-      "${claimType.toLowerCase()}"
+      "${claimType.toString()}"
       "/api/v1/oauth";
 
   final response = await http.get(
@@ -167,15 +168,16 @@ Future<String> getOAuthURL(
   checkResponse('getOAuthURL', response);
 
   final oAuthUrl = convert.jsonDecode(response.body)["url"] as String;
+
   return oAuthUrl;
 }
 
 Future<dynamic> getOAuthUsername(
   String token,
-  String claimType,
+  fixnum.Int64 claimType,
 ) async {
   final url = "https://verifiers.grayjay.app/"
-      "${claimType.toLowerCase()}"
+      "${claimType.toString()}"
       "/api/v1/oauth_handle?token=$token";
 
   final response = await http.get(

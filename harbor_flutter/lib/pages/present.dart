@@ -7,6 +7,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart' as main;
+import '../models.dart' as models;
 import '../shared_ui.dart' as shared_ui;
 import '../protocol.pb.dart' as protocol;
 
@@ -96,7 +97,7 @@ class PresentPage extends StatelessWidget {
         const SizedBox(height: 10),
         Center(
             child: Text(
-          claim.claimType,
+          models.ClaimType.claimTypeToString(claim.claimType),
           style: const TextStyle(
             fontWeight: FontWeight.w200,
             fontSize: 24,

@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:harbor_flutter/pages/make_oauth_platform_claim.dart';
 import 'package:provider/provider.dart';
-import 'package:harbor_flutter/protocol.pbserver.dart';
+import 'dart:convert' as convert;
+import 'package:fixnum/fixnum.dart' as fixnum;
 
+import 'package:harbor_flutter/protocol.pbserver.dart';
+import 'package:harbor_flutter/pages/make_oauth_platform_claim.dart';
 import '../main.dart';
 import '../models.dart' as models;
 import 'present.dart';
 import 'add_token.dart';
 import '../main.dart' as main;
 import '../shared_ui.dart' as shared_ui;
-import 'dart:convert' as convert;
 
-const Set<String> manualVerificationClaimTypes = {
-  "Generic",
-  "Skill",
-  "Occupation"
+final Set<fixnum.Int64> manualVerificationClaimTypes = {
+  models.ClaimType.claimTypeGeneric,
+  models.ClaimType.claimTypeSkill,
+  models.ClaimType.claimTypeOccupation,
 };
 
 class ClaimPage extends StatefulWidget {
@@ -181,7 +182,7 @@ class _ClaimPageState extends State<ClaimPage> {
         const SizedBox(height: 15),
         Center(
           child: Text(
-            claim.claimType,
+            models.ClaimType.claimTypeToString(claim.claimType),
             style: const TextStyle(
               fontWeight: FontWeight.w200,
               fontSize: 24,
