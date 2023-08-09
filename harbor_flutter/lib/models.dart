@@ -175,7 +175,41 @@ class ClaimType {
 
   @override
   static String claimTypeToString(fixnum.Int64 claimType) {
-    return 'blah';
+    if (claimType == claimTypeHackerNews) {
+      return "HackerNews";
+    } else if (claimType == claimTypeYouTube) {
+      return "YouTube";
+    } else if (claimType == claimTypeOdysee) {
+      return "Odysee";
+    } else if (claimType == claimTypeRumble) {
+      return "Rumble";
+    } else if (claimType == claimTypeTwitter) {
+      return "Twitter";
+    } else if (claimType == claimTypeBitcoin) {
+      return "Bitcoin";
+    } else if (claimType == claimTypeGeneric) {
+      return "Generic";
+    } else if (claimType == claimTypeDiscord) {
+      return "Discord";
+    } else if (claimType == claimTypeInstagram) {
+      return "Instagram";
+    } else if (claimType == claimTypeMinds) {
+      return "Minds";
+    } else if (claimType == claimTypePatreon) {
+      return "Patreon";
+    } else if (claimType == claimTypeSubstack) {
+      return "Substack";
+    } else if (claimType == claimTypeTwitch) {
+      return "Twitch";
+    } else if (claimType == claimTypeUrl) {
+      return "URL";
+    } else if (claimType == claimTypeOccupation) {
+      return "Occupation";
+    } else if (claimType == claimTypeSkill) {
+      return "Skill";
+    }
+
+    return 'unknown';
   }
 }
 
