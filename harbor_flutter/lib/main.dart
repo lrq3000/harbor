@@ -764,11 +764,10 @@ Future<void> setStore(sqflite.Transaction transaction,
 
 Future<void> makeClaim(sqflite.Transaction transaction,
     ProcessSecret processInfo, String claimText) async {
-  final claimIdentifier = protocol.ClaimIdentifier()..identifier = claimText;
-
-  final claim = protocol.Claim()
-    ..claimType = models.ClaimType.claimTypeGeneric
-    ..claim = claimIdentifier.writeToBuffer();
+  final claim = models.claimIdentifier(
+    models.ClaimType.claimTypeGeneric,
+    claimText,
+  );
 
   final protocol.Event event = protocol.Event()
     ..contentType = models.ContentType.contentTypeClaim
@@ -812,11 +811,7 @@ Future<void> setServer(
 
 Future<ClaimInfo> makePlatformClaim(sqflite.Transaction transaction,
     ProcessSecret processInfo, fixnum.Int64 claimType, String account) async {
-  final claimIdentifier = protocol.ClaimIdentifier()..identifier = account;
-
-  final claim = protocol.Claim()
-    ..claimType = claimType
-    ..claim = claimIdentifier.writeToBuffer();
+  final claim = models.claimIdentifier(claimType, account);
 
   final protocol.Event event = protocol.Event()
     ..contentType = models.ContentType.contentTypeClaim
@@ -833,14 +828,7 @@ Future<ClaimInfo> makeOccupationClaim(
     String organization,
     String role,
     String location) async {
-  final claimOccupation = protocol.ClaimOccupation()
-    ..organization = organization
-    ..role = role
-    ..location = location;
-
-  final claim = protocol.Claim()
-    ..claimType = models.ClaimType.claimTypeOccupation
-    ..claim = claimOccupation.writeToBuffer();
+  final claim = models.claimOccupation(organization, role, location);
 
   final protocol.Event event = protocol.Event()
     ..contentType = models.ContentType.contentTypeClaim
@@ -878,27 +866,22 @@ Future<void> main() async {
 }
 
 class ClaimInfo {
-  fixnum.Int64 claimType = fixnum.Int64(0);
-  String text = '';
   final protocol.Pointer pointer;
   final protocol.Event event;
-  protocol.ClaimOccupation? claimOccupation;
+  protocol.Claim claim = protocol.Claim();
 
   ClaimInfo(this.pointer, this.event) {
-    final protocol.Claim claim = protocol.Claim.fromBuffer(event.content);
+    claim = protocol.Claim.fromBuffer(event.content);
+  }
 
-    claimType = claim.claimType;
-
-    if (claim.claimType == models.ClaimType.claimTypeOccupation) {
-      claimOccupation = protocol.ClaimOccupation.fromBuffer(claim.claim);
-
-      text = claimOccupation!.organization;
-    } else {
-      final protocol.ClaimIdentifier claimIdentifier =
-          protocol.ClaimIdentifier.fromBuffer(claim.claim);
-
-      text = claimIdentifier.identifier;
+  String? getField(fixnum.Int64 key) {
+    for (final field in claim.claimFields) {
+      if (field.key == key) {
+        return field.value;
+      }
     }
+
+    return null;
   }
 }
 

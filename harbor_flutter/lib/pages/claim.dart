@@ -182,7 +182,7 @@ class _ClaimPageState extends State<ClaimPage> {
         const SizedBox(height: 15),
         Center(
           child: Text(
-            models.ClaimType.claimTypeToString(claim.claimType),
+            models.ClaimType.claimTypeToString(claim.claim.claimType),
             style: const TextStyle(
               fontWeight: FontWeight.w200,
               fontSize: 24,
@@ -204,20 +204,20 @@ class _ClaimPageState extends State<ClaimPage> {
             ),
           ),
         ),
-        if (!manualVerificationClaimTypes.contains(claim.claimType))
+        if (!manualVerificationClaimTypes.contains(claim.claim.claimType))
           shared_ui.StandardButtonGeneric(
             actionText: 'Automated',
             actionDescription:
                 'Get an automated authority to vouch for this claim',
             left: shared_ui.makeSVG('smart_toy.svg', 'Automated'),
             onPressed: () async {
-              if (main.isOAuthClaim(claim.claimType)) {
+              if (main.isOAuthClaim(claim.claim.claimType)) {
                 Navigator.push(context,
                     MaterialPageRoute<MakeOAuthPlatformClaimPage>(
                         builder: (context) {
                   return MakeOAuthPlatformClaimPage(
                     identityIndex: widget.identityIndex,
-                    claimType: claim.claimType,
+                    claimType: claim.claim.claimType,
                     inProgressClaim: claim,
                   );
                 }));

@@ -97,7 +97,7 @@ class PresentPage extends StatelessWidget {
         const SizedBox(height: 10),
         Center(
             child: Text(
-          models.ClaimType.claimTypeToString(claim.claimType),
+          models.ClaimType.claimTypeToString(claim.claim.claimType),
           style: const TextStyle(
             fontWeight: FontWeight.w200,
             fontSize: 24,

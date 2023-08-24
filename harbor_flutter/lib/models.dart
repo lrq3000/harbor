@@ -270,3 +270,30 @@ String urlInfoToLinkSuffix(protocol.URLInfo proto) {
 String urlInfoToLink(protocol.URLInfo proto) {
   return "polycentric://${base64Url.encode(proto.writeToBuffer())}";
 }
+
+protocol.Claim claimIdentifier(
+  fixnum.Int64 claimType,
+  String identifier,
+) {
+  final field = protocol.ClaimFieldEntry()
+    ..key = fixnum.Int64(1)
+    ..value = identifier;
+
+  final claim = protocol.Claim()
+    ..claimType = claimType;
+
+  claim.claimFields.add(field);
+
+  return claim;
+}
+
+protocol.Claim claimOccupation(
+  String? organization,
+  String? role,
+  String? location,
+) {
+  final claim = protocol.Claim()
+    ..claimType = ClaimType.claimTypeOccupation;
+
+  return claim;
+}

@@ -436,12 +436,17 @@ class _ProfilePageState extends State<ProfilePage> {
       List<StatelessWidget> result = [];
 
       for (var i = 0; i < claims.length; i++) {
+        final potential = claims[i].getField(fixnum.Int64(1));
+        final text = potential ?? 'unknown';
+
         result.add(shared_ui.StandardButtonGeneric(
-          actionText: models.ClaimType.claimTypeToString(claims[i].claimType),
-          actionDescription: claims[i].text,
+          actionText: models.ClaimType.claimTypeToString(
+            claims[i].claim.claimType,
+          ),
+          actionDescription: text,
           left: Container(
             margin: const EdgeInsets.only(top: 5, bottom: 5),
-            child: shared_ui.claimTypeToVisual(claims[i].claimType),
+            child: shared_ui.claimTypeToVisual(claims[i].claim.claimType),
           ),
           onPressed: () async {
             Navigator.push(context,

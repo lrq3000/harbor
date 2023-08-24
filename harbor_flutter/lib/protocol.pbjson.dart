@@ -437,41 +437,28 @@ const Claim$json = {
   '1': 'Claim',
   '2': [
     {'1': 'claim_type', '3': 1, '4': 1, '5': 4, '10': 'claimType'},
-    {'1': 'claim', '3': 2, '4': 1, '5': 12, '10': 'claim'},
+    {'1': 'claim_fields', '3': 2, '4': 3, '5': 11, '6': '.userpackage.ClaimFieldEntry', '10': 'claimFields'},
   ],
 };
 
 /// Descriptor for `Claim`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List claimDescriptor = $convert.base64Decode(
-    'CgVDbGFpbRIdCgpjbGFpbV90eXBlGAEgASgEUgljbGFpbVR5cGUSFAoFY2xhaW0YAiABKAxSBW'
-    'NsYWlt');
+    'CgVDbGFpbRIdCgpjbGFpbV90eXBlGAEgASgEUgljbGFpbVR5cGUSPwoMY2xhaW1fZmllbGRzGA'
+    'IgAygLMhwudXNlcnBhY2thZ2UuQ2xhaW1GaWVsZEVudHJ5UgtjbGFpbUZpZWxkcw==');
 
-@$core.Deprecated('Use claimIdentifierDescriptor instead')
-const ClaimIdentifier$json = {
-  '1': 'ClaimIdentifier',
+@$core.Deprecated('Use claimFieldEntryDescriptor instead')
+const ClaimFieldEntry$json = {
+  '1': 'ClaimFieldEntry',
   '2': [
-    {'1': 'identifier', '3': 1, '4': 1, '5': 9, '10': 'identifier'},
+    {'1': 'key', '3': 1, '4': 1, '5': 4, '10': 'key'},
+    {'1': 'value', '3': 2, '4': 1, '5': 9, '10': 'value'},
   ],
 };
 
-/// Descriptor for `ClaimIdentifier`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List claimIdentifierDescriptor = $convert.base64Decode(
-    'Cg9DbGFpbUlkZW50aWZpZXISHgoKaWRlbnRpZmllchgBIAEoCVIKaWRlbnRpZmllcg==');
-
-@$core.Deprecated('Use claimOccupationDescriptor instead')
-const ClaimOccupation$json = {
-  '1': 'ClaimOccupation',
-  '2': [
-    {'1': 'organization', '3': 1, '4': 1, '5': 9, '10': 'organization'},
-    {'1': 'role', '3': 2, '4': 1, '5': 9, '10': 'role'},
-    {'1': 'location', '3': 3, '4': 1, '5': 9, '10': 'location'},
-  ],
-};
-
-/// Descriptor for `ClaimOccupation`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List claimOccupationDescriptor = $convert.base64Decode(
-    'Cg9DbGFpbU9jY3VwYXRpb24SIgoMb3JnYW5pemF0aW9uGAEgASgJUgxvcmdhbml6YXRpb24SEg'
-    'oEcm9sZRgCIAEoCVIEcm9sZRIaCghsb2NhdGlvbhgDIAEoCVIIbG9jYXRpb24=');
+/// Descriptor for `ClaimFieldEntry`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List claimFieldEntryDescriptor = $convert.base64Decode(
+    'Cg9DbGFpbUZpZWxkRW50cnkSEAoDa2V5GAEgASgEUgNrZXkSFAoFdmFsdWUYAiABKAlSBXZhbH'
+    'Vl');
 
 @$core.Deprecated('Use vouchDescriptor instead')
 const Vouch$json = {
@@ -715,6 +702,54 @@ final $typed_data.Uint8List queryReferencesResponseDescriptor = $convert.base64D
     'cxgCIAMoCzIYLnVzZXJwYWNrYWdlLlNpZ25lZEV2ZW50Ug1yZWxhdGVkRXZlbnRzEhsKBmN1cn'
     'NvchgDIAEoDEgAUgZjdXJzb3KIAQESFgoGY291bnRzGAQgAygEUgZjb3VudHNCCQoHX2N1cnNv'
     'cg==');
+
+@$core.Deprecated('Use queryClaimToSystemRequestDescriptor instead')
+const QueryClaimToSystemRequest$json = {
+  '1': 'QueryClaimToSystemRequest',
+  '2': [
+    {'1': 'claim_type', '3': 1, '4': 1, '5': 4, '10': 'claimType'},
+    {'1': 'trust_root', '3': 2, '4': 1, '5': 11, '6': '.userpackage.PublicKey', '10': 'trustRoot'},
+    {'1': 'match_any_field', '3': 3, '4': 1, '5': 9, '9': 0, '10': 'matchAnyField', '17': true},
+  ],
+  '8': [
+    {'1': '_match_any_field'},
+  ],
+};
+
+/// Descriptor for `QueryClaimToSystemRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List queryClaimToSystemRequestDescriptor = $convert.base64Decode(
+    'ChlRdWVyeUNsYWltVG9TeXN0ZW1SZXF1ZXN0Eh0KCmNsYWltX3R5cGUYASABKARSCWNsYWltVH'
+    'lwZRI1Cgp0cnVzdF9yb290GAIgASgLMhYudXNlcnBhY2thZ2UuUHVibGljS2V5Ugl0cnVzdFJv'
+    'b3QSKwoPbWF0Y2hfYW55X2ZpZWxkGAMgASgJSABSDW1hdGNoQW55RmllbGSIAQFCEgoQX21hdG'
+    'NoX2FueV9maWVsZA==');
+
+@$core.Deprecated('Use queryClaimToSystemResponseDescriptor instead')
+const QueryClaimToSystemResponse$json = {
+  '1': 'QueryClaimToSystemResponse',
+  '2': [
+    {'1': 'matches', '3': 1, '4': 3, '5': 11, '6': '.userpackage.QueryClaimToSystemResponseMatch', '10': 'matches'},
+  ],
+};
+
+/// Descriptor for `QueryClaimToSystemResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List queryClaimToSystemResponseDescriptor = $convert.base64Decode(
+    'ChpRdWVyeUNsYWltVG9TeXN0ZW1SZXNwb25zZRJGCgdtYXRjaGVzGAEgAygLMiwudXNlcnBhY2'
+    'thZ2UuUXVlcnlDbGFpbVRvU3lzdGVtUmVzcG9uc2VNYXRjaFIHbWF0Y2hlcw==');
+
+@$core.Deprecated('Use queryClaimToSystemResponseMatchDescriptor instead')
+const QueryClaimToSystemResponseMatch$json = {
+  '1': 'QueryClaimToSystemResponseMatch',
+  '2': [
+    {'1': 'claim', '3': 1, '4': 1, '5': 11, '6': '.userpackage.SignedEvent', '10': 'claim'},
+    {'1': 'proof_chain', '3': 2, '4': 3, '5': 11, '6': '.userpackage.SignedEvent', '10': 'proofChain'},
+  ],
+};
+
+/// Descriptor for `QueryClaimToSystemResponseMatch`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List queryClaimToSystemResponseMatchDescriptor = $convert.base64Decode(
+    'Ch9RdWVyeUNsYWltVG9TeXN0ZW1SZXNwb25zZU1hdGNoEi4KBWNsYWltGAEgASgLMhgudXNlcn'
+    'BhY2thZ2UuU2lnbmVkRXZlbnRSBWNsYWltEjkKC3Byb29mX2NoYWluGAIgAygLMhgudXNlcnBh'
+    'Y2thZ2UuU2lnbmVkRXZlbnRSCnByb29mQ2hhaW4=');
 
 @$core.Deprecated('Use queryIndexResponseDescriptor instead')
 const QueryIndexResponse$json = {

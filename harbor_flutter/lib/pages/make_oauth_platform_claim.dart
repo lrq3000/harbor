@@ -56,11 +56,17 @@ class _MakeOAuthPlatformClaimPageState
           debugPrint("Token got $tok");
           if (mounted) {
             if (widget.inProgressClaim != null) {
-              if (widget.inProgressClaim!.text != uname) {
+              final potential = widget.inProgressClaim!.getField(
+                fixnum.Int64(1),
+              );
+
+              final text = potential ?? "unknown";
+
+              if (text != uname) {
                 setState(() {
                   screenState = 2;
-                  errorReason =
-                      "The account you signed in with didn't match the one on the claim";
+                  errorReason = "The account you signed in with didn't match "
+                      "the one on the claim";
                 });
                 return;
               }
@@ -94,8 +100,13 @@ class _MakeOAuthPlatformClaimPageState
       await synchronizer.backfillServers(state.db, systemProto);
 
       await synchronizer.backfillServers(state.db, systemProto);
-      await api_methods.requestVerification(claim.pointer, claim.claimType,
-          challengeResponse: oauthToken);
+
+      await api_methods.requestVerification(
+        claim.pointer,
+        claim.claim.claimType,
+        challengeResponse: oauthToken,
+      );
+
       setState(() {
         screenState = 1;
       });
@@ -124,6 +135,18 @@ class _MakeOAuthPlatformClaimPageState
     final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[widget.identityIndex];
 
+    var text = 'unknown';
+
+    if (widget.inProgressClaim != null) {
+      final potential = widget.inProgressClaim!.getField(
+        fixnum.Int64(1),
+      );
+
+      if (potential != null) {
+        text = potential;
+      }
+    }
+
     return shared_ui.StandardScaffold(
       appBar: AppBar(
         title: shared_ui.makeAppBarTitleText('Make Claim'),
@@ -147,16 +170,15 @@ class _MakeOAuthPlatformClaimPageState
                 style: TextStyle(color: Colors.white)),
             Text(username!, style: const TextStyle(color: Colors.white))
           ] else if (widget.inProgressClaim != null) ...[
-            Text(
-                "Sign in with ${widget.inProgressClaim!.text} to verify ownership",
+            Text("Sign in with $text to verify ownership",
                 style: const TextStyle(color: Colors.white))
           ],
           Align(
             alignment: AlignmentDirectional.center,
             child: callbackUrl == null
                 ? shared_ui.OblongTextButton(
-                    text:
-                        "Log in with ${models.ClaimType.claimTypeToString(widget.claimType)}",
+                    text: "Log in with "
+                        "${models.ClaimType.claimTypeToString(widget.claimType)}",
                     onPressed: () async {
                       try {
                         final oauthURL =
@@ -172,8 +194,8 @@ class _MakeOAuthPlatformClaimPageState
                       } catch (err) {
                         setState(() {
                           screenState = 2;
-                          errorReason =
-                              "Unable to get sign on information from the server";
+                          errorReason = "Unable to get sign on information "
+                              "from the server";
                         });
                       }
                     },

@@ -1490,7 +1490,7 @@ class Claim extends $pb.GeneratedMessage {
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Claim', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
     ..a<$fixnum.Int64>(1, _omitFieldNames ? '' : 'claimType', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
-    ..a<$core.List<$core.int>>(2, _omitFieldNames ? '' : 'claim', $pb.PbFieldType.OY)
+    ..pc<ClaimFieldEntry>(2, _omitFieldNames ? '' : 'claimFields', $pb.PbFieldType.PM, subBuilder: ClaimFieldEntry.create)
     ..hasRequiredFields = false
   ;
 
@@ -1525,23 +1525,18 @@ class Claim extends $pb.GeneratedMessage {
   void clearClaimType() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.List<$core.int> get claim => $_getN(1);
-  @$pb.TagNumber(2)
-  set claim($core.List<$core.int> v) { $_setBytes(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasClaim() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearClaim() => clearField(2);
+  $core.List<ClaimFieldEntry> get claimFields => $_getList(1);
 }
 
-class ClaimIdentifier extends $pb.GeneratedMessage {
-  factory ClaimIdentifier() => create();
-  ClaimIdentifier._() : super();
-  factory ClaimIdentifier.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory ClaimIdentifier.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+class ClaimFieldEntry extends $pb.GeneratedMessage {
+  factory ClaimFieldEntry() => create();
+  ClaimFieldEntry._() : super();
+  factory ClaimFieldEntry.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ClaimFieldEntry.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ClaimIdentifier', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'identifier')
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ClaimFieldEntry', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
+    ..a<$fixnum.Int64>(1, _omitFieldNames ? '' : 'key', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..aOS(2, _omitFieldNames ? '' : 'value')
     ..hasRequiredFields = false
   ;
 
@@ -1549,93 +1544,40 @@ class ClaimIdentifier extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  ClaimIdentifier clone() => ClaimIdentifier()..mergeFromMessage(this);
+  ClaimFieldEntry clone() => ClaimFieldEntry()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  ClaimIdentifier copyWith(void Function(ClaimIdentifier) updates) => super.copyWith((message) => updates(message as ClaimIdentifier)) as ClaimIdentifier;
+  ClaimFieldEntry copyWith(void Function(ClaimFieldEntry) updates) => super.copyWith((message) => updates(message as ClaimFieldEntry)) as ClaimFieldEntry;
 
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static ClaimIdentifier create() => ClaimIdentifier._();
-  ClaimIdentifier createEmptyInstance() => create();
-  static $pb.PbList<ClaimIdentifier> createRepeated() => $pb.PbList<ClaimIdentifier>();
+  static ClaimFieldEntry create() => ClaimFieldEntry._();
+  ClaimFieldEntry createEmptyInstance() => create();
+  static $pb.PbList<ClaimFieldEntry> createRepeated() => $pb.PbList<ClaimFieldEntry>();
   @$core.pragma('dart2js:noInline')
-  static ClaimIdentifier getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ClaimIdentifier>(create);
-  static ClaimIdentifier? _defaultInstance;
+  static ClaimFieldEntry getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ClaimFieldEntry>(create);
+  static ClaimFieldEntry? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get identifier => $_getSZ(0);
+  $fixnum.Int64 get key => $_getI64(0);
   @$pb.TagNumber(1)
-  set identifier($core.String v) { $_setString(0, v); }
+  set key($fixnum.Int64 v) { $_setInt64(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasIdentifier() => $_has(0);
+  $core.bool hasKey() => $_has(0);
   @$pb.TagNumber(1)
-  void clearIdentifier() => clearField(1);
-}
-
-class ClaimOccupation extends $pb.GeneratedMessage {
-  factory ClaimOccupation() => create();
-  ClaimOccupation._() : super();
-  factory ClaimOccupation.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory ClaimOccupation.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ClaimOccupation', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'organization')
-    ..aOS(2, _omitFieldNames ? '' : 'role')
-    ..aOS(3, _omitFieldNames ? '' : 'location')
-    ..hasRequiredFields = false
-  ;
-
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  ClaimOccupation clone() => ClaimOccupation()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  ClaimOccupation copyWith(void Function(ClaimOccupation) updates) => super.copyWith((message) => updates(message as ClaimOccupation)) as ClaimOccupation;
-
-  $pb.BuilderInfo get info_ => _i;
-
-  @$core.pragma('dart2js:noInline')
-  static ClaimOccupation create() => ClaimOccupation._();
-  ClaimOccupation createEmptyInstance() => create();
-  static $pb.PbList<ClaimOccupation> createRepeated() => $pb.PbList<ClaimOccupation>();
-  @$core.pragma('dart2js:noInline')
-  static ClaimOccupation getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ClaimOccupation>(create);
-  static ClaimOccupation? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $core.String get organization => $_getSZ(0);
-  @$pb.TagNumber(1)
-  set organization($core.String v) { $_setString(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasOrganization() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearOrganization() => clearField(1);
+  void clearKey() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.String get role => $_getSZ(1);
+  $core.String get value => $_getSZ(1);
   @$pb.TagNumber(2)
-  set role($core.String v) { $_setString(1, v); }
+  set value($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasRole() => $_has(1);
+  $core.bool hasValue() => $_has(1);
   @$pb.TagNumber(2)
-  void clearRole() => clearField(2);
-
-  @$pb.TagNumber(3)
-  $core.String get location => $_getSZ(2);
-  @$pb.TagNumber(3)
-  set location($core.String v) { $_setString(2, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasLocation() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearLocation() => clearField(3);
+  void clearValue() => clearField(2);
 }
 
 class Vouch extends $pb.GeneratedMessage {
@@ -2372,6 +2314,154 @@ class QueryReferencesResponse extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(4)
   $core.List<$fixnum.Int64> get counts => $_getList(3);
+}
+
+class QueryClaimToSystemRequest extends $pb.GeneratedMessage {
+  factory QueryClaimToSystemRequest() => create();
+  QueryClaimToSystemRequest._() : super();
+  factory QueryClaimToSystemRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory QueryClaimToSystemRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'QueryClaimToSystemRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
+    ..a<$fixnum.Int64>(1, _omitFieldNames ? '' : 'claimType', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..aOM<PublicKey>(2, _omitFieldNames ? '' : 'trustRoot', subBuilder: PublicKey.create)
+    ..aOS(3, _omitFieldNames ? '' : 'matchAnyField')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  QueryClaimToSystemRequest clone() => QueryClaimToSystemRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  QueryClaimToSystemRequest copyWith(void Function(QueryClaimToSystemRequest) updates) => super.copyWith((message) => updates(message as QueryClaimToSystemRequest)) as QueryClaimToSystemRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static QueryClaimToSystemRequest create() => QueryClaimToSystemRequest._();
+  QueryClaimToSystemRequest createEmptyInstance() => create();
+  static $pb.PbList<QueryClaimToSystemRequest> createRepeated() => $pb.PbList<QueryClaimToSystemRequest>();
+  @$core.pragma('dart2js:noInline')
+  static QueryClaimToSystemRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<QueryClaimToSystemRequest>(create);
+  static QueryClaimToSystemRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $fixnum.Int64 get claimType => $_getI64(0);
+  @$pb.TagNumber(1)
+  set claimType($fixnum.Int64 v) { $_setInt64(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasClaimType() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearClaimType() => clearField(1);
+
+  @$pb.TagNumber(2)
+  PublicKey get trustRoot => $_getN(1);
+  @$pb.TagNumber(2)
+  set trustRoot(PublicKey v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasTrustRoot() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTrustRoot() => clearField(2);
+  @$pb.TagNumber(2)
+  PublicKey ensureTrustRoot() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  $core.String get matchAnyField => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set matchAnyField($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasMatchAnyField() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearMatchAnyField() => clearField(3);
+}
+
+class QueryClaimToSystemResponse extends $pb.GeneratedMessage {
+  factory QueryClaimToSystemResponse() => create();
+  QueryClaimToSystemResponse._() : super();
+  factory QueryClaimToSystemResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory QueryClaimToSystemResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'QueryClaimToSystemResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
+    ..pc<QueryClaimToSystemResponseMatch>(1, _omitFieldNames ? '' : 'matches', $pb.PbFieldType.PM, subBuilder: QueryClaimToSystemResponseMatch.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  QueryClaimToSystemResponse clone() => QueryClaimToSystemResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  QueryClaimToSystemResponse copyWith(void Function(QueryClaimToSystemResponse) updates) => super.copyWith((message) => updates(message as QueryClaimToSystemResponse)) as QueryClaimToSystemResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static QueryClaimToSystemResponse create() => QueryClaimToSystemResponse._();
+  QueryClaimToSystemResponse createEmptyInstance() => create();
+  static $pb.PbList<QueryClaimToSystemResponse> createRepeated() => $pb.PbList<QueryClaimToSystemResponse>();
+  @$core.pragma('dart2js:noInline')
+  static QueryClaimToSystemResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<QueryClaimToSystemResponse>(create);
+  static QueryClaimToSystemResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<QueryClaimToSystemResponseMatch> get matches => $_getList(0);
+}
+
+class QueryClaimToSystemResponseMatch extends $pb.GeneratedMessage {
+  factory QueryClaimToSystemResponseMatch() => create();
+  QueryClaimToSystemResponseMatch._() : super();
+  factory QueryClaimToSystemResponseMatch.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory QueryClaimToSystemResponseMatch.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'QueryClaimToSystemResponseMatch', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
+    ..aOM<SignedEvent>(1, _omitFieldNames ? '' : 'claim', subBuilder: SignedEvent.create)
+    ..pc<SignedEvent>(2, _omitFieldNames ? '' : 'proofChain', $pb.PbFieldType.PM, subBuilder: SignedEvent.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  QueryClaimToSystemResponseMatch clone() => QueryClaimToSystemResponseMatch()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  QueryClaimToSystemResponseMatch copyWith(void Function(QueryClaimToSystemResponseMatch) updates) => super.copyWith((message) => updates(message as QueryClaimToSystemResponseMatch)) as QueryClaimToSystemResponseMatch;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static QueryClaimToSystemResponseMatch create() => QueryClaimToSystemResponseMatch._();
+  QueryClaimToSystemResponseMatch createEmptyInstance() => create();
+  static $pb.PbList<QueryClaimToSystemResponseMatch> createRepeated() => $pb.PbList<QueryClaimToSystemResponseMatch>();
+  @$core.pragma('dart2js:noInline')
+  static QueryClaimToSystemResponseMatch getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<QueryClaimToSystemResponseMatch>(create);
+  static QueryClaimToSystemResponseMatch? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  SignedEvent get claim => $_getN(0);
+  @$pb.TagNumber(1)
+  set claim(SignedEvent v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasClaim() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearClaim() => clearField(1);
+  @$pb.TagNumber(1)
+  SignedEvent ensureClaim() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  $core.List<SignedEvent> get proofChain => $_getList(1);
 }
 
 class QueryIndexResponse extends $pb.GeneratedMessage {
