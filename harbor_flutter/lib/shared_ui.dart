@@ -590,12 +590,16 @@ void showSnackBar(BuildContext context, String text) {
 }
 
 List<Widget> renderClaim(main.ClaimInfo claim) {
-  if (claim.claimOccupation != null) {
+  if (claim.claim.claimType == models.ClaimType.claimTypeOccupation) {
+    final organization = claim.getField(fixnum.Int64(1));
+    final role = claim.getField(fixnum.Int64(2));
+    final location = claim.getField(fixnum.Int64(3));
+
     return [
-      if (claim.claimOccupation!.organization != "")
+      if (organization != null)
         Center(
           child: Text(
-            "Organization: ${claim.claimOccupation!.organization}",
+            "Organization: $organization",
             style: const TextStyle(
               fontWeight: FontWeight.w200,
               fontSize: 20,
@@ -603,10 +607,10 @@ List<Widget> renderClaim(main.ClaimInfo claim) {
             ),
           ),
         ),
-      if (claim.claimOccupation!.role != "")
+      if (role != null)
         Center(
           child: Text(
-            "Role: ${claim.claimOccupation!.role}",
+            "Role: $role",
             style: const TextStyle(
               fontWeight: FontWeight.w200,
               fontSize: 20,
@@ -614,10 +618,10 @@ List<Widget> renderClaim(main.ClaimInfo claim) {
             ),
           ),
         ),
-      if (claim.claimOccupation!.location != "")
+      if (location != null)
         Center(
           child: Text(
-            "Location: ${claim.claimOccupation!.location}",
+            "Location: $location",
             style: const TextStyle(
               fontWeight: FontWeight.w200,
               fontSize: 20,
@@ -627,10 +631,12 @@ List<Widget> renderClaim(main.ClaimInfo claim) {
         ),
     ];
   } else {
+    final text = claim.getField(fixnum.Int64(1));
+
     return [
       Center(
         child: Text(
-          claim.text,
+          text ?? 'unknown',
           style: const TextStyle(
             fontWeight: FontWeight.w200,
             fontSize: 20,

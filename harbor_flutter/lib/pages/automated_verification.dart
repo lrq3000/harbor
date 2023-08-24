@@ -56,7 +56,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
 
       await api_methods.requestVerification(
         widget.claim.pointer,
-        widget.claim.claimType,
+        widget.claim.claim.claimType,
       );
 
       setState(() {
