@@ -27,7 +27,13 @@ class SystemState {
 
   @override
   String toString() {
-    return "(servers: $servers, processes: $processes, username: $username, description: $description, store: $store, avatar: $avatar, banner: $banner)";
+    return "(servers: $servers, "
+      "processes: $processes, "
+      "username: $username, "
+      "description: $description, "
+      "store: $store, "
+      "avatar: $avatar, "
+      "banner: $banner)";
   }
 
   static SystemState fromStorageTypeSystemState(StorageTypeSystemState state) {
