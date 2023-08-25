@@ -809,10 +809,11 @@ Future<void> setServer(
   );
 }
 
-Future<ClaimInfo> makePlatformClaim(sqflite.Transaction transaction,
-    ProcessSecret processInfo, fixnum.Int64 claimType, String account) async {
-  final claim = models.claimIdentifier(claimType, account);
-
+Future<ClaimInfo> persistClaim(
+  sqflite.Transaction transaction,
+  ProcessSecret processInfo,
+  protocol.Claim claim,
+) async {
   final protocol.Event event = protocol.Event()
     ..contentType = models.ContentType.contentTypeClaim
     ..content = claim.writeToBuffer();
@@ -822,21 +823,26 @@ Future<ClaimInfo> makePlatformClaim(sqflite.Transaction transaction,
   return ClaimInfo(pointer, event);
 }
 
+Future<ClaimInfo> makePlatformClaim(sqflite.Transaction transaction,
+    ProcessSecret processInfo, fixnum.Int64 claimType, String account) async {
+  return await persistClaim(
+    transaction,
+    processInfo,
+    models.claimIdentifier(claimType, account),
+  );
+}
+
 Future<ClaimInfo> makeOccupationClaim(
     sqflite.Transaction transaction,
     ProcessSecret processInfo,
     String organization,
     String role,
     String location) async {
-  final claim = models.claimOccupation(organization, role, location);
-
-  final protocol.Event event = protocol.Event()
-    ..contentType = models.ContentType.contentTypeClaim
-    ..content = claim.writeToBuffer();
-
-  final pointer = await saveEvent(transaction, processInfo, event);
-
-  return ClaimInfo(pointer, event);
+  return await persistClaim(
+    transaction,
+    processInfo,
+    models.claimOccupation(organization, role, location),
+  );
 }
 
 Future<void> makeVouch(sqflite.Transaction transaction,

@@ -188,8 +188,9 @@ Future<List<protocol.ClaimFieldEntry>> getClaimFieldsByUrl(
 Future<void> requestVerification(
     protocol.Pointer pointer, fixnum.Int64 claimType,
     {String? challengeResponse}) async {
-  var url = "$authorityServer${claimType.toString()}"
-      "/api/v1/vouch";
+  var url = "$authorityServer/platforms"
+      "/${models.ClaimType.claimTypeToString(claimType)}"
+      "/text/vouch";
 
   if (challengeResponse != null) {
     url += "?challengeResponse=$challengeResponse";
