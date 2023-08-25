@@ -5,9 +5,11 @@ import 'package:http/http.dart' as http;
 
 import 'web_execption.dart';
 import 'protocol.pb.dart' as protocol;
+import 'models.dart' as models;
 import 'logger.dart';
 
-const authorityServer = "https://verifiers.grayjay.app";
+// const authorityServer = "https://verifiers.grayjay.app";
+const authorityServer = "http://10.10.10.58:9000";
 
 void checkResponse(String name, http.Response response) {
   if (response.statusCode != 200) {
@@ -133,6 +135,54 @@ Future<protocol.Events> getQueryLatest(String server, protocol.PublicKey system,
   checkResponse('getQueryLatest', response);
 
   return protocol.Events.fromBuffer(response.bodyBytes);
+}
+
+Future<List<protocol.ClaimFieldEntry>> getClaimFieldsByUrl(
+  fixnum.Int64 claimType,
+  String subject,
+) async {
+  final url = "$authorityServer/platforms"
+      "/${models.ClaimType.claimTypeToString(claimType)}"
+      "/text/getClaimFieldsByUrl";
+
+  logger.d(subject);
+
+  final Map<String, String> body = {};
+  body["url"] = subject;
+
+  final response = await http.post(
+    Uri.parse(url),
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    },
+    body: convert.jsonEncode(body),
+  );
+
+  checkResponse('getClaimFieldsByUrl', response);
+
+  logger.d(response.body);
+
+  final List<dynamic> decoded = convert.jsonDecode(
+    response.body,
+  ) as List<dynamic>;
+
+  final List<protocol.ClaimFieldEntry> result = [];
+
+  for (final itemDynamic in decoded) {
+    final item = itemDynamic as Map<String, dynamic>;
+
+    final entry = protocol.ClaimFieldEntry()
+      ..key = fixnum.Int64(item['key'] as int)
+      ..value = item['value'] as String;
+
+    result.add(entry);
+  }
+
+  for (final entry in result) {
+    logger.d("${entry.key} ${entry.value}");
+  }
+
+  return result;
 }
 
 Future<void> requestVerification(
