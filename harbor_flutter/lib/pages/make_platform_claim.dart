@@ -57,34 +57,38 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
           child: shared_ui.OblongTextButton(
               text: 'Next step',
               onPressed: () async {
-                final claimFields = await api_methods.getClaimFieldsByUrl(
-                  widget.claimType,
-                  textController.text,
-                );
-
-                final claim = protocol.Claim()..claimType = widget.claimType;
-
-                claim.claimFields.addAll(claimFields);
-
-                final claimInfo =
-                    await state.db.transaction((transaction) async {
-                  return await main.persistClaim(
-                    transaction,
-                    identity.processSecret,
-                    claim,
+                try {
+                  final claimFields = await api_methods.getClaimFieldsByUrl(
+                    widget.claimType,
+                    textController.text,
                   );
-                });
 
-                await state.mLoadIdentities();
+                  final claim = protocol.Claim()..claimType = widget.claimType;
 
-                if (context.mounted) {
-                  Navigator.push(context,
-                      MaterialPageRoute<AddTokenPage>(builder: (context) {
-                    return AddTokenPage(
-                      claim: claimInfo,
-                      identityIndex: widget.identityIndex,
+                  claim.claimFields.addAll(claimFields);
+
+                  final claimInfo =
+                      await state.db.transaction((transaction) async {
+                    return await main.persistClaim(
+                      transaction,
+                      identity.processSecret,
+                      claim,
                     );
-                  }));
+                  });
+
+                  await state.mLoadIdentities();
+
+                  if (context.mounted) {
+                    Navigator.push(context,
+                        MaterialPageRoute<AddTokenPage>(builder: (context) {
+                      return AddTokenPage(
+                        claim: claimInfo,
+                        identityIndex: widget.identityIndex,
+                      );
+                    }));
+                  }
+                } on api_methods.AuthorityException catch(e) {
+                  await shared_ui.errorDialog(context, e.message);
                 }
               }),
         ),

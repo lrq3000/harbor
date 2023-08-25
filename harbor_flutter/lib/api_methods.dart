@@ -1,4 +1,5 @@
 import 'dart:convert' as convert;
+import 'dart:io' as dart_io;
 import 'dart:typed_data';
 import 'package:fixnum/fixnum.dart' as fixnum;
 import 'package:http/http.dart' as http;
@@ -7,6 +8,22 @@ import 'web_execption.dart';
 import 'protocol.pb.dart' as protocol;
 import 'models.dart' as models;
 import 'logger.dart';
+
+class AuthorityException implements Exception {
+  final String message;
+
+  AuthorityException(this.message);
+}
+
+void checkAuthorityResponse(String name, http.Response response)  {
+  if (response.statusCode == 200) {
+    return;
+  }
+
+  final Map<String, dynamic> fields = convert.jsonDecode(response.body);
+
+  throw AuthorityException(fields['message'] as String);
+}
 
 // const authorityServer = "https://verifiers.grayjay.app";
 const authorityServer = "http://10.10.10.58:9000";
@@ -141,69 +158,79 @@ Future<List<protocol.ClaimFieldEntry>> getClaimFieldsByUrl(
   fixnum.Int64 claimType,
   String subject,
 ) async {
-  final url = "$authorityServer/platforms"
-      "/${models.ClaimType.claimTypeToString(claimType)}"
-      "/text/getClaimFieldsByUrl";
+  try {
+    final url = "$authorityServer/platforms"
+        "/${models.ClaimType.claimTypeToString(claimType)}"
+        "/text/getClaimFieldsByUrl";
 
-  logger.d(subject);
+    logger.d(subject);
 
-  final Map<String, String> body = {};
-  body["url"] = subject;
+    final Map<String, String> body = {};
+    body["url"] = subject;
 
-  final response = await http.post(
-    Uri.parse(url),
-    headers: <String, String>{
-      'Content-Type': 'application/json',
-    },
-    body: convert.jsonEncode(body),
-  );
+    final response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: convert.jsonEncode(body),
+    );
 
-  checkResponse('getClaimFieldsByUrl', response);
+    checkAuthorityResponse('getClaimFieldsByUrl', response);
 
-  logger.d(response.body);
+    logger.d(response.statusCode);
+    logger.d(response.body);
 
-  final List<dynamic> decoded = convert.jsonDecode(
-    response.body,
-  ) as List<dynamic>;
+    final List<dynamic> decoded = convert.jsonDecode(
+      response.body,
+    ) as List<dynamic>;
 
-  final List<protocol.ClaimFieldEntry> result = [];
+    final List<protocol.ClaimFieldEntry> result = [];
 
-  for (final itemDynamic in decoded) {
-    final item = itemDynamic as Map<String, dynamic>;
+    for (final itemDynamic in decoded) {
+      final item = itemDynamic as Map<String, dynamic>;
 
-    final entry = protocol.ClaimFieldEntry()
-      ..key = fixnum.Int64(item['key'] as int)
-      ..value = item['value'] as String;
+      final entry = protocol.ClaimFieldEntry()
+        ..key = fixnum.Int64(item['key'] as int)
+        ..value = item['value'] as String;
 
-    result.add(entry);
+      result.add(entry);
+    }
+
+    for (final entry in result) {
+      logger.d("${entry.key} ${entry.value}");
+    }
+
+    return result;
+  } on dart_io.SocketException {
+    throw AuthorityException("Failed to connect to authority");
   }
-
-  for (final entry in result) {
-    logger.d("${entry.key} ${entry.value}");
-  }
-
-  return result;
 }
 
 Future<void> requestVerification(
     protocol.Pointer pointer, fixnum.Int64 claimType,
     {String? challengeResponse}) async {
-  var url = "$authorityServer/platforms"
-      "/${models.ClaimType.claimTypeToString(claimType)}"
-      "/text/vouch";
+  try {
+    var url = "$authorityServer/platforms"
+        "/${models.ClaimType.claimTypeToString(claimType)}"
+        "/text/vouch";
 
-  if (challengeResponse != null) {
-    url += "?challengeResponse=$challengeResponse";
+    if (challengeResponse != null) {
+      url += "?challengeResponse=$challengeResponse";
+    }
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/octet-stream',
+      },
+      body: pointer.writeToBuffer(),
+    );
+
+    checkAuthorityResponse('requestVerification', response);
+  } on dart_io.SocketException {
+    throw AuthorityException("Failed to connect to authority");
   }
-  final response = await http.post(
-    Uri.parse(url),
-    headers: <String, String>{
-      'Content-Type': 'application/octet-stream',
-    },
-    body: pointer.writeToBuffer(),
-  );
-
-  checkResponse('requestVerification', response);
 }
 
 Future<String> getOAuthURL(

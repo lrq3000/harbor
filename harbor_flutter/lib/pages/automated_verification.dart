@@ -62,23 +62,12 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
       setState(() {
         page = 1;
       });
-    } on WebException catch (err) {
+    } on api_methods.AuthorityException catch (err) {
       logger.e(err);
 
       setState(() {
         page = 2;
-        if (err.statusCode == 422) {
-          errorMessage =
-              "The token was not found in your profile. Ensure you're using the correct username or id for your account. Try waiting a few minutes for the change to process and then trying again.";
-        } else {
-          errorMessage =
-              "An unknown error occurred with the verification server.";
-        }
-      });
-    } on SocketException {
-      setState(() {
-        page = 2;
-        errorMessage = "Unable to connect to the verification server.";
+        errorMessage = err.message;
       });
     } catch (err) {
       logger.e(err);
