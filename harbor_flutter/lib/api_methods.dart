@@ -7,6 +7,8 @@ import 'web_execption.dart';
 import 'protocol.pb.dart' as protocol;
 import 'logger.dart';
 
+const authorityServer = "https://verifiers.grayjay.app";
+
 void checkResponse(String name, http.Response response) {
   if (response.statusCode != 200) {
     throw WebException(response.statusCode, name, response.body);
@@ -136,8 +138,7 @@ Future<protocol.Events> getQueryLatest(String server, protocol.PublicKey system,
 Future<void> requestVerification(
     protocol.Pointer pointer, fixnum.Int64 claimType,
     {String? challengeResponse}) async {
-  var url = "https://verifiers.grayjay.app/"
-      "${claimType.toString()}"
+  var url = "$authorityServer${claimType.toString()}"
       "/api/v1/vouch";
 
   if (challengeResponse != null) {
@@ -157,8 +158,7 @@ Future<void> requestVerification(
 Future<String> getOAuthURL(
   fixnum.Int64 claimType,
 ) async {
-  final url = "https://verifiers.grayjay.app/"
-      "${claimType.toString()}"
+  final url = "$authorityServer/${claimType.toString()}"
       "/api/v1/oauth";
 
   final response = await http.get(
@@ -176,8 +176,7 @@ Future<dynamic> getOAuthUsername(
   String token,
   fixnum.Int64 claimType,
 ) async {
-  final url = "https://verifiers.grayjay.app/"
-      "${claimType.toString()}"
+  final url = "$authorityServer/${claimType.toString()}"
       "/api/v1/oauth_handle?token=$token";
 
   final response = await http.get(
