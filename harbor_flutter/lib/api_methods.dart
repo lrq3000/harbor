@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 
 import 'web_execption.dart';
 import 'protocol.pb.dart' as protocol;
-import 'models.dart' as models;
 import 'logger.dart';
 
 class AuthorityException implements Exception {
@@ -27,7 +26,7 @@ void checkAuthorityResponse(String name, http.Response response) {
 }
 
 // const authorityServer = "https://verifiers.grayjay.app";
-const authorityServer = "http://10.10.10.58:9000";
+const authorityServer = "http://10.10.10.58:3092";
 
 void checkResponse(String name, http.Response response) {
   if (response.statusCode != 200) {
@@ -161,7 +160,7 @@ Future<List<protocol.ClaimFieldEntry>> getClaimFieldsByUrl(
 ) async {
   try {
     final url = "$authorityServer/platforms"
-        "/${models.ClaimType.claimTypeToString(claimType)}"
+        "/${claimType.toString()}"
         "/text/getClaimFieldsByUrl";
 
     logger.d(subject);
@@ -215,7 +214,7 @@ Future<void> requestVerification(
     final verifierType = challengeResponse != null ? "oauth" : "text";
 
     var url = "$authorityServer/platforms"
-        "/${models.ClaimType.claimTypeToString(claimType)}"
+        "/${claimType.toString()}"
         "/$verifierType/vouch";
 
     if (challengeResponse != null) {
@@ -239,9 +238,9 @@ Future<void> requestVerification(
 Future<String> getOAuthURL(
   fixnum.Int64 claimType,
 ) async {
-  final url = "$authorityServer"
-      "/${models.ClaimType.claimTypeToString(claimType)}"
-      "/api/v1/oauth";
+  final url = "$authorityServer/platforms"
+      "/${claimType.toString()}"
+      "/oauth/url";
 
   final response = await http.get(
     Uri.parse(url),
@@ -258,9 +257,9 @@ Future<dynamic> getOAuthUsername(
   String token,
   fixnum.Int64 claimType,
 ) async {
-  final url = "$authorityServer"
-      "/${models.ClaimType.claimTypeToString(claimType)}"
-      "/api/v1/oauth_handle?token=$token";
+  final url = "$authorityServer/platforms"
+      "/${claimType.toString()}"
+      "/oauth/token?token=$token";
 
   final response = await http.get(
     Uri.parse(url),

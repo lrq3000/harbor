@@ -99,8 +99,6 @@ class _MakeOAuthPlatformClaimPageState
 
       await synchronizer.backfillServers(state.db, systemProto);
 
-      await synchronizer.backfillServers(state.db, systemProto);
-
       await api_methods.requestVerification(
         claim.pointer,
         claim.claim.claimType,
