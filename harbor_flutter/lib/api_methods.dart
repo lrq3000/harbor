@@ -15,12 +15,13 @@ class AuthorityException implements Exception {
   AuthorityException(this.message);
 }
 
-void checkAuthorityResponse(String name, http.Response response)  {
+void checkAuthorityResponse(String name, http.Response response) {
   if (response.statusCode == 200) {
     return;
   }
 
-  final Map<String, dynamic> fields = convert.jsonDecode(response.body);
+  final Map<String, dynamic> fields =
+      convert.jsonDecode(response.body) as Map<String, dynamic>;
 
   throw AuthorityException(fields['message'] as String);
 }
@@ -211,9 +212,11 @@ Future<void> requestVerification(
     protocol.Pointer pointer, fixnum.Int64 claimType,
     {String? challengeResponse}) async {
   try {
+    final verifierType = challengeResponse != null ? "oauth" : "text";
+
     var url = "$authorityServer/platforms"
         "/${models.ClaimType.claimTypeToString(claimType)}"
-        "/text/vouch";
+        "/$verifierType/vouch";
 
     if (challengeResponse != null) {
       url += "?challengeResponse=$challengeResponse";
@@ -236,7 +239,8 @@ Future<void> requestVerification(
 Future<String> getOAuthURL(
   fixnum.Int64 claimType,
 ) async {
-  final url = "$authorityServer/${claimType.toString()}"
+  final url = "$authorityServer"
+      "/${models.ClaimType.claimTypeToString(claimType)}"
       "/api/v1/oauth";
 
   final response = await http.get(
@@ -254,7 +258,8 @@ Future<dynamic> getOAuthUsername(
   String token,
   fixnum.Int64 claimType,
 ) async {
-  final url = "$authorityServer/${claimType.toString()}"
+  final url = "$authorityServer"
+      "/${models.ClaimType.claimTypeToString(claimType)}"
       "/api/v1/oauth_handle?token=$token";
 
   final response = await http.get(

@@ -87,7 +87,7 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
                       );
                     }));
                   }
-                } on api_methods.AuthorityException catch(e) {
+                } on api_methods.AuthorityException catch (e) {
                   await shared_ui.errorDialog(context, e.message);
                 }
               }),

@@ -3,13 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:fixnum/fixnum.dart' as fixnum;
 import 'profile.dart';
 import '../main.dart' as main;
-import '../web_execption.dart';
 import '../shared_ui.dart' as shared_ui;
 import '../api_methods.dart' as api_methods;
 import '../synchronizer.dart' as synchronizer;
 import '../protocol.pb.dart' as protocol;
 import '../logger.dart';
-import 'dart:io';
 
 class AutomatedVerificationPage extends StatefulWidget {
   final main.ClaimInfo claim;
