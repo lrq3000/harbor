@@ -246,11 +246,7 @@ Future<String> getOAuthURL(
     Uri.parse(url),
   );
 
-  checkResponse('getOAuthURL', response);
-
-  final oAuthUrl = convert.jsonDecode(response.body)["url"] as String;
-
-  return oAuthUrl;
+  return convert.jsonDecode(response.body) as String;
 }
 
 Future<dynamic> getOAuthUsername(
@@ -259,7 +255,7 @@ Future<dynamic> getOAuthUsername(
 ) async {
   final url = "$authorityServer/platforms"
       "/${claimType.toString()}"
-      "/oauth/token?token=$token";
+      "/oauth/token$token";
 
   final response = await http.get(
     Uri.parse(url),
