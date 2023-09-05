@@ -591,9 +591,9 @@ void showSnackBar(BuildContext context, String text) {
 
 List<Widget> renderClaim(main.ClaimInfo claim) {
   if (claim.claim.claimType == models.ClaimType.claimTypeOccupation) {
-    final organization = claim.getField(fixnum.Int64(1));
-    final role = claim.getField(fixnum.Int64(2));
-    final location = claim.getField(fixnum.Int64(3));
+    final organization = claim.getField(fixnum.Int64(0));
+    final role = claim.getField(fixnum.Int64(1));
+    final location = claim.getField(fixnum.Int64(2));
 
     return [
       if (organization != null)

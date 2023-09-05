@@ -295,5 +295,29 @@ protocol.Claim claimOccupation(
   final claim = protocol.Claim()
     ..claimType = ClaimType.claimTypeOccupation;
 
+  if (organization != null) {
+    claim.claimFields.add(
+      protocol.ClaimFieldEntry()
+        ..key = fixnum.Int64(0)
+        ..value = organization
+      );
+  }
+
+  if (role != null) {
+    claim.claimFields.add(
+      protocol.ClaimFieldEntry()
+        ..key = fixnum.Int64(1)
+        ..value = role
+      );
+  }
+
+  if (location != null) {
+    claim.claimFields.add(
+      protocol.ClaimFieldEntry()
+        ..key = fixnum.Int64(2)
+        ..value = location
+      );
+  }
+
   return claim;
 }
