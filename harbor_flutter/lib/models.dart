@@ -276,7 +276,7 @@ protocol.Claim claimIdentifier(
   String identifier,
 ) {
   final field = protocol.ClaimFieldEntry()
-    ..key = fixnum.Int64(1)
+    ..key = fixnum.Int64(0)
     ..value = identifier;
 
   final claim = protocol.Claim()

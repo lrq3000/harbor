@@ -46,8 +46,10 @@ class _MakeOAuthPlatformClaimPageState
       if (link != null) {
         try {
           debugPrint("Stream URI received ${link.toString()}");
-          final String encodedLink = base64.encode(
-              utf8.encode("${link.toString()}&harborSecret=$harborSecret"));
+
+          final String encodedLink = "?harborSecret=$harborSecret"
+              "&oauthData=${link.queryParameters['oauthData']}";
+
           final resp =
               await api_methods.getOAuthUsername(encodedLink, widget.claimType);
           final uname = resp["username"] as String;
@@ -96,8 +98,6 @@ class _MakeOAuthPlatformClaimPageState
       final systemProto = protocol.PublicKey();
       systemProto.keyType = fixnum.Int64(1);
       systemProto.key = public.bytes;
-
-      await synchronizer.backfillServers(state.db, systemProto);
 
       await synchronizer.backfillServers(state.db, systemProto);
 

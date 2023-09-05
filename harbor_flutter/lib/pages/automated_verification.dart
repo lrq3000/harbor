@@ -3,13 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:fixnum/fixnum.dart' as fixnum;
 import 'profile.dart';
 import '../main.dart' as main;
-import '../web_execption.dart';
 import '../shared_ui.dart' as shared_ui;
 import '../api_methods.dart' as api_methods;
 import '../synchronizer.dart' as synchronizer;
 import '../protocol.pb.dart' as protocol;
 import '../logger.dart';
-import 'dart:io';
 
 class AutomatedVerificationPage extends StatefulWidget {
   final main.ClaimInfo claim;
@@ -62,23 +60,12 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
       setState(() {
         page = 1;
       });
-    } on WebException catch (err) {
+    } on api_methods.AuthorityException catch (err) {
       logger.e(err);
 
       setState(() {
         page = 2;
-        if (err.statusCode == 422) {
-          errorMessage =
-              "The token was not found in your profile. Ensure you're using the correct username or id for your account. Try waiting a few minutes for the change to process and then trying again.";
-        } else {
-          errorMessage =
-              "An unknown error occurred with the verification server.";
-        }
-      });
-    } on SocketException {
-      setState(() {
-        page = 2;
-        errorMessage = "Unable to connect to the verification server.";
+        errorMessage = err.message;
       });
     } catch (err) {
       logger.e(err);

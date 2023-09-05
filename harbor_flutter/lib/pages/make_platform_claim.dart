@@ -6,7 +6,8 @@ import 'add_token.dart';
 import '../main.dart' as main;
 import '../models.dart' as models;
 import '../shared_ui.dart' as shared_ui;
-import '../handle_validation.dart' as handle_validation;
+import '../api_methods.dart' as api_methods;
+import '../protocol.pb.dart' as protocol;
 
 class MakePlatformClaimPage extends StatefulWidget {
   final int identityIndex;
@@ -56,30 +57,38 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
           child: shared_ui.OblongTextButton(
               text: 'Next step',
               onPressed: () async {
-                if (!handle_validation.isHandleValid(
-                    widget.claimType, textController.text)) {
-                  shared_ui.showSnackBar(context, "Invalid handle");
-                  return;
-                }
+                try {
+                  final claimFields = await api_methods.getClaimFieldsByUrl(
+                    widget.claimType,
+                    textController.text,
+                  );
 
-                final claim = await state.db.transaction((transaction) async {
-                  return await main.makePlatformClaim(
+                  final claim = protocol.Claim()..claimType = widget.claimType;
+
+                  claim.claimFields.addAll(claimFields);
+
+                  final claimInfo =
+                      await state.db.transaction((transaction) async {
+                    return await main.persistClaim(
                       transaction,
                       identity.processSecret,
-                      widget.claimType,
-                      textController.text);
-                });
-
-                await state.mLoadIdentities();
-
-                if (context.mounted) {
-                  Navigator.push(context,
-                      MaterialPageRoute<AddTokenPage>(builder: (context) {
-                    return AddTokenPage(
-                      claim: claim,
-                      identityIndex: widget.identityIndex,
+                      claim,
                     );
-                  }));
+                  });
+
+                  await state.mLoadIdentities();
+
+                  if (context.mounted) {
+                    Navigator.push(context,
+                        MaterialPageRoute<AddTokenPage>(builder: (context) {
+                      return AddTokenPage(
+                        claim: claimInfo,
+                        identityIndex: widget.identityIndex,
+                      );
+                    }));
+                  }
+                } on api_methods.AuthorityException catch (e) {
+                  await shared_ui.errorDialog(context, e.message);
                 }
               }),
         ),

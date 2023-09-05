@@ -631,7 +631,7 @@ List<Widget> renderClaim(main.ClaimInfo claim) {
         ),
     ];
   } else {
-    final text = claim.getField(fixnum.Int64(1));
+    final text = claim.getField(fixnum.Int64(0));
 
     return [
       Center(

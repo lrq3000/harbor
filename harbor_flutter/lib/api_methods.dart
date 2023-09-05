@@ -1,4 +1,5 @@
 import 'dart:convert' as convert;
+import 'dart:io' as dart_io;
 import 'dart:typed_data';
 import 'package:fixnum/fixnum.dart' as fixnum;
 import 'package:http/http.dart' as http;
@@ -6,6 +7,26 @@ import 'package:http/http.dart' as http;
 import 'web_execption.dart';
 import 'protocol.pb.dart' as protocol;
 import 'logger.dart';
+
+class AuthorityException implements Exception {
+  final String message;
+
+  AuthorityException(this.message);
+}
+
+void checkAuthorityResponse(String name, http.Response response) {
+  if (response.statusCode == 200) {
+    return;
+  }
+
+  final Map<String, dynamic> fields =
+      convert.jsonDecode(response.body) as Map<String, dynamic>;
+
+  throw AuthorityException(fields['message'] as String);
+}
+
+// const authorityServer = "https://verifiers.grayjay.app";
+const authorityServer = "http://10.10.10.58:3092";
 
 void checkResponse(String name, http.Response response) {
   if (response.statusCode != 200) {
@@ -133,52 +154,108 @@ Future<protocol.Events> getQueryLatest(String server, protocol.PublicKey system,
   return protocol.Events.fromBuffer(response.bodyBytes);
 }
 
+Future<List<protocol.ClaimFieldEntry>> getClaimFieldsByUrl(
+  fixnum.Int64 claimType,
+  String subject,
+) async {
+  try {
+    final url = "$authorityServer/platforms"
+        "/${claimType.toString()}"
+        "/text/getClaimFieldsByUrl";
+
+    logger.d(subject);
+
+    final Map<String, String> body = {};
+    body["url"] = subject;
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: convert.jsonEncode(body),
+    );
+
+    checkAuthorityResponse('getClaimFieldsByUrl', response);
+
+    logger.d(response.statusCode);
+    logger.d(response.body);
+
+    final List<dynamic> decoded = convert.jsonDecode(
+      response.body,
+    ) as List<dynamic>;
+
+    final List<protocol.ClaimFieldEntry> result = [];
+
+    for (final itemDynamic in decoded) {
+      final item = itemDynamic as Map<String, dynamic>;
+
+      final entry = protocol.ClaimFieldEntry()
+        ..key = fixnum.Int64(item['key'] as int)
+        ..value = item['value'] as String;
+
+      result.add(entry);
+    }
+
+    for (final entry in result) {
+      logger.d("${entry.key} ${entry.value}");
+    }
+
+    return result;
+  } on dart_io.SocketException {
+    throw AuthorityException("Failed to connect to authority");
+  }
+}
+
 Future<void> requestVerification(
     protocol.Pointer pointer, fixnum.Int64 claimType,
     {String? challengeResponse}) async {
-  var url = "https://verifiers.grayjay.app/"
-      "${claimType.toString()}"
-      "/api/v1/vouch";
+  try {
+    final verifierType = challengeResponse != null ? "oauth" : "text";
 
-  if (challengeResponse != null) {
-    url += "?challengeResponse=$challengeResponse";
+    var url = "$authorityServer/platforms"
+        "/${claimType.toString()}"
+        "/$verifierType/vouch";
+
+    if (challengeResponse != null) {
+      url += "?challengeResponse=$challengeResponse";
+    }
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/octet-stream',
+      },
+      body: pointer.writeToBuffer(),
+    );
+
+    checkAuthorityResponse('requestVerification', response);
+  } on dart_io.SocketException {
+    throw AuthorityException("Failed to connect to authority");
   }
-  final response = await http.post(
-    Uri.parse(url),
-    headers: <String, String>{
-      'Content-Type': 'application/octet-stream',
-    },
-    body: pointer.writeToBuffer(),
-  );
-
-  checkResponse('requestVerification', response);
 }
 
 Future<String> getOAuthURL(
   fixnum.Int64 claimType,
 ) async {
-  final url = "https://verifiers.grayjay.app/"
-      "${claimType.toString()}"
-      "/api/v1/oauth";
+  final url = "$authorityServer/platforms"
+      "/${claimType.toString()}"
+      "/oauth/url";
 
   final response = await http.get(
     Uri.parse(url),
   );
 
-  checkResponse('getOAuthURL', response);
-
-  final oAuthUrl = convert.jsonDecode(response.body)["url"] as String;
-
-  return oAuthUrl;
+  return convert.jsonDecode(response.body) as String;
 }
 
 Future<dynamic> getOAuthUsername(
   String token,
   fixnum.Int64 claimType,
 ) async {
-  final url = "https://verifiers.grayjay.app/"
-      "${claimType.toString()}"
-      "/api/v1/oauth_handle?token=$token";
+  final url = "$authorityServer/platforms"
+      "/${claimType.toString()}"
+      "/oauth/token$token";
 
   final response = await http.get(
     Uri.parse(url),
