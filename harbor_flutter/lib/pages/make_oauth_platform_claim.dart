@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uni_links/uni_links.dart';
 
+import 'profile.dart';
 import '../api_methods.dart' as api_methods;
 import '../main.dart' as main;
 import '../models.dart' as models;
@@ -86,15 +87,19 @@ class _MakeOAuthPlatformClaimPageState
     });
   }
 
-  Future<void> doVerification(main.ClaimInfo claim, String oauthToken) async {
+  Future<void> doVerification(
+    final main.ClaimInfo claim,
+    final String oauthToken,
+  ) async {
     try {
       final state = Provider.of<main.PolycentricModel>(context, listen: false);
       final identity = state.identities[widget.identityIndex];
 
       final public = await identity.processSecret.system.extractPublicKey();
-      final systemProto = protocol.PublicKey();
-      systemProto.keyType = fixnum.Int64(1);
-      systemProto.key = public.bytes;
+
+      final systemProto = protocol.PublicKey()
+        ..keyType = fixnum.Int64(1)
+        ..key = public.bytes;
 
       await synchronizer.backfillServers(state.db, systemProto);
 
@@ -128,7 +133,7 @@ class _MakeOAuthPlatformClaimPageState
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[widget.identityIndex];
 
@@ -149,19 +154,10 @@ class _MakeOAuthPlatformClaimPageState
         title: shared_ui.makeAppBarTitleText('Make Claim'),
       ),
       children: [
+        const SizedBox(height: 100),
+        Center(child: shared_ui.claimTypeToVisual(widget.claimType)),
+        const SizedBox(height: 120),
         if (screenState == 0) ...[
-          const SizedBox(height: 75),
-          Center(child: shared_ui.claimTypeToVisual(widget.claimType)),
-          const SizedBox(height: 75),
-          Center(
-              child: Text(
-            models.ClaimType.claimTypeToString(widget.claimType),
-            style: const TextStyle(
-              fontSize: 30,
-              color: Colors.white,
-            ),
-          )),
-          const SizedBox(height: 100),
           if (callbackUrl != null) ...[
             const Text("Is this the account you would like to verify?",
                 style: TextStyle(color: Colors.white)),
@@ -234,6 +230,21 @@ class _MakeOAuthPlatformClaimPageState
               color: Colors.white,
             ),
           )),
+          const SizedBox(height: 120),
+          Align(
+            alignment: AlignmentDirectional.center,
+            child: shared_ui.OblongTextButton(
+              text: 'Continue',
+              onPressed: () async {
+                Navigator.pushAndRemoveUntil(context,
+                    MaterialPageRoute<ProfilePage>(builder: (context) {
+                  return ProfilePage(
+                    identityIndex: widget.identityIndex,
+                  );
+                }), (Route route) => false);
+              },
+            ),
+          ),
         ] else if (screenState == 2) ...[
           const Center(
               child: Icon(
