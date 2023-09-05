@@ -34,9 +34,9 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   Future<void> editUsername(
-    BuildContext context,
-    main.PolycentricModel state,
-    main.ProcessInfo identity,
+    final BuildContext context,
+    final main.PolycentricModel state,
+    final main.ProcessInfo identity,
   ) async {
     final TextEditingController usernameController = TextEditingController(
       text: identity.username,
@@ -44,7 +44,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     await showDialog<AlertDialog>(
         context: context,
-        builder: (BuildContext context) {
+        builder: (final BuildContext context) {
           return AlertDialog(
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10.0))),
@@ -100,9 +100,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> editDescription(
-    BuildContext context,
-    main.PolycentricModel state,
-    main.ProcessInfo identity,
+    final BuildContext context,
+    final main.PolycentricModel state,
+    final main.ProcessInfo identity,
   ) async {
     final TextEditingController descriptionController = TextEditingController(
       text: identity.description,
@@ -110,7 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     await showDialog<AlertDialog>(
         context: context,
-        builder: (BuildContext context) {
+        builder: (final BuildContext context) {
           return AlertDialog(
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10.0))),
@@ -168,9 +168,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> editStore(
-    BuildContext context,
-    main.PolycentricModel state,
-    main.ProcessInfo identity,
+    final BuildContext context,
+    final main.PolycentricModel state,
+    final main.ProcessInfo identity,
   ) async {
     final TextEditingController controller = TextEditingController(
       text: identity.store,
@@ -178,7 +178,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     await showDialog<AlertDialog>(
         context: context,
-        builder: (BuildContext context) {
+        builder: (final BuildContext context) {
           return AlertDialog(
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10.0))),
@@ -244,10 +244,10 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> deleteClaimDialog(
-    BuildContext context,
-    main.PolycentricModel state,
-    main.ProcessInfo identity,
-    protocol.Pointer pointer,
+    final BuildContext context,
+    final main.PolycentricModel state,
+    final main.ProcessInfo identity,
+    final protocol.Pointer pointer,
   ) async {
     await showDialog<AlertDialog>(
         context: context,
@@ -286,9 +286,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> updateProfilePicture(
-    BuildContext context,
-    main.PolycentricModel state,
-    main.ProcessInfo identity,
+    final BuildContext context,
+    final main.PolycentricModel state,
+    final main.ProcessInfo identity,
   ) async {
     final picker = image_picker.ImagePicker();
     final pickedImage = await picker.pickImage(
@@ -373,12 +373,13 @@ class _ProfilePageState extends State<ProfilePage> {
     await state.mLoadIdentities();
   }
 
-  Widget buildSystemKeyWidget(ProcessInfo identity, BuildContext context) {
+  Widget buildSystemKeyWidget(
+      final ProcessInfo identity, final BuildContext context) {
     return FutureBuilder<SimplePublicKey>(
         future: identity.processSecret.system.extractPublicKey(),
-        builder:
-            (BuildContext context, AsyncSnapshot<SimplePublicKey> snapshot) {
-          var d = snapshot.data;
+        builder: (final BuildContext context,
+            final AsyncSnapshot<SimplePublicKey> snapshot) {
+          final d = snapshot.data;
           if (snapshot.connectionState != ConnectionState.done ||
               snapshot.hasError ||
               d == null) {
@@ -414,7 +415,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
     if (widget.identityIndex >= state.identities.length) {
       return const SizedBox();
@@ -431,7 +432,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final nameFontWeight = isIOS ? FontWeight.w600 : FontWeight.w300;
 
     List<StatelessWidget> renderClaims(
-      List<main.ClaimInfo> claims,
+      final List<main.ClaimInfo> claims,
     ) {
       List<StatelessWidget> result = [];
 
@@ -472,8 +473,8 @@ class _ProfilePageState extends State<ProfilePage> {
           onTap: () async {
             await updateProfilePicture(context, state, identity);
           },
-          builder:
-              (BuildContext context, tap_debouncer.TapDebouncerFunc? onTap) {
+          builder: (final BuildContext context,
+              final tap_debouncer.TapDebouncerFunc? onTap) {
             return InkWell(
               onTap: onTap,
               child: Container(
@@ -518,8 +519,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   onTap: () async {
                     await editUsername(context, state, identity);
                   },
-                  builder: (BuildContext context,
-                      tap_debouncer.TapDebouncerFunc? onTap) {
+                  builder: (final BuildContext context,
+                      final tap_debouncer.TapDebouncerFunc? onTap) {
                     return OutlinedButton(
                       onPressed: onTap,
                       child: const Icon(
@@ -552,7 +553,8 @@ class _ProfilePageState extends State<ProfilePage> {
         onTap: () async {
           await editDescription(context, state, identity);
         },
-        builder: (BuildContext context, tap_debouncer.TapDebouncerFunc? onTap) {
+        builder: (final BuildContext context,
+            final tap_debouncer.TapDebouncerFunc? onTap) {
           return OutlinedButton(
             style: OutlinedButton.styleFrom(
                 backgroundColor: shared_ui.tokenColor,

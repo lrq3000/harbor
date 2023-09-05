@@ -21,7 +21,7 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
   TextEditingController textController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[widget.identityIndex];
 
@@ -58,8 +58,8 @@ class _CreateSkillClaimPageState extends State<CreateSkillClaimPage> {
         actions: [
           tap_debouncer.TapDebouncer(
             onTap: () async => onPressed.call(),
-            builder:
-                (BuildContext context, tap_debouncer.TapDebouncerFunc? onTap) {
+            builder: (final BuildContext context,
+                final tap_debouncer.TapDebouncerFunc? onTap) {
               return TextButton(
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.blue,

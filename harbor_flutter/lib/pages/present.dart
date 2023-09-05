@@ -12,9 +12,9 @@ import '../shared_ui.dart' as shared_ui;
 import '../protocol.pb.dart' as protocol;
 
 Future<void> handlePresentClipboard(
-  main.PolycentricModel state,
+  final main.PolycentricModel state,
   final protocol.Pointer pointer,
-  BuildContext context,
+  final BuildContext context,
 ) async {
   final link = await main.makeEventLink(
       state.db, pointer.system, pointer.process, pointer.logicalClock);
@@ -27,7 +27,7 @@ Future<void> handlePresentClipboard(
 }
 
 Future<void> handlePresentShare(
-  main.PolycentricModel state,
+  final main.PolycentricModel state,
   final protocol.Pointer pointer,
 ) async {
   final link = await main.makeEventLink(
@@ -45,7 +45,7 @@ class PresentPage extends StatelessWidget {
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[identityIndex];
     final claim = identity.claims[claimIndex];

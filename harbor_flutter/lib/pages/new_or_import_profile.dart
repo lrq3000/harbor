@@ -15,7 +15,8 @@ class NewOrImportProfilePage extends StatefulWidget {
 }
 
 class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
-  List<StatelessWidget> _renderProfiles(List<main.ProcessInfo> identities) {
+  List<StatelessWidget> _renderProfiles(
+      final List<main.ProcessInfo> identities) {
     List<StatelessWidget> result = [];
 
     for (var i = 0; i < identities.length; i++) {
@@ -45,7 +46,7 @@ class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
 
     return shared_ui.StandardScaffold(

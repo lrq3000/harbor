@@ -23,7 +23,7 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
   TextEditingController textControllerLocation = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[widget.identityIndex];
 

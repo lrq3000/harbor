@@ -31,13 +31,13 @@ class ClaimPage extends StatefulWidget {
 }
 
 class _ClaimPageState extends State<ClaimPage> {
-  Widget buildVouchersWidget(
-      ProcessInfo identity, ClaimInfo claimInfo, BuildContext context) {
+  Widget buildVouchersWidget(final ProcessInfo identity,
+      final ClaimInfo claimInfo, final BuildContext context) {
     return FutureBuilder(
         future: getVouchersAsync(identity.servers, claimInfo.pointer),
         builder:
             (BuildContext context, AsyncSnapshot<List<PublicKey>> snapshot) {
-          final Iterable<Widget> ws;
+          Iterable<Widget> ws;
           if (snapshot.hasData) {
             var d = snapshot.data;
             if (d == null || d.isEmpty) {
@@ -75,7 +75,8 @@ class _ClaimPageState extends State<ClaimPage> {
         });
   }
 
-  Widget buildVoucherWidget(ProcessInfo identity, PublicKey system) {
+  Widget buildVoucherWidget(
+      final ProcessInfo identity, final PublicKey system) {
     return FutureBuilder<models.SystemState>(
         future: getProfileAsync(identity.servers, system),
         builder:
@@ -130,7 +131,7 @@ class _ClaimPageState extends State<ClaimPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[widget.identityIndex];
     final claim = identity.claims[widget.claimIndex];

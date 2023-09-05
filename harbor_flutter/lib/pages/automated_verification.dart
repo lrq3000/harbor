@@ -35,7 +35,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
     });
   }
 
-  Future<void> doVerification(BuildContext context) async {
+  Future<void> doVerification(final BuildContext context) async {
     setState(() {
       page = 0;
       errorMessage = "";
@@ -79,8 +79,8 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    List<Widget> columnChildren = [
+  Widget build(final BuildContext context) {
+    final List<Widget> columnChildren = [
       const SizedBox(height: 100),
       shared_ui.appLogoAndText,
       const SizedBox(height: 120),

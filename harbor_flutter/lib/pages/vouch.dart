@@ -35,7 +35,7 @@ class _VouchPageState extends State<VouchPage> {
     });
   }
 
-  Future<void> loadClaim(String server) async {
+  Future<void> loadClaim(final String server) async {
     final rangesForProcess = protocol.RangesForProcess()
       ..process = widget.link.process
       ..ranges.add(
@@ -71,8 +71,8 @@ class _VouchPageState extends State<VouchPage> {
   }
 
   Future<void> loadUsername(
-    String server,
-    models.StorageTypeSystemState state,
+    final String server,
+    final models.StorageTypeSystemState state,
   ) async {
     final events = await api_methods.getQueryLatest(
       server,
@@ -89,7 +89,7 @@ class _VouchPageState extends State<VouchPage> {
     }
   }
 
-  Future<void> doVerification(BuildContext context) async {
+  Future<void> doVerification(final BuildContext context) async {
     setState(() {
       statePointer = null;
       stateEvent = null;
@@ -115,7 +115,7 @@ class _VouchPageState extends State<VouchPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
 
     List<Widget> columnChildren = [];

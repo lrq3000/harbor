@@ -16,7 +16,7 @@ class _NewProfilePageState extends State<NewProfilePage> {
   final TextEditingController textController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
 
     return shared_ui.StandardScaffold(

@@ -46,12 +46,12 @@ class _AdvancedPageState extends State<AdvancedPage> {
   }
 
   List<StatelessWidget> renderServers(
-    BuildContext context,
-    main.PolycentricModel state,
-    main.ProcessSecret identity,
-    List<String> servers,
+    final BuildContext context,
+    final main.PolycentricModel state,
+    final main.ProcessSecret identity,
+    final List<String> servers,
   ) {
-    List<StatelessWidget> result = [];
+    final List<StatelessWidget> result = [];
 
     for (var i = 0; i < servers.length; i++) {
       result.add(shared_ui.StandardButtonGeneric(
@@ -69,15 +69,15 @@ class _AdvancedPageState extends State<AdvancedPage> {
   }
 
   Future<void> addServerDialog(
-    BuildContext context,
-    main.PolycentricModel state,
-    main.ProcessSecret identity,
+    final BuildContext context,
+    final main.PolycentricModel state,
+    final main.ProcessSecret identity,
   ) async {
     final TextEditingController newServerController = TextEditingController();
 
     await showDialog<AlertDialog>(
         context: context,
-        builder: (BuildContext context) {
+        builder: (final BuildContext context) {
           return AlertDialog(
             title: Text("Add Server",
                 style: Theme.of(context).textTheme.bodyMedium),
@@ -143,14 +143,14 @@ class _AdvancedPageState extends State<AdvancedPage> {
   }
 
   Future<void> deleteServerDialog(
-    BuildContext context,
-    main.PolycentricModel state,
-    main.ProcessSecret identity,
-    String server,
+    final BuildContext context,
+    final main.PolycentricModel state,
+    final main.ProcessSecret identity,
+    final String server,
   ) async {
     await showDialog<AlertDialog>(
         context: context,
-        builder: (BuildContext context) {
+        builder: (final BuildContext context) {
           return AlertDialog(
             title: Text("Remove Server",
                 style: Theme.of(context).textTheme.bodyMedium),
@@ -190,13 +190,13 @@ class _AdvancedPageState extends State<AdvancedPage> {
   }
 
   Future<void> deleteAccountDialog(
-    BuildContext context,
-    main.PolycentricModel state,
-    main.ProcessInfo identity,
+    final BuildContext context,
+    final main.PolycentricModel state,
+    final main.ProcessInfo identity,
   ) async {
     await showDialog<AlertDialog>(
         context: context,
-        builder: (BuildContext context) {
+        builder: (final BuildContext context) {
           return AlertDialog(
             title: Text("Delete Account",
                 style: Theme.of(context).textTheme.bodyMedium),
@@ -249,8 +249,8 @@ class _AdvancedPageState extends State<AdvancedPage> {
   }
 
   Future<void> handleOpenHarborSocial(
-    main.PolycentricModel state,
-    main.ProcessInfo identity,
+    final main.PolycentricModel state,
+    final main.ProcessInfo identity,
   ) async {
     final public = await identity.processSecret.system.extractPublicKey();
 
@@ -269,7 +269,7 @@ class _AdvancedPageState extends State<AdvancedPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
     if (widget.identityIndex >= state.identities.length) {
       return const SizedBox();

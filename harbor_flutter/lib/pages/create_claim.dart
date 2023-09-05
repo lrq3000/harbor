@@ -22,8 +22,8 @@ class CreateClaimPage extends StatefulWidget {
 
 class _CreateClaimPageState extends State<CreateClaimPage> {
   @override
-  Widget build(BuildContext context) {
-    StatelessWidget makePlatformButton(fixnum.Int64 claimType) {
+  Widget build(final BuildContext context) {
+    StatelessWidget makePlatformButton(final fixnum.Int64 claimType) {
       return shared_ui.ClaimButtonGeneric(
         nameText: models.ClaimType.claimTypeToString(claimType),
         top: shared_ui.claimTypeToVisual(claimType),

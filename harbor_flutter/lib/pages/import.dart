@@ -8,9 +8,9 @@ import '../models.dart' as models;
 import '../shared_ui.dart' as shared_ui;
 
 Future<bool> importFromBase64(
-  BuildContext context,
-  main.PolycentricModel state,
-  String text,
+  final BuildContext context,
+  final main.PolycentricModel state,
+  final String text,
 ) async {
   try {
     final urlInfo = models.urlInfoFromLink(text);
@@ -43,8 +43,8 @@ class ImportPage extends StatelessWidget {
   const ImportPage({Key? key}) : super(key: key);
 
   Future<void> textImport(
-    BuildContext context,
-    main.PolycentricModel state,
+    final BuildContext context,
+    final main.PolycentricModel state,
   ) async {
     final TextEditingController textController = TextEditingController(
       text: '',
@@ -52,7 +52,7 @@ class ImportPage extends StatelessWidget {
 
     await showDialog<AlertDialog>(
         context: context,
-        builder: (BuildContext context) {
+        builder: (final BuildContext context) {
           return AlertDialog(
             title: Text("Enter Polycentric Link",
                 style: Theme.of(context).textTheme.bodyMedium),
@@ -102,7 +102,7 @@ class ImportPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
     return shared_ui.StandardScaffold(
       appBar: AppBar(

@@ -16,7 +16,7 @@ class AddTokenPage extends StatelessWidget {
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final token = convert.base64.encode(claim.pointer.system.key);
 
     return shared_ui.StandardScaffold(

@@ -15,10 +15,10 @@ class VouchOptionsPage extends StatelessWidget {
       : super(key: key);
 
   Future<void> handleBase64(
-    BuildContext context,
-    main.PolycentricModel state,
-    String text,
-    bool popBefore,
+    final BuildContext context,
+    final main.PolycentricModel state,
+    final String text,
+    final bool popBefore,
   ) async {
     try {
       final urlInfo = models.urlInfoFromLink(text);
@@ -38,8 +38,8 @@ class VouchOptionsPage extends StatelessWidget {
   }
 
   Future<void> handleScan(
-    BuildContext context,
-    main.PolycentricModel state,
+    final BuildContext context,
+    final main.PolycentricModel state,
   ) async {
     final String rawScan = await FlutterBarcodeScanner.scanBarcode(
         "#ff6666", 'Cancel', false, ScanMode.QR);
@@ -50,8 +50,8 @@ class VouchOptionsPage extends StatelessWidget {
   }
 
   Future<void> handleText(
-    BuildContext context,
-    main.PolycentricModel state,
+    final BuildContext context,
+    final main.PolycentricModel state,
   ) async {
     final TextEditingController textController = TextEditingController(
       text: '',
@@ -59,7 +59,7 @@ class VouchOptionsPage extends StatelessWidget {
 
     await showDialog<AlertDialog>(
         context: context,
-        builder: (BuildContext context) {
+        builder: (final BuildContext context) {
           return AlertDialog(
             title: Text("Enter Polycentric Link",
                 style: Theme.of(context).textTheme.bodyMedium),
@@ -106,7 +106,7 @@ class VouchOptionsPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
     return shared_ui.StandardScaffold(
       appBar: AppBar(

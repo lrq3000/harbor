@@ -8,9 +8,9 @@ import '../main.dart' as main;
 import '../shared_ui.dart' as shared_ui;
 
 Future<void> handleShareClipboard(
-  main.PolycentricModel state,
-  main.ProcessSecret processSecret,
-  BuildContext context,
+  final main.PolycentricModel state,
+  final main.ProcessSecret processSecret,
+  final BuildContext context,
 ) async {
   final exportBundle = await main.makeExportBundle(state.db, processSecret);
 
@@ -22,9 +22,9 @@ Future<void> handleShareClipboard(
 }
 
 Future<void> handleShareQR(
-  main.PolycentricModel state,
-  main.ProcessSecret processSecret,
-  BuildContext context,
+  final main.PolycentricModel state,
+  final main.ProcessSecret processSecret,
+  final BuildContext context,
 ) async {
   final exportBundle = await main.makeExportBundle(state.db, processSecret);
 
@@ -36,8 +36,8 @@ Future<void> handleShareQR(
 }
 
 Future<void> handleShareShare(
-  main.PolycentricModel state,
-  main.ProcessSecret processSecret,
+  final main.PolycentricModel state,
+  final main.ProcessSecret processSecret,
 ) async {
   final exportBundle = await main.makeExportBundle(state.db, processSecret);
   share_plus.Share.share(exportBundle);
@@ -75,7 +75,7 @@ class BackupPage extends StatelessWidget {
   const BackupPage({Key? key, required this.processSecret}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
 
     return shared_ui.StandardScaffold(

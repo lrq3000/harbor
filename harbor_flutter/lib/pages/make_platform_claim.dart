@@ -25,7 +25,7 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
   TextEditingController textController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
     final identity = state.identities[widget.identityIndex];
 
