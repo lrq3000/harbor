@@ -58,11 +58,10 @@ class _MakeOAuthPlatformClaimPageState
           debugPrint("Token got $tok");
           if (mounted) {
             if (widget.inProgressClaim != null) {
-              final potential = widget.inProgressClaim!.getField(
-                fixnum.Int64(1),
-              );
-
-              final text = potential ?? "unknown";
+              final text = widget.inProgressClaim!.getField(
+                    fixnum.Int64(1),
+                  ) ??
+                  "unknown";
 
               if (text != uname) {
                 setState(() {

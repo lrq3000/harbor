@@ -436,8 +436,7 @@ class _ProfilePageState extends State<ProfilePage> {
       List<StatelessWidget> result = [];
 
       for (var i = 0; i < claims.length; i++) {
-        final potential = claims[i].getField(fixnum.Int64(0));
-        final text = potential ?? 'unknown';
+        final text = claims[i].getField(fixnum.Int64(0)) ?? 'unknown';
 
         result.add(shared_ui.StandardButtonGeneric(
           actionText: models.ClaimType.claimTypeToString(

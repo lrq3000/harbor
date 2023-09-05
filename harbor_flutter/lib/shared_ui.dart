@@ -631,12 +631,12 @@ List<Widget> renderClaim(main.ClaimInfo claim) {
         ),
     ];
   } else {
-    final text = claim.getField(fixnum.Int64(0));
+    final text = claim.getField(fixnum.Int64(0)) ?? "unknown";
 
     return [
       Center(
         child: Text(
-          text ?? 'unknown',
+          text,
           style: const TextStyle(
             fontWeight: FontWeight.w200,
             fontSize: 20,
