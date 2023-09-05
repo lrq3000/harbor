@@ -252,7 +252,14 @@ Future<String> getOAuthURL(
   return convert.jsonDecode(response.body) as String;
 }
 
-Future<dynamic> getOAuthUsername(
+class GetOAuthUsernameResponse {
+  final String username;
+  final String token;
+
+  const GetOAuthUsernameResponse(this.username, this.token);
+}
+
+Future<GetOAuthUsernameResponse> getOAuthUsername(
   final String token,
   final fixnum.Int64 claimType,
 ) async {
@@ -266,5 +273,10 @@ Future<dynamic> getOAuthUsername(
 
   checkResponse('getOAuthUsername', response);
 
-  return convert.jsonDecode(response.body);
+  final parsed = convert.jsonDecode(response.body);
+
+  return GetOAuthUsernameResponse(
+    parsed["username"] as String,
+    parsed["token"] as String,
+  );
 }

@@ -50,12 +50,10 @@ class _MakeOAuthPlatformClaimPageState
           final String encodedLink = "?harborSecret=$harborSecret"
               "&oauthData=${link.queryParameters['oauthData']}";
 
-          final resp =
+          final response =
               await api_methods.getOAuthUsername(encodedLink, widget.claimType);
-          final uname = resp["username"] as String;
-          final tok = resp["token"] as String;
-          debugPrint("Username got $uname");
-          debugPrint("Token got $tok");
+          debugPrint("Username got $response.username");
+          debugPrint("Token got $response.token");
           if (mounted) {
             if (widget.inProgressClaim != null) {
               final text = widget.inProgressClaim!.getField(
@@ -63,7 +61,7 @@ class _MakeOAuthPlatformClaimPageState
                   ) ??
                   "unknown";
 
-              if (text != uname) {
+              if (text != response.username) {
                 setState(() {
                   screenState = 2;
                   errorReason = "The account you signed in with didn't match "
@@ -73,9 +71,9 @@ class _MakeOAuthPlatformClaimPageState
               }
             }
             setState(() {
-              username = uname;
+              username = response.username;
               callbackUrl = link.toString();
-              token = tok;
+              token = response.token;
             });
           }
         } catch (err) {
