@@ -35,11 +35,11 @@ class ProcessSecret {
   ProcessSecret(this.system, this.process);
 }
 
-bool isOAuthClaim(fixnum.Int64 claimType) {
+bool isOAuthClaim(final fixnum.Int64 claimType) {
   return oAuthClaimTypes.contains(claimType);
 }
 
-Future<ProcessSecret> createNewIdentity(sqflite.Database db) async {
+Future<ProcessSecret> createNewIdentity(final sqflite.Database db) async {
   final algorithm = cryptography.Ed25519();
   final keyPair = await algorithm.newKeyPair();
 
@@ -58,8 +58,8 @@ Future<ProcessSecret> createNewIdentity(sqflite.Database db) async {
 }
 
 Future<ProcessSecret> importIdentity(
-  sqflite.Transaction transaction,
-  cryptography.SimpleKeyPair keyPair,
+  final sqflite.Transaction transaction,
+  final cryptography.SimpleKeyPair keyPair,
 ) async {
   final public = await keyPair.extractPublicKey();
 
@@ -85,7 +85,7 @@ Future<ProcessSecret> importIdentity(
   return ProcessSecret(keyPair, process);
 }
 
-Future<List<ProcessSecret>> loadIdentities(sqflite.Database db) async {
+Future<List<ProcessSecret>> loadIdentities(final sqflite.Database db) async {
   final List<Map> rows = await db.rawQuery('''
         SELECT * FROM process_secrets;
     ''');
@@ -113,8 +113,8 @@ Future<List<ProcessSecret>> loadIdentities(sqflite.Database db) async {
 }
 
 Future<String> makeSystemLink(
-  sqflite.Database db,
-  protocol.PublicKey system,
+  final sqflite.Database db,
+  final protocol.PublicKey system,
 ) async {
   final servers = await db.transaction((transaction) async {
     return await loadServerList(transaction, system.key);
@@ -132,10 +132,10 @@ Future<String> makeSystemLink(
 }
 
 Future<String> makeEventLink(
-  sqflite.Database db,
-  protocol.PublicKey system,
-  protocol.Process process,
-  fixnum.Int64 logicalClock,
+  final sqflite.Database db,
+  final protocol.PublicKey system,
+  final protocol.Process process,
+  final fixnum.Int64 logicalClock,
 ) async {
   final servers = await db.transaction((transaction) async {
     return await loadServerList(transaction, system.key);
@@ -155,8 +155,8 @@ Future<String> makeEventLink(
 }
 
 Future<String> makeExportBundle(
-  sqflite.Database db,
-  ProcessSecret processSecret,
+  final sqflite.Database db,
+  final ProcessSecret processSecret,
 ) async {
   final privateKey = await processSecret.system.extractPrivateKeyBytes();
   final publicKey = (await processSecret.system.extractPublicKey()).bytes;
@@ -204,8 +204,8 @@ Future<String> makeExportBundle(
 // returns true on success
 // throws on other error
 Future<bool> importExportBundle(
-  sqflite.Database db,
-  protocol.ExportBundle exportBundle,
+  final sqflite.Database db,
+  final protocol.ExportBundle exportBundle,
 ) async {
   final public = cryptography.SimplePublicKey(
     exportBundle.keyPair.publicKey,
@@ -239,7 +239,7 @@ Future<bool> importExportBundle(
 }
 
 Future<protocol.Event?> getEventWhenValid(
-    protocol.SignedEvent signedEvent) async {
+    final protocol.SignedEvent signedEvent) async {
   final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
 
   final publicKey = cryptography.SimplePublicKey(
@@ -261,7 +261,7 @@ Future<protocol.Event?> getEventWhenValid(
 }
 
 Future<protocol.Event> getEventWhenValidCompute(
-    protocol.SignedEvent signedEvent) async {
+    final protocol.SignedEvent signedEvent) async {
   final event = await compute(getEventWhenValid, signedEvent);
 
   if (event == null) {
@@ -279,7 +279,7 @@ class _GetVouchersComputeArgs {
 }
 
 Future<List<PublicKey>> _getVouchersCompute(
-    _GetVouchersComputeArgs args) async {
+    final _GetVouchersComputeArgs args) async {
   final List<String> servers = args.servers;
   final Pointer claimPointer = args.claimPointer;
 
@@ -324,7 +324,7 @@ Future<List<PublicKey>> _getVouchersCompute(
 }
 
 Future<List<PublicKey>> getVouchersAsync(
-    List<String> servers, Pointer claimPointer) async {
+    final List<String> servers, final Pointer claimPointer) async {
   _GetVouchersComputeArgs args = _GetVouchersComputeArgs(servers, claimPointer);
   return compute(_getVouchersCompute, args);
 }
@@ -337,7 +337,7 @@ class _GetProfileComputeArgs {
 }
 
 Future<models.SystemState> _getProfileCompute(
-    _GetProfileComputeArgs args) async {
+    final _GetProfileComputeArgs args) async {
   final futures = <Future<Events>>[];
   for (final server in args.servers) {
     futures.add(getQueryLatest(server, args.system, [
@@ -363,16 +363,16 @@ Future<models.SystemState> _getProfileCompute(
 }
 
 Future<models.SystemState> getProfileAsync(
-    List<String> servers, PublicKey system) async {
+    final List<String> servers, final PublicKey system) async {
   _GetProfileComputeArgs args = _GetProfileComputeArgs(servers, system);
   return compute(_getProfileCompute, args);
 }
 
 Future<void> ingest(
-  sqflite.Transaction transaction,
-  protocol.SignedEvent signedEvent,
+  final sqflite.Transaction transaction,
+  final protocol.SignedEvent signedEvent,
 ) async {
-  var event = await getEventWhenValidCompute(signedEvent);
+  final event = await getEventWhenValidCompute(signedEvent);
 
   if (await queries.doesEventExist(transaction, event)) {
     logger.d("event already persisted");
@@ -403,7 +403,7 @@ Future<void> ingest(
 }
 
 Future<protocol.Pointer> signedEventToPointer(
-    protocol.SignedEvent signedEvent) async {
+    final protocol.SignedEvent signedEvent) async {
   final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
 
   final hash = await cryptography.Sha256().hash(signedEvent.event);
@@ -420,13 +420,13 @@ Future<protocol.Pointer> signedEventToPointer(
 }
 
 Future<List<ClaimInfo>> loadClaims(
-  sqflite.Transaction transaction,
+  final sqflite.Transaction transaction,
   List<int> system,
 ) async {
   final signedEvents = await queries.loadEventsForSystemByContentType(
     transaction,
     system,
-    fixnum.Int64(12),
+    models.ContentType.contentTypeClaim,
   );
 
   final List<ClaimInfo> result = [];
@@ -443,8 +443,8 @@ Future<List<ClaimInfo>> loadClaims(
 }
 
 Future<List<String>> loadServerList(
-  sqflite.Transaction transaction,
-  List<int> system,
+  final sqflite.Transaction transaction,
+  final List<int> system,
 ) async {
   final signedEvents = await queries.loadLatestCRDTSetItemsByContentType(
     transaction,
@@ -483,8 +483,8 @@ Future<List<String>> loadServerList(
 }
 
 Future<String> loadLatestUsername(
-  sqflite.Transaction transaction,
-  List<int> system,
+  final sqflite.Transaction transaction,
+  final List<int> system,
 ) async {
   final signedEvent = await queries.loadLatestCRDTByContentType(
     transaction,
@@ -502,8 +502,8 @@ Future<String> loadLatestUsername(
 }
 
 Future<String> loadLatestDescription(
-  sqflite.Transaction transaction,
-  List<int> system,
+  final sqflite.Transaction transaction,
+  final List<int> system,
 ) async {
   final signedEvent = await queries.loadLatestCRDTByContentType(
     transaction,
@@ -521,8 +521,8 @@ Future<String> loadLatestDescription(
 }
 
 Future<String> loadLatestStore(
-  sqflite.Transaction transaction,
-  List<int> system,
+  final sqflite.Transaction transaction,
+  final List<int> system,
 ) async {
   final signedEvent = await queries.loadLatestCRDTByContentType(
     transaction,
@@ -540,11 +540,11 @@ Future<String> loadLatestStore(
 }
 
 Future<Image?> loadImage(
-  sqflite.Transaction transaction,
-  String mime,
-  List<int> system,
-  protocol.Process process,
-  List<protocol.Range> sections,
+  final sqflite.Transaction transaction,
+  final String mime,
+  final List<int> system,
+  final protocol.Process process,
+  final List<protocol.Range> sections,
 ) async {
   final List<int> buffer = [];
 
@@ -578,8 +578,8 @@ Future<Image?> loadImage(
 }
 
 Future<Image?> loadLatestAvatar(
-  sqflite.Transaction transaction,
-  List<int> system,
+  final sqflite.Transaction transaction,
+  final List<int> system,
 ) async {
   try {
     final signedEvent = await queries.loadLatestCRDTByContentType(
@@ -617,8 +617,8 @@ Future<Image?> loadLatestAvatar(
   }
 }
 
-Future<protocol.Pointer> saveEvent(sqflite.Transaction transaction,
-    ProcessSecret processInfo, protocol.Event event) async {
+Future<protocol.Pointer> saveEvent(final sqflite.Transaction transaction,
+    final ProcessSecret processInfo, final protocol.Event event) async {
   final public = await processInfo.system.extractPublicKey();
 
   final protocol.PublicKey system = protocol.PublicKey()
@@ -658,9 +658,9 @@ Future<protocol.Pointer> saveEvent(sqflite.Transaction transaction,
 }
 
 Future<void> deleteEvent(
-  sqflite.Transaction transaction,
-  ProcessSecret processInfo,
-  protocol.Pointer pointer,
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final protocol.Pointer pointer,
 ) async {
   final signedEvent = await queries.loadEvent(
     transaction,
@@ -690,8 +690,12 @@ Future<void> deleteEvent(
   }
 }
 
-Future<List<ranges.Range>> publishBlob(sqflite.Transaction transaction,
-    ProcessSecret processInfo, String mime, List<int> bytes) async {
+Future<List<ranges.Range>> publishBlob(
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final String mime,
+  final List<int> bytes,
+) async {
   final List<ranges.Range> result = [];
 
   const maxBytes = 1024 * 512;
@@ -709,8 +713,12 @@ Future<List<ranges.Range>> publishBlob(sqflite.Transaction transaction,
   return result;
 }
 
-Future<void> setCRDT(sqflite.Transaction transaction, ProcessSecret processInfo,
-    fixnum.Int64 contentType, Uint8List bytes) async {
+Future<void> setCRDT(
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final fixnum.Int64 contentType,
+  final Uint8List bytes,
+) async {
   final lwwElement = protocol.LWWElement()
     ..unixMilliseconds = fixnum.Int64(DateTime.now().millisecondsSinceEpoch)
     ..value = bytes;
@@ -722,8 +730,11 @@ Future<void> setCRDT(sqflite.Transaction transaction, ProcessSecret processInfo,
   await saveEvent(transaction, processInfo, event);
 }
 
-Future<void> setAvatar(sqflite.Transaction transaction,
-    ProcessSecret processInfo, protocol.ImageBundle imageBundle) async {
+Future<void> setAvatar(
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final protocol.ImageBundle imageBundle,
+) async {
   await setCRDT(
     transaction,
     processInfo,
@@ -732,8 +743,11 @@ Future<void> setAvatar(sqflite.Transaction transaction,
   );
 }
 
-Future<void> setUsername(sqflite.Transaction transaction,
-    ProcessSecret processInfo, String username) async {
+Future<void> setUsername(
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final String username,
+) async {
   await setCRDT(
     transaction,
     processInfo,
@@ -742,8 +756,11 @@ Future<void> setUsername(sqflite.Transaction transaction,
   );
 }
 
-Future<void> setDescription(sqflite.Transaction transaction,
-    ProcessSecret processInfo, String description) async {
+Future<void> setDescription(
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final String description,
+) async {
   await setCRDT(
     transaction,
     processInfo,
@@ -752,8 +769,11 @@ Future<void> setDescription(sqflite.Transaction transaction,
   );
 }
 
-Future<void> setStore(sqflite.Transaction transaction,
-    ProcessSecret processInfo, String storeLink) async {
+Future<void> setStore(
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final String storeLink,
+) async {
   await setCRDT(
     transaction,
     processInfo,
@@ -762,8 +782,11 @@ Future<void> setStore(sqflite.Transaction transaction,
   );
 }
 
-Future<void> makeClaim(sqflite.Transaction transaction,
-    ProcessSecret processInfo, String claimText) async {
+Future<void> makeClaim(
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final String claimText,
+) async {
   final claim = models.claimIdentifier(
     models.ClaimType.claimTypeGeneric,
     claimText,
@@ -777,11 +800,12 @@ Future<void> makeClaim(sqflite.Transaction transaction,
 }
 
 Future<void> setCRDTSetItem(
-    sqflite.Transaction transaction,
-    ProcessSecret processInfo,
-    fixnum.Int64 contentType,
-    protocol.LWWElementSet_Operation operation,
-    Uint8List value) async {
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final fixnum.Int64 contentType,
+  final protocol.LWWElementSet_Operation operation,
+  final Uint8List value,
+) async {
   final lwwElementSet = protocol.LWWElementSet()
     ..unixMilliseconds = fixnum.Int64(DateTime.now().millisecondsSinceEpoch)
     ..value = value
@@ -795,10 +819,10 @@ Future<void> setCRDTSetItem(
 }
 
 Future<void> setServer(
-  sqflite.Transaction transaction,
-  ProcessSecret processInfo,
-  protocol.LWWElementSet_Operation operation,
-  String server,
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final protocol.LWWElementSet_Operation operation,
+  final String server,
 ) async {
   await setCRDTSetItem(
     transaction,
@@ -810,9 +834,9 @@ Future<void> setServer(
 }
 
 Future<ClaimInfo> persistClaim(
-  sqflite.Transaction transaction,
-  ProcessSecret processInfo,
-  protocol.Claim claim,
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final protocol.Claim claim,
 ) async {
   final protocol.Event event = protocol.Event()
     ..contentType = models.ContentType.contentTypeClaim
@@ -823,8 +847,12 @@ Future<ClaimInfo> persistClaim(
   return ClaimInfo(pointer, event);
 }
 
-Future<ClaimInfo> makePlatformClaim(sqflite.Transaction transaction,
-    ProcessSecret processInfo, fixnum.Int64 claimType, String account) async {
+Future<ClaimInfo> makePlatformClaim(
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final fixnum.Int64 claimType,
+  final String account,
+) async {
   return await persistClaim(
     transaction,
     processInfo,
@@ -833,11 +861,12 @@ Future<ClaimInfo> makePlatformClaim(sqflite.Transaction transaction,
 }
 
 Future<ClaimInfo> makeOccupationClaim(
-    sqflite.Transaction transaction,
-    ProcessSecret processInfo,
-    String organization,
-    String role,
-    String location) async {
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final String organization,
+  final String role,
+  final String location,
+) async {
   return await persistClaim(
     transaction,
     processInfo,
@@ -845,8 +874,11 @@ Future<ClaimInfo> makeOccupationClaim(
   );
 }
 
-Future<void> makeVouch(sqflite.Transaction transaction,
-    ProcessSecret processInfo, protocol.Pointer pointer) async {
+Future<void> makeVouch(
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final protocol.Pointer pointer,
+) async {
   final reference = protocol.Reference()
     ..referenceType = fixnum.Int64(2)
     ..reference = pointer.writeToBuffer();
@@ -880,7 +912,7 @@ class ClaimInfo {
     claim = protocol.Claim.fromBuffer(event.content);
   }
 
-  String? getField(fixnum.Int64 key) {
+  String? getField(final fixnum.Int64 key) {
     for (final field in claim.claimFields) {
       if (field.key == key) {
         return field.value;

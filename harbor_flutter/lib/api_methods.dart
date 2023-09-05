@@ -14,7 +14,7 @@ class AuthorityException implements Exception {
   AuthorityException(this.message);
 }
 
-void checkAuthorityResponse(String name, http.Response response) {
+void checkAuthorityResponse(final String name, final http.Response response) {
   if (response.statusCode == 200) {
     return;
   }
@@ -28,13 +28,14 @@ void checkAuthorityResponse(String name, http.Response response) {
 // const authorityServer = "https://verifiers.grayjay.app";
 const authorityServer = "http://10.10.10.58:3092";
 
-void checkResponse(String name, http.Response response) {
+void checkResponse(final String name, final http.Response response) {
   if (response.statusCode != 200) {
     throw WebException(response.statusCode, name, response.body);
   }
 }
 
-Future<void> postEvents(String server, protocol.Events payload) async {
+Future<void> postEvents(
+    final String server, final protocol.Events payload) async {
   try {
     final url = "$server/events";
 
@@ -53,8 +54,8 @@ Future<void> postEvents(String server, protocol.Events payload) async {
 }
 
 Future<protocol.RangesForSystem> getRanges(
-  String server,
-  protocol.PublicKey system,
+  final String server,
+  final protocol.PublicKey system,
 ) async {
   final systemQuery = convert.base64Url.encode(system.writeToBuffer());
 
@@ -73,9 +74,9 @@ Future<protocol.RangesForSystem> getRanges(
 }
 
 Future<protocol.Events> getEvents(
-  String server,
-  protocol.PublicKey system,
-  protocol.RangesForSystem ranges,
+  final String server,
+  final protocol.PublicKey system,
+  final protocol.RangesForSystem ranges,
 ) async {
   final systemQuery = convert.base64Url.encode(system.writeToBuffer());
 
@@ -96,13 +97,13 @@ Future<protocol.Events> getEvents(
 }
 
 Future<protocol.QueryReferencesResponse> getQueryReferences(
-  String server,
-  protocol.Reference reference,
-  Uint8List? cursor,
-  protocol.QueryReferencesRequestEvents? requestEvents,
-  List<protocol.QueryReferencesRequestCountLWWElementReferences>?
+  final String server,
+  final protocol.Reference reference,
+  final Uint8List? cursor,
+  final protocol.QueryReferencesRequestEvents? requestEvents,
+  final List<protocol.QueryReferencesRequestCountLWWElementReferences>?
       countLwwElementReferences,
-  List<protocol.QueryReferencesRequestCountReferences>? countReferences,
+  final List<protocol.QueryReferencesRequestCountReferences>? countReferences,
 ) async {
   final request = protocol.QueryReferencesRequest()..reference = reference;
 
@@ -134,8 +135,10 @@ Future<protocol.QueryReferencesResponse> getQueryReferences(
   return protocol.QueryReferencesResponse.fromBuffer(response.bodyBytes);
 }
 
-Future<protocol.Events> getQueryLatest(String server, protocol.PublicKey system,
-    List<fixnum.Int64> eventTypes) async {
+Future<protocol.Events> getQueryLatest(
+    final String server,
+    final protocol.PublicKey system,
+    final List<fixnum.Int64> eventTypes) async {
   final systemQuery = convert.base64Url.encode(system.writeToBuffer());
 
   final eventTypesBuilder = protocol.RepeatedUInt64()
@@ -155,8 +158,8 @@ Future<protocol.Events> getQueryLatest(String server, protocol.PublicKey system,
 }
 
 Future<List<protocol.ClaimFieldEntry>> getClaimFieldsByUrl(
-  fixnum.Int64 claimType,
-  String subject,
+  final fixnum.Int64 claimType,
+  final String subject,
 ) async {
   try {
     final url = "$authorityServer/platforms"
@@ -208,8 +211,8 @@ Future<List<protocol.ClaimFieldEntry>> getClaimFieldsByUrl(
 }
 
 Future<void> requestVerification(
-    protocol.Pointer pointer, fixnum.Int64 claimType,
-    {String? challengeResponse}) async {
+    final protocol.Pointer pointer, final fixnum.Int64 claimType,
+    {final String? challengeResponse}) async {
   try {
     final verifierType = challengeResponse != null ? "oauth" : "text";
 
@@ -236,7 +239,7 @@ Future<void> requestVerification(
 }
 
 Future<String> getOAuthURL(
-  fixnum.Int64 claimType,
+  final fixnum.Int64 claimType,
 ) async {
   final url = "$authorityServer/platforms"
       "/${claimType.toString()}"
@@ -250,8 +253,8 @@ Future<String> getOAuthURL(
 }
 
 Future<dynamic> getOAuthUsername(
-  String token,
-  fixnum.Int64 claimType,
+  final String token,
+  final fixnum.Int64 claimType,
 ) async {
   final url = "$authorityServer/platforms"
       "/${claimType.toString()}"
