@@ -929,6 +929,7 @@ class ClaimInfo {
 
 class ProcessInfo {
   final ProcessSecret processSecret;
+  final protocol.PublicKey system;
   final String username;
   final List<ClaimInfo> claims;
   final Image? avatar;
@@ -936,8 +937,8 @@ class ProcessInfo {
   final String store;
   final List<String> servers;
 
-  ProcessInfo(this.processSecret, this.username, this.claims, this.avatar,
-      this.description, this.store, this.servers);
+  ProcessInfo(this.processSecret, this.system, this.username, this.claims,
+      this.avatar, this.description, this.store, this.servers);
 }
 
 class PolycentricModel extends ChangeNotifier {
@@ -951,6 +952,10 @@ class PolycentricModel extends ChangeNotifier {
     this.identities = [];
     for (final identity in identities) {
       final public = await identity.system.extractPublicKey();
+
+      final system = protocol.PublicKey()
+        ..keyType = fixnum.Int64(1)
+        ..key = public.bytes;
 
       await db.transaction((transaction) async {
         final username = await loadLatestUsername(
@@ -977,17 +982,13 @@ class PolycentricModel extends ChangeNotifier {
         final claims = await loadClaims(transaction, public.bytes);
 
         this.identities.add(
-              ProcessInfo(identity, username, claims, avatar, description,
-                  store, servers),
+              ProcessInfo(identity, system, username, claims, avatar,
+                  description, store, servers),
             );
       });
 
-      final systemProto = protocol.PublicKey()
-        ..keyType = fixnum.Int64(1)
-        ..key = public.bytes;
-
-      synchronizer.backfillClient(db, systemProto);
-      synchronizer.backfillServers(db, systemProto);
+      synchronizer.backfillClient(db, system);
+      synchronizer.backfillServers(db, system);
     }
 
     notifyListeners();

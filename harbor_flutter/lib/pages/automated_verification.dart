@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:fixnum/fixnum.dart' as fixnum;
+
 import 'profile.dart';
 import '../main.dart' as main;
 import '../shared_ui.dart' as shared_ui;
 import '../api_methods.dart' as api_methods;
 import '../synchronizer.dart' as synchronizer;
-import '../protocol.pb.dart' as protocol;
 import '../logger.dart';
 
 class AutomatedVerificationPage extends StatefulWidget {
@@ -45,12 +44,7 @@ class _AutomatedVerificationPageState extends State<AutomatedVerificationPage> {
       final state = Provider.of<main.PolycentricModel>(context, listen: false);
       final identity = state.identities[widget.identityIndex];
 
-      final public = await identity.processSecret.system.extractPublicKey();
-      final systemProto = protocol.PublicKey();
-      systemProto.keyType = fixnum.Int64(1);
-      systemProto.key = public.bytes;
-
-      await synchronizer.backfillServers(state.db, systemProto);
+      await synchronizer.backfillServers(state.db, identity.system);
 
       await api_methods.requestVerification(
         widget.claim.pointer,

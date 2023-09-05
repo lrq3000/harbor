@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
-import 'package:fixnum/fixnum.dart' as fixnum;
 
 import '../main.dart' as main;
 import '../shared_ui.dart' as shared_ui;
@@ -34,10 +33,9 @@ class _AdvancedPageState extends State<AdvancedPage> {
   Future<void> loadServers() async {
     final state = Provider.of<main.PolycentricModel>(context, listen: false);
     final identity = state.identities[widget.identityIndex];
-    final public = await identity.processSecret.system.extractPublicKey();
 
     final servers = await state.db.transaction((transaction) async {
-      return await main.loadServerList(transaction, public.bytes);
+      return await main.loadServerList(transaction, identity.system.key);
     });
 
     setState(() {
@@ -214,12 +212,9 @@ class _AdvancedPageState extends State<AdvancedPage> {
               shared_ui.StandardDialogButton(
                 text: "Delete",
                 onPressed: () async {
-                  final public =
-                      await identity.processSecret.system.extractPublicKey();
-
                   await state.db.transaction((transaction) async {
-                    await queries.deleteIdentity(transaction, public.bytes,
-                        identity.processSecret.process);
+                    await queries.deleteIdentity(transaction,
+                        identity.system.key, identity.processSecret.process);
                   });
 
                   if (context.mounted) {
@@ -252,13 +247,7 @@ class _AdvancedPageState extends State<AdvancedPage> {
     final main.PolycentricModel state,
     final main.ProcessInfo identity,
   ) async {
-    final public = await identity.processSecret.system.extractPublicKey();
-
-    final systemProto = protocol.PublicKey()
-      ..keyType = fixnum.Int64(1)
-      ..key = public.bytes;
-
-    final query = await main.makeSystemLink(state.db, systemProto);
+    final query = await main.makeSystemLink(state.db, identity.system);
 
     final Uri url = Uri.parse("https://harbor.social/$query");
 
