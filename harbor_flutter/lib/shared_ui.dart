@@ -7,7 +7,7 @@ import 'package:fixnum/fixnum.dart' as fixnum;
 import './main.dart' as main;
 import './models.dart' as models;
 
-MaterialColor makeColor(Color color) {
+MaterialColor makeColor(final Color color) {
   final Map<int, Color> shades = {};
 
   for (int i = 1; i < 20; i++) {
@@ -381,7 +381,7 @@ class StandardDialogButton extends StatelessWidget {
   }
 }
 
-Icon makeButtonIcon(IconData icon, String actionText) {
+Icon makeButtonIcon(final IconData icon, final String actionText) {
   return Icon(
     icon,
     size: 40,
@@ -390,11 +390,11 @@ Icon makeButtonIcon(IconData icon, String actionText) {
   );
 }
 
-Image makeButtonImage(String path) {
+Image makeButtonImage(final String path) {
   return Image.asset(path);
 }
 
-Widget makeSVG(String fileName, String label) {
+Widget makeSVG(final String fileName, final String label) {
   final asset = flutter_svg.SvgPicture.asset(
     'assets/$fileName',
     colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
@@ -528,7 +528,7 @@ class StandardScaffold extends StatelessWidget {
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Scaffold(
       appBar: appBar,
       body: LayoutBuilder(
@@ -556,12 +556,12 @@ class StandardScaffold extends StatelessWidget {
 }
 
 Future<void> errorDialog(
-  BuildContext context,
-  String text,
+  final BuildContext context,
+  final String text,
 ) async {
   await showDialog<AlertDialog>(
       context: context,
-      builder: (BuildContext context) {
+      builder: (final BuildContext context) {
         return AlertDialog(
           title: Text("Error", style: Theme.of(context).textTheme.bodyMedium),
           content: Text(text, style: Theme.of(context).textTheme.bodyMedium),
@@ -579,7 +579,7 @@ Future<void> errorDialog(
       });
 }
 
-void showSnackBar(BuildContext context, String text) {
+void showSnackBar(final BuildContext context, final String text) {
   final snackBar = SnackBar(
     content: Text(text),
     duration: const Duration(milliseconds: 1000),
@@ -589,7 +589,7 @@ void showSnackBar(BuildContext context, String text) {
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
 
-List<Widget> renderClaim(main.ClaimInfo claim) {
+List<Widget> renderClaim(final main.ClaimInfo claim) {
   if (claim.claim.claimType == models.ClaimType.claimTypeOccupation) {
     final organization = claim.getField(fixnum.Int64(0));
     final role = claim.getField(fixnum.Int64(1));

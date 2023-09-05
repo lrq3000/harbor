@@ -36,16 +36,17 @@ class SystemState {
       "banner: $banner)";
   }
 
-  static SystemState fromStorageTypeSystemState(StorageTypeSystemState state) {
-    List<String> servers = [];
-    servers = state.crdtSetItems
+  static SystemState fromStorageTypeSystemState(
+    final StorageTypeSystemState state,
+  ) {
+    final List<String> servers = state.crdtSetItems
         .where((item) =>
             item.contentType == ContentType.contentTypeServer &&
             item.operation == LWWElementSet_Operation.ADD)
         .map((item) => utf8.decode(item.value))
         .toList();
 
-    List<Process> processes = List.from(state.processes);
+    final List<Process> processes = List.from(state.processes);
 
     String username = '';
     String description = '';
@@ -84,15 +85,15 @@ class StorageTypeSystemState {
   final List<Process> processes = List.empty(growable: true);
   final List<StorageTypeCRDTItem> crdtItems = List.empty(growable: true);
 
-  void update(Event event) {
+  void update(final Event event) {
     if (event.hasLwwElementSet()) {
-      int foundIndex = crdtSetItems.indexWhere((item) =>
+      final int foundIndex = crdtSetItems.indexWhere((item) =>
           item.contentType == event.contentType &&
           listEquals(item.value, event.lwwElementSet.value));
 
       bool found = false;
       if (foundIndex != -1) {
-        var foundItem = crdtSetItems[foundIndex];
+        final foundItem = crdtSetItems[foundIndex];
         if (foundItem.unixMilliseconds < event.lwwElementSet.unixMilliseconds) {
           foundItem.operation = event.lwwElementSet.operation;
           foundItem.unixMilliseconds = event.lwwElementSet.unixMilliseconds;
@@ -110,7 +111,10 @@ class StorageTypeSystemState {
     }
 
     if (event.hasLwwElement()) {
-      int foundIndex = crdtItems.indexWhere((item) => item.contentType == event.contentType);
+      final int foundIndex = crdtItems.indexWhere(
+        (item) => item.contentType == event.contentType,
+      );
+
       bool found = false;
       if (foundIndex != -1) {
         var foundItem = crdtItems[foundIndex];
@@ -130,7 +134,7 @@ class StorageTypeSystemState {
     }
 
     bool foundProcess = false;
-    for (var rawProcess in processes) {
+    for (final rawProcess in processes) {
       if (rawProcess == event.process) {
         foundProcess = true;
         break;
@@ -180,7 +184,7 @@ class ClaimType {
   static final claimTypeSkill = fixnum.Int64(22);
 
   @override
-  static String claimTypeToString(fixnum.Int64 claimType) {
+  static String claimTypeToString(final fixnum.Int64 claimType) {
     if (claimType == claimTypeHackerNews) {
       return "HackerNews";
     } else if (claimType == claimTypeYouTube) {
@@ -226,7 +230,7 @@ class URLInfoType {
 }
 
 protocol.ExportBundle urlInfoGetExportBundle(
-  protocol.URLInfo proto,
+  final protocol.URLInfo proto,
 ) {
   if (!(proto.urlType == URLInfoType.urlInfoTypeExportBundle)) {
     throw "expected urlInfoTypeExportBundle";
@@ -236,7 +240,7 @@ protocol.ExportBundle urlInfoGetExportBundle(
 }
 
 protocol.URLInfoEventLink urlInfoGetEventLink(
-  protocol.URLInfo proto,
+  final protocol.URLInfo proto,
 ) {
   if (!(proto.urlType == URLInfoType.urlInfoTypeEventLink)) {
     throw "expected urlInfoTypeEventLink";
@@ -263,17 +267,17 @@ protocol.URLInfo urlInfoFromLink(String text) {
   );
 }
 
-String urlInfoToLinkSuffix(protocol.URLInfo proto) {
+String urlInfoToLinkSuffix(final protocol.URLInfo proto) {
   return base64Url.encode(proto.writeToBuffer());
 }
 
-String urlInfoToLink(protocol.URLInfo proto) {
+String urlInfoToLink(final protocol.URLInfo proto) {
   return "polycentric://${base64Url.encode(proto.writeToBuffer())}";
 }
 
 protocol.Claim claimIdentifier(
-  fixnum.Int64 claimType,
-  String identifier,
+  final fixnum.Int64 claimType,
+  final String identifier,
 ) {
   final field = protocol.ClaimFieldEntry()
     ..key = fixnum.Int64(0)
@@ -288,9 +292,9 @@ protocol.Claim claimIdentifier(
 }
 
 protocol.Claim claimOccupation(
-  String? organization,
-  String? role,
-  String? location,
+  final String? organization,
+  final String? role,
+  final String? location,
 ) {
   final claim = protocol.Claim()
     ..claimType = ClaimType.claimTypeOccupation;

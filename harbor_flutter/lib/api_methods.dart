@@ -1,6 +1,7 @@
 import 'dart:convert' as convert;
 import 'dart:io' as dart_io;
 import 'dart:typed_data';
+import 'dart:collection';
 import 'package:fixnum/fixnum.dart' as fixnum;
 import 'package:http/http.dart' as http;
 
@@ -99,7 +100,7 @@ Future<protocol.Events> getEvents(
 Future<protocol.QueryReferencesResponse> getQueryReferences(
   final String server,
   final protocol.Reference reference,
-  final Uint8List? cursor,
+  final UnmodifiableUint8ListView? cursor,
   final protocol.QueryReferencesRequestEvents? requestEvents,
   final List<protocol.QueryReferencesRequestCountLWWElementReferences>?
       countLwwElementReferences,
@@ -138,7 +139,7 @@ Future<protocol.QueryReferencesResponse> getQueryReferences(
 Future<protocol.Events> getQueryLatest(
     final String server,
     final protocol.PublicKey system,
-    final List<fixnum.Int64> eventTypes) async {
+    final UnmodifiableListView<fixnum.Int64> eventTypes) async {
   final systemQuery = convert.base64Url.encode(system.writeToBuffer());
 
   final eventTypesBuilder = protocol.RepeatedUInt64()

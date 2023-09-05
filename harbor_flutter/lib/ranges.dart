@@ -25,7 +25,7 @@ class Range {
   }
 }
 
-void insert(List<Range> ranges, fixnum.Int64 item) {
+void insert(final List<Range> ranges, final fixnum.Int64 item) {
   for (var i = 0; i < ranges.length; i++) {
     // within existing range
     if (item >= ranges[i].low && item <= ranges[i].high) {
@@ -64,7 +64,7 @@ void insert(List<Range> ranges, fixnum.Int64 item) {
   ranges.add(Range(low: item, high: item));
 }
 
-List<Range> subtractRange(List<Range> left, List<Range> right) {
+List<Range> subtractRange(final List<Range> left, final List<Range> right) {
   final List<Range> result = [];
 
   for (final range in left) {
@@ -101,7 +101,8 @@ List<Range> subtractRange(List<Range> left, List<Range> right) {
   return result;
 }
 
-List<Range> takeRangesMaxItems(List<Range> ranges, fixnum.Int64 limit) {
+List<Range> takeRangesMaxItems(
+    final List<Range> ranges, final fixnum.Int64 limit) {
   if (limit == 0) {
     return [];
   }

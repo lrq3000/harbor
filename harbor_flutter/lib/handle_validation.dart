@@ -11,7 +11,7 @@ final twitterRegex = RegExp(r'^[a-zA-Z0-9_]{4,15}$');
 final discordRegex =
     RegExp(r'^(?!(here|everyone))^(?!.*(discord|```)).[^\@\#\:]{2,32}#\d{4}$');
 
-bool isHandleValid(fixnum.Int64 platform, String handle) {
+bool isHandleValid(final fixnum.Int64 platform, final String handle) {
   if (platform == models.ClaimType.claimTypeTwitter) {
     return twitterRegex.hasMatch(handle);
   } else if (platform == models.ClaimType.claimTypeDiscord) {

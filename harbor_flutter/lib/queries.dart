@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS crdt_set_items (
 );
 ''';
 
-Future<sqflite.Database> createDB(String name) async {
+Future<sqflite.Database> createDB(final String name) async {
   return await sqflite.openDatabase(
     path.join(await sqflite.getDatabasesPath(), name),
     onCreate: (db, version) async {
@@ -86,8 +86,8 @@ Future<sqflite.Database> createDB(String name) async {
 }
 
 Future<protocol.RangesForSystem> rangesForSystem(
-  sqflite.Transaction transaction,
-  protocol.PublicKey system,
+  final sqflite.Transaction transaction,
+  final protocol.PublicKey system,
 ) async {
   const query = '''
       SELECT
@@ -157,8 +157,8 @@ Future<protocol.RangesForSystem> rangesForSystem(
 }
 
 Future<bool> doesProcessSecretExistForSystem(
-  sqflite.Transaction transaction,
-  protocol.KeyPair system,
+  final sqflite.Transaction transaction,
+  final protocol.KeyPair system,
 ) async {
   const query = '''
         SELECT 1 FROM process_secrets
@@ -176,8 +176,8 @@ Future<bool> doesProcessSecretExistForSystem(
 }
 
 Future<bool> isEventDeleted(
-  sqflite.Transaction transaction,
-  protocol.Event event,
+  final sqflite.Transaction transaction,
+  final protocol.Event event,
 ) async {
   const query = '''
       SELECT 1 FROM deletions
@@ -199,8 +199,8 @@ Future<bool> isEventDeleted(
 }
 
 Future<bool> doesEventExist(
-  sqflite.Transaction transaction,
-  protocol.Event event,
+  final sqflite.Transaction transaction,
+  final protocol.Event event,
 ) async {
   const query = '''
       SELECT 1 FROM events
@@ -222,10 +222,10 @@ Future<bool> doesEventExist(
 }
 
 Future<void> deleteEventDB(
-  sqflite.Transaction transaction,
-  int rowId,
-  protocol.PublicKey system,
-  protocol.Delete deleteBody,
+  final sqflite.Transaction transaction,
+  final int rowId,
+  final protocol.PublicKey system,
+  final protocol.Delete deleteBody,
 ) async {
   const queryInsertDelete = '''
       INSERT INTO deletions
@@ -264,9 +264,9 @@ Future<void> deleteEventDB(
 }
 
 Future<void> insertLWWElement(
-  sqflite.Transaction transaction,
-  int rowId,
-  protocol.LWWElement element,
+  final sqflite.Transaction transaction,
+  final int rowId,
+  final protocol.LWWElement element,
 ) async {
   const query = '''
     INSERT INTO crdts
@@ -286,9 +286,9 @@ Future<void> insertLWWElement(
 }
 
 Future<void> insertCRDTSetItem(
-  sqflite.Transaction transaction,
-  int rowId,
-  protocol.LWWElementSet element,
+  final sqflite.Transaction transaction,
+  final int rowId,
+  final protocol.LWWElementSet element,
 ) async {
   const query = '''
     INSERT INTO crdt_set_items
@@ -310,9 +310,9 @@ Future<void> insertCRDTSetItem(
 }
 
 Future<int> insertEvent(
-  sqflite.Transaction transaction,
-  protocol.SignedEvent signedEvent,
-  protocol.Event event,
+  final sqflite.Transaction transaction,
+  final protocol.SignedEvent signedEvent,
+  final protocol.Event event,
 ) async {
   return await transaction.rawInsert('''
             INSERT INTO events (
@@ -334,9 +334,9 @@ Future<int> insertEvent(
 }
 
 Future<void> deleteIdentity(
-  sqflite.Transaction transaction,
-  List<int> system,
-  List<int> process,
+  final sqflite.Transaction transaction,
+  final List<int> system,
+  final List<int> process,
 ) async {
   const query = '''
       DELETE FROM process_secrets
@@ -350,10 +350,10 @@ Future<void> deleteIdentity(
 }
 
 Future<protocol.SignedEvent?> loadEvent(
-  sqflite.Transaction transaction,
-  List<int> system,
-  List<int> process,
-  fixnum.Int64 logicalClock,
+  final sqflite.Transaction transaction,
+  final List<int> system,
+  final List<int> process,
+  final fixnum.Int64 logicalClock,
 ) async {
   final rows = await transaction.rawQuery('''
     SELECT raw_event FROM events
@@ -377,11 +377,11 @@ Future<protocol.SignedEvent?> loadEvent(
 }
 
 Future<void> insertProcessSecret(
-  sqflite.Transaction transaction,
-  Uint8List publicKey,
-  Uint8List privateKey,
-  int keyType,
-  Uint8List process,
+  final sqflite.Transaction transaction,
+  final Uint8List publicKey,
+  final Uint8List privateKey,
+  final int keyType,
+  final Uint8List process,
 ) async {
   await transaction.rawInsert('''
             INSERT INTO process_secrets (
@@ -399,9 +399,9 @@ Future<void> insertProcessSecret(
 }
 
 Future<int> loadLatestClock(
-  sqflite.Transaction transaction,
-  List<int> system,
-  List<int> process,
+  final sqflite.Transaction transaction,
+  final List<int> system,
+  final List<int> process,
 ) async {
   final f = sqflite.Sqflite.firstIntValue(await transaction.rawQuery('''
         SELECT MAX(logical_clock) as x FROM events
@@ -418,10 +418,10 @@ Future<int> loadLatestClock(
 }
 
 Future<protocol.SignedEvent?> loadLatestEventByContentType(
-  sqflite.Transaction transaction,
-  List<int> system,
-  List<int> process,
-  fixnum.Int64 contentType,
+  final sqflite.Transaction transaction,
+  final List<int> system,
+  final List<int> process,
+  final fixnum.Int64 contentType,
 ) async {
   final q = await transaction.rawQuery('''
         SELECT raw_event FROM events
@@ -446,9 +446,9 @@ Future<protocol.SignedEvent?> loadLatestEventByContentType(
 }
 
 Future<protocol.SignedEvent?> loadLatestCRDTByContentType(
-  sqflite.Transaction transaction,
-  List<int> system,
-  fixnum.Int64 contentType,
+  final sqflite.Transaction transaction,
+  final List<int> system,
+  final fixnum.Int64 contentType,
 ) async {
   final q = await transaction.rawQuery('''
             SELECT events.raw_event
@@ -477,9 +477,9 @@ Future<protocol.SignedEvent?> loadLatestCRDTByContentType(
 }
 
 Future<List<protocol.SignedEvent>> loadEventsForSystemByContentType(
-  sqflite.Transaction transaction,
-  List<int> system,
-  fixnum.Int64 contentType,
+  final sqflite.Transaction transaction,
+  final List<int> system,
+  final fixnum.Int64 contentType,
 ) async {
   final rows = await transaction.rawQuery('''
         SELECT raw_event FROM events
@@ -498,9 +498,9 @@ Future<List<protocol.SignedEvent>> loadEventsForSystemByContentType(
 }
 
 Future<List<protocol.SignedEvent>> loadLatestCRDTSetItemsByContentType(
-  sqflite.Transaction transaction,
-  List<int> system,
-  fixnum.Int64 contentType,
+  final sqflite.Transaction transaction,
+  final List<int> system,
+  final fixnum.Int64 contentType,
 ) async {
   final rows = await transaction.rawQuery('''
     WITH latest_values AS (
@@ -541,10 +541,10 @@ Future<List<protocol.SignedEvent>> loadLatestCRDTSetItemsByContentType(
 }
 
 Future<List<protocol.SignedEvent>> loadEventRange(
-  sqflite.Transaction transaction,
-  List<int> system,
-  List<int> process,
-  ranges.Range range,
+  final sqflite.Transaction transaction,
+  final List<int> system,
+  final List<int> process,
+  final ranges.Range range,
 ) async {
   final rows = await transaction.rawQuery('''
     SELECT raw_event FROM events

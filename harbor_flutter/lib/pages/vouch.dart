@@ -1,6 +1,7 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:collection';
 
 import '../logger.dart';
 import 'package:harbor_flutter/protocol.pb.dart' as protocol;
@@ -76,7 +77,7 @@ class _VouchPageState extends State<VouchPage> {
     final events = await api_methods.getQueryLatest(
       server,
       widget.link.system,
-      [models.ContentType.contentTypeUsername],
+      UnmodifiableListView([models.ContentType.contentTypeUsername]),
     );
 
     for (final signedEvent in events.events) {

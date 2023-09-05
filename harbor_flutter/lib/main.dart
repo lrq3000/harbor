@@ -9,9 +9,10 @@ import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:async';
+import 'dart:collection';
 import 'package:fixnum/fixnum.dart' as fixnum;
 
-import 'api_methods.dart';
+import 'api_methods.dart' as api_methods;
 import 'pages/new_or_import_profile.dart';
 import 'models.dart' as models;
 import 'protocol.pb.dart' as protocol;
@@ -22,11 +23,11 @@ import 'shared_ui.dart' as shared_ui;
 import 'ranges.dart' as ranges;
 import 'logger.dart';
 
-final Set<fixnum.Int64> oAuthClaimTypes = {
+final UnmodifiableSetView<fixnum.Int64> oAuthClaimTypes = UnmodifiableSetView({
   models.ClaimType.claimTypeDiscord,
   models.ClaimType.claimTypeInstagram,
   models.ClaimType.claimTypeTwitter,
-};
+});
 
 class ProcessSecret {
   cryptography.SimpleKeyPair system;
@@ -292,7 +293,7 @@ Future<List<PublicKey>> _getVouchersCompute(
 
   final futures = <Future<QueryReferencesResponse>>[];
   for (final server in servers) {
-    futures.add(getQueryReferences(
+    futures.add(api_methods.getQueryReferences(
         server, reference, null, queryReferencesRequestEvents, null, null));
   }
 
@@ -340,10 +341,13 @@ Future<models.SystemState> _getProfileCompute(
     final _GetProfileComputeArgs args) async {
   final futures = <Future<Events>>[];
   for (final server in args.servers) {
-    futures.add(getQueryLatest(server, args.system, [
-      models.ContentType.contentTypeUsername,
-      models.ContentType.contentTypeAvatar
-    ]));
+    futures.add(api_methods.getQueryLatest(
+        server,
+        args.system,
+        UnmodifiableListView([
+          models.ContentType.contentTypeUsername,
+          models.ContentType.contentTypeAvatar
+        ])));
   }
 
   final storageTypeSystemState = models.StorageTypeSystemState();

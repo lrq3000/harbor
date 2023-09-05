@@ -8,15 +8,15 @@ import 'ranges.dart' as ranges;
 import 'queries.dart' as queries;
 import 'logger.dart';
 
-bool processDeepEqual(protocol.Process x, protocol.Process y) {
+bool processDeepEqual(final protocol.Process x, final protocol.Process y) {
   return foundation.listEquals(x.process, y.process);
 }
 
-List<ranges.Range> protocolRangesToRanges(List<protocol.Range> x) {
+List<ranges.Range> protocolRangesToRanges(final List<protocol.Range> x) {
   return x.map((item) => ranges.Range(low: item.low, high: item.high)).toList();
 }
 
-List<protocol.Range> rangesToProtocolRanges(List<ranges.Range> x) {
+List<protocol.Range> rangesToProtocolRanges(final List<ranges.Range> x) {
   return x.map((item) {
     final range = protocol.Range();
     range.low = item.low;
@@ -26,9 +26,9 @@ List<protocol.Range> rangesToProtocolRanges(List<ranges.Range> x) {
 }
 
 Future<bool> backfillClientSingle(
-  sqflite.Database db,
-  protocol.PublicKey system,
-  String server,
+  final sqflite.Database db,
+  final protocol.PublicKey system,
+  final String server,
 ) async {
   logger.d('backfillClientSingle $server');
 
@@ -87,8 +87,8 @@ Future<bool> backfillClientSingle(
 }
 
 Future<bool> backfillClient(
-  sqflite.Database db,
-  protocol.PublicKey system,
+  final sqflite.Database db,
+  final protocol.PublicKey system,
 ) async {
   final servers = await db.transaction((transaction) async {
     return await main.loadServerList(transaction, system.key);
@@ -110,9 +110,9 @@ Future<bool> backfillClient(
 }
 
 Future<bool> backfillServerSingle(
-  sqflite.Database db,
-  protocol.PublicKey system,
-  String server,
+  final sqflite.Database db,
+  final protocol.PublicKey system,
+  final String server,
 ) async {
   logger.d('backfillServerSingle $server');
 
@@ -172,8 +172,8 @@ Future<bool> backfillServerSingle(
 }
 
 Future<bool> backfillServers(
-  sqflite.Database db,
-  protocol.PublicKey system,
+  final sqflite.Database db,
+  final protocol.PublicKey system,
 ) async {
   final servers = await db.transaction((transaction) async {
     return await main.loadServerList(transaction, system.key);
