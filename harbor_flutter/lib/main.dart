@@ -118,7 +118,7 @@ Future<String> makeSystemLink(
   final protocol.PublicKey system,
 ) async {
   final servers = await db.transaction((transaction) async {
-    return await loadServerList(transaction, system.key);
+    return await loadServerList(transaction, system);
   });
 
   final systemLink = protocol.URLInfoSystemLink()
@@ -139,7 +139,7 @@ Future<String> makeEventLink(
   final fixnum.Int64 logicalClock,
 ) async {
   final servers = await db.transaction((transaction) async {
-    return await loadServerList(transaction, system.key);
+    return await loadServerList(transaction, system);
   });
 
   final eventLink = protocol.URLInfoEventLink()
@@ -162,12 +162,16 @@ Future<String> makeExportBundle(
   final privateKey = await processSecret.system.extractPrivateKeyBytes();
   final publicKey = (await processSecret.system.extractPublicKey()).bytes;
 
+  final system = protocol.PublicKey()
+    ..keyType = fixnum.Int64(1)
+    ..key = publicKey;
+
   final events = protocol.Events();
 
   await db.transaction((transaction) async {
     final usernameSignedEvent = await queries.loadLatestCRDTByContentType(
       transaction,
-      publicKey,
+      system,
       models.ContentType.contentTypeUsername,
     );
 
@@ -178,7 +182,7 @@ Future<String> makeExportBundle(
     final serverSignedEvents =
         await queries.loadLatestCRDTSetItemsByContentType(
       transaction,
-      publicKey,
+      system,
       models.ContentType.contentTypeServer,
     );
 
@@ -425,7 +429,7 @@ Future<protocol.Pointer> signedEventToPointer(
 
 Future<List<ClaimInfo>> loadClaims(
   final sqflite.Transaction transaction,
-  List<int> system,
+  final protocol.PublicKey system,
 ) async {
   final signedEvents = await queries.loadEventsForSystemByContentType(
     transaction,
@@ -448,7 +452,7 @@ Future<List<ClaimInfo>> loadClaims(
 
 Future<List<String>> loadServerList(
   final sqflite.Transaction transaction,
-  final List<int> system,
+  final protocol.PublicKey system,
 ) async {
   final signedEvents = await queries.loadLatestCRDTSetItemsByContentType(
     transaction,
@@ -488,7 +492,7 @@ Future<List<String>> loadServerList(
 
 Future<String> loadLatestUsername(
   final sqflite.Transaction transaction,
-  final List<int> system,
+  final protocol.PublicKey system,
 ) async {
   final signedEvent = await queries.loadLatestCRDTByContentType(
     transaction,
@@ -507,7 +511,7 @@ Future<String> loadLatestUsername(
 
 Future<String> loadLatestDescription(
   final sqflite.Transaction transaction,
-  final List<int> system,
+  final protocol.PublicKey system,
 ) async {
   final signedEvent = await queries.loadLatestCRDTByContentType(
     transaction,
@@ -526,7 +530,7 @@ Future<String> loadLatestDescription(
 
 Future<String> loadLatestStore(
   final sqflite.Transaction transaction,
-  final List<int> system,
+  final protocol.PublicKey system,
 ) async {
   final signedEvent = await queries.loadLatestCRDTByContentType(
     transaction,
@@ -546,7 +550,7 @@ Future<String> loadLatestStore(
 Future<Image?> loadImage(
   final sqflite.Transaction transaction,
   final String mime,
-  final List<int> system,
+  final protocol.PublicKey system,
   final protocol.Process process,
   final List<protocol.Range> sections,
 ) async {
@@ -583,7 +587,7 @@ Future<Image?> loadImage(
 
 Future<Image?> loadLatestAvatar(
   final sqflite.Transaction transaction,
-  final List<int> system,
+  final protocol.PublicKey system,
 ) async {
   try {
     final signedEvent = await queries.loadLatestCRDTByContentType(
@@ -634,7 +638,7 @@ Future<protocol.Pointer> saveEvent(final sqflite.Transaction transaction,
 
   final clock = await queries.loadLatestClock(
     transaction,
-    public.bytes,
+    system,
     processInfo.process,
   );
 
@@ -668,7 +672,7 @@ Future<void> deleteEvent(
 ) async {
   final signedEvent = await queries.loadEvent(
     transaction,
-    pointer.system.key,
+    pointer.system,
     pointer.process.process,
     pointer.logicalClock,
   );
@@ -960,26 +964,26 @@ class PolycentricModel extends ChangeNotifier {
       await db.transaction((transaction) async {
         final username = await loadLatestUsername(
           transaction,
-          public.bytes,
+          system,
         );
 
         final description = await loadLatestDescription(
           transaction,
-          public.bytes,
+          system,
         );
 
         final store = await loadLatestStore(
           transaction,
-          public.bytes,
+          system,
         );
 
         final avatar = await loadLatestAvatar(
           transaction,
-          public.bytes,
+          system,
         );
 
-        final servers = await loadServerList(transaction, public.bytes);
-        final claims = await loadClaims(transaction, public.bytes);
+        final servers = await loadServerList(transaction, system);
+        final claims = await loadClaims(transaction, system);
 
         this.identities.add(
               ProcessInfo(identity, system, username, claims, avatar,

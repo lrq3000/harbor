@@ -91,7 +91,7 @@ Future<bool> backfillClient(
   final protocol.PublicKey system,
 ) async {
   final servers = await db.transaction((transaction) async {
-    return await main.loadServerList(transaction, system.key);
+    return await main.loadServerList(transaction, system);
   });
 
   var progress = false;
@@ -153,7 +153,7 @@ Future<bool> backfillServerSingle(
         payload.events.addAll(
           await queries.loadEventRange(
             transaction,
-            system.key,
+            system,
             clientRangesForProcess.process.process,
             range,
           ),
@@ -176,7 +176,7 @@ Future<bool> backfillServers(
   final protocol.PublicKey system,
 ) async {
   final servers = await db.transaction((transaction) async {
-    return await main.loadServerList(transaction, system.key);
+    return await main.loadServerList(transaction, system);
   });
 
   var progress = false;

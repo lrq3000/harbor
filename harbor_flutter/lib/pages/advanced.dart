@@ -35,7 +35,7 @@ class _AdvancedPageState extends State<AdvancedPage> {
     final identity = state.identities[widget.identityIndex];
 
     final servers = await state.db.transaction((transaction) async {
-      return await main.loadServerList(transaction, identity.system.key);
+      return await main.loadServerList(transaction, identity.system);
     });
 
     setState(() {
@@ -213,8 +213,8 @@ class _AdvancedPageState extends State<AdvancedPage> {
                 text: "Delete",
                 onPressed: () async {
                   await state.db.transaction((transaction) async {
-                    await queries.deleteIdentity(transaction,
-                        identity.system.key, identity.processSecret.process);
+                    await queries.deleteIdentity(transaction, identity.system,
+                        identity.processSecret.process);
                   });
 
                   if (context.mounted) {

@@ -335,7 +335,7 @@ Future<int> insertEvent(
 
 Future<void> deleteIdentity(
   final sqflite.Transaction transaction,
-  final List<int> system,
+  final protocol.PublicKey system,
   final List<int> process,
 ) async {
   const query = '''
@@ -346,12 +346,12 @@ Future<void> deleteIdentity(
   ''';
 
   await transaction.rawDelete(
-      query, [Uint8List.fromList(system), Uint8List.fromList(process)]);
+      query, [Uint8List.fromList(system.key), Uint8List.fromList(process)]);
 }
 
 Future<protocol.SignedEvent?> loadEvent(
   final sqflite.Transaction transaction,
-  final List<int> system,
+  final protocol.PublicKey system,
   final List<int> process,
   final fixnum.Int64 logicalClock,
 ) async {
@@ -363,7 +363,7 @@ Future<protocol.SignedEvent?> loadEvent(
     AND logical_clock = ?
     LIMIT 1;
   ''', [
-    Uint8List.fromList(system),
+    Uint8List.fromList(system.key),
     Uint8List.fromList(process),
     logicalClock.toInt()
   ]);
@@ -400,7 +400,7 @@ Future<void> insertProcessSecret(
 
 Future<int> loadLatestClock(
   final sqflite.Transaction transaction,
-  final List<int> system,
+  final protocol.PublicKey system,
   final List<int> process,
 ) async {
   final f = sqflite.Sqflite.firstIntValue(await transaction.rawQuery('''
@@ -408,7 +408,7 @@ Future<int> loadLatestClock(
         WHERE system_key_type = 1
         AND system_key = ?
         AND process = ?;
-    ''', [Uint8List.fromList(system), Uint8List.fromList(process)]));
+    ''', [Uint8List.fromList(system.key), Uint8List.fromList(process)]));
 
   if (f == null) {
     return 0;
@@ -419,7 +419,7 @@ Future<int> loadLatestClock(
 
 Future<protocol.SignedEvent?> loadLatestEventByContentType(
   final sqflite.Transaction transaction,
-  final List<int> system,
+  final protocol.PublicKey system,
   final List<int> process,
   final fixnum.Int64 contentType,
 ) async {
@@ -433,7 +433,7 @@ Future<protocol.SignedEvent?> loadLatestEventByContentType(
         logical_clock DESC
         LIMIT 1;
     ''', [
-    Uint8List.fromList(system),
+    Uint8List.fromList(system.key),
     Uint8List.fromList(process),
     contentType.toInt()
   ]);
@@ -447,7 +447,7 @@ Future<protocol.SignedEvent?> loadLatestEventByContentType(
 
 Future<protocol.SignedEvent?> loadLatestCRDTByContentType(
   final sqflite.Transaction transaction,
-  final List<int> system,
+  final protocol.PublicKey system,
   final fixnum.Int64 contentType,
 ) async {
   final q = await transaction.rawQuery('''
@@ -467,7 +467,7 @@ Future<protocol.SignedEvent?> loadLatestCRDTByContentType(
             ORDER BY
               crdts.unix_milliseconds DESC
             LIMIT 1
-    ''', [contentType.toInt(), Uint8List.fromList(system)]);
+    ''', [contentType.toInt(), Uint8List.fromList(system.key)]);
 
   if (q.isEmpty) {
     return null;
@@ -478,7 +478,7 @@ Future<protocol.SignedEvent?> loadLatestCRDTByContentType(
 
 Future<List<protocol.SignedEvent>> loadEventsForSystemByContentType(
   final sqflite.Transaction transaction,
-  final List<int> system,
+  final protocol.PublicKey system,
   final fixnum.Int64 contentType,
 ) async {
   final rows = await transaction.rawQuery('''
@@ -486,7 +486,7 @@ Future<List<protocol.SignedEvent>> loadEventsForSystemByContentType(
         WHERE system_key_type = 1
         AND system_key = ?
         AND content_type = ?;
-    ''', [Uint8List.fromList(system), contentType.toInt()]);
+    ''', [Uint8List.fromList(system.key), contentType.toInt()]);
 
   final List<protocol.SignedEvent> result = [];
 
@@ -499,7 +499,7 @@ Future<List<protocol.SignedEvent>> loadEventsForSystemByContentType(
 
 Future<List<protocol.SignedEvent>> loadLatestCRDTSetItemsByContentType(
   final sqflite.Transaction transaction,
-  final List<int> system,
+  final protocol.PublicKey system,
   final fixnum.Int64 contentType,
 ) async {
   final rows = await transaction.rawQuery('''
@@ -529,7 +529,7 @@ Future<List<protocol.SignedEvent>> loadLatestCRDTSetItemsByContentType(
         latest_values
     WHERE
         latest_values.operation = 0
-    ''', [contentType.toInt(), Uint8List.fromList(system)]);
+    ''', [contentType.toInt(), Uint8List.fromList(system.key)]);
 
   final List<protocol.SignedEvent> result = [];
 
@@ -542,7 +542,7 @@ Future<List<protocol.SignedEvent>> loadLatestCRDTSetItemsByContentType(
 
 Future<List<protocol.SignedEvent>> loadEventRange(
   final sqflite.Transaction transaction,
-  final List<int> system,
+  final protocol.PublicKey system,
   final List<int> process,
   final ranges.Range range,
 ) async {
@@ -554,7 +554,7 @@ Future<List<protocol.SignedEvent>> loadEventRange(
     AND logical_clock >= ?
     AND logical_clock <= ?
   ''', [
-    Uint8List.fromList(system),
+    Uint8List.fromList(system.key),
     Uint8List.fromList(process),
     range.low.toInt(),
     range.high.toInt(),
