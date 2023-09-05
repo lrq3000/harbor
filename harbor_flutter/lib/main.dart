@@ -44,7 +44,7 @@ Future<ProcessSecret> createNewIdentity(final sqflite.Database db) async {
   final algorithm = cryptography.Ed25519();
   final keyPair = await algorithm.newKeyPair();
 
-  return await db.transaction((transaction) async {
+  return await db.transaction((final transaction) async {
     final processInfo = await importIdentity(transaction, keyPair);
 
     await setServer(
@@ -67,7 +67,8 @@ Future<ProcessSecret> importIdentity(
   final privateBytes = await keyPair.extractPrivateKeyBytes();
   final publicBytes = public.bytes;
 
-  final process = List<int>.generate(16, (i) => Random.secure().nextInt(256));
+  final process =
+      List<int>.generate(16, (final i) => Random.secure().nextInt(256));
 
   await queries.insertProcessSecret(
     transaction,
@@ -93,7 +94,7 @@ Future<List<ProcessSecret>> loadIdentities(final sqflite.Database db) async {
 
   final result = List<ProcessSecret>.empty(growable: true);
 
-  for (var row in rows) {
+  for (final row in rows) {
     final public = cryptography.SimplePublicKey(
       row['system_key_pub'] as List<int>,
       type: cryptography.KeyPairType.ed25519,
@@ -117,7 +118,7 @@ Future<String> makeSystemLink(
   final sqflite.Database db,
   final protocol.PublicKey system,
 ) async {
-  final servers = await db.transaction((transaction) async {
+  final servers = await db.transaction((final transaction) async {
     return await loadServerList(transaction, system);
   });
 
@@ -138,7 +139,7 @@ Future<String> makeEventLink(
   final protocol.Process process,
   final fixnum.Int64 logicalClock,
 ) async {
-  final servers = await db.transaction((transaction) async {
+  final servers = await db.transaction((final transaction) async {
     return await loadServerList(transaction, system);
   });
 
@@ -168,7 +169,7 @@ Future<String> makeExportBundle(
 
   final events = protocol.Events();
 
-  await db.transaction((transaction) async {
+  await db.transaction((final transaction) async {
     final usernameSignedEvent = await queries.loadLatestCRDTByContentType(
       transaction,
       system,
@@ -223,7 +224,7 @@ Future<bool> importExportBundle(
     type: cryptography.KeyPairType.ed25519,
   );
 
-  return await db.transaction((transaction) async {
+  return await db.transaction((final transaction) async {
     final exists = await queries.doesProcessSecretExistForSystem(
       transaction,
       exportBundle.keyPair,
@@ -303,8 +304,8 @@ Future<List<PublicKey>> _getVouchersCompute(
 
   final List<SignedEvent> vouchEvents = List.empty(growable: true);
   final responses = await Future.wait(futures);
-  for (var response in responses) {
-    vouchEvents.addAll(response.items.map((e) => e.event));
+  for (final response in responses) {
+    vouchEvents.addAll(response.items.map((final e) => e.event));
     //TODO: Can we deduplicate the list early?
     //TODO: Handle more than X vouchers by using cursor to get the next page
   }
@@ -317,7 +318,7 @@ Future<List<PublicKey>> _getVouchersCompute(
     }
 
     final referenceMatches = e.references
-        .any((r) => claimPointer == Pointer.fromBuffer(r.reference));
+        .any((final r) => claimPointer == Pointer.fromBuffer(r.reference));
     if (referenceMatches) {
       if (!vouchers.contains(e.system)) {
         vouchers.add(e.system);
@@ -330,7 +331,8 @@ Future<List<PublicKey>> _getVouchersCompute(
 
 Future<List<PublicKey>> getVouchersAsync(
     final List<String> servers, final Pointer claimPointer) async {
-  _GetVouchersComputeArgs args = _GetVouchersComputeArgs(servers, claimPointer);
+  final _GetVouchersComputeArgs args =
+      _GetVouchersComputeArgs(servers, claimPointer);
   return compute(_getVouchersCompute, args);
 }
 
@@ -372,7 +374,7 @@ Future<models.SystemState> _getProfileCompute(
 
 Future<models.SystemState> getProfileAsync(
     final List<String> servers, final PublicKey system) async {
-  _GetProfileComputeArgs args = _GetProfileComputeArgs(servers, system);
+  final _GetProfileComputeArgs args = _GetProfileComputeArgs(servers, system);
   return compute(_getProfileCompute, args);
 }
 
@@ -613,7 +615,7 @@ Future<Image?> loadLatestAvatar(
       );
 
       final protocol.ImageManifest manifest = bundle.imageManifests.firstWhere(
-          (manifest) =>
+          (final manifest) =>
               manifest.width == fixnum.Int64(256) &&
               manifest.height == fixnum.Int64(256));
 
@@ -961,7 +963,7 @@ class PolycentricModel extends ChangeNotifier {
         ..keyType = fixnum.Int64(1)
         ..key = public.bytes;
 
-      await db.transaction((transaction) async {
+      await db.transaction((final transaction) async {
         final username = await loadLatestUsername(
           transaction,
           system,

@@ -39,7 +39,7 @@ class _ClaimPageState extends State<ClaimPage> {
             (BuildContext context, AsyncSnapshot<List<PublicKey>> snapshot) {
           Iterable<Widget> ws;
           if (snapshot.hasData) {
-            var d = snapshot.data;
+            final d = snapshot.data;
             if (d == null || d.isEmpty) {
               ws = [
                 const Text("Nobody has vouched for this claim",
@@ -82,7 +82,7 @@ class _ClaimPageState extends State<ClaimPage> {
         builder:
             (BuildContext context, AsyncSnapshot<models.SystemState> snapshot) {
           if (snapshot.hasData) {
-            var data = snapshot.data;
+            final data = snapshot.data;
             if (data == null) {
               return const Text("No profile data",
                   style: TextStyle(color: Colors.white70));

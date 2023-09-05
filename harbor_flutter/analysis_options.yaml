@@ -2,6 +2,15 @@ include: package:flutter_lints/flutter.yaml
 
 linter:
   rules:
+    - prefer_final_in_for_each
+    - prefer_final_locals
+    - unnecessary_null_checks
+    - no_self_assignments
+    - unnecessary_statements
+    - always_declare_return_types
+    - always_put_control_body_on_new_line
+    - avoid_void_async
+    - eol_at_end_of_file
 
 analyzer:
   language:

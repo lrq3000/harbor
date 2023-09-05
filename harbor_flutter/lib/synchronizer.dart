@@ -41,7 +41,7 @@ Future<bool> backfillClientSingle(
 
   for (final serverRangesForProcess
       in serverRangesForSystem.rangesForProcesses) {
-    var serverRanges = protocolRangesToRanges(serverRangesForProcess.ranges);
+    final serverRanges = protocolRangesToRanges(serverRangesForProcess.ranges);
     List<ranges.Range> clientRanges = [];
 
     for (final clientRangesForProcess
@@ -125,7 +125,7 @@ Future<bool> backfillServerSingle(
 
   for (final clientRangesForProcess
       in clientRangesForSystem.rangesForProcesses) {
-    var clientRanges = protocolRangesToRanges(clientRangesForProcess.ranges);
+    final clientRanges = protocolRangesToRanges(clientRangesForProcess.ranges);
     List<ranges.Range> serverRanges = [];
 
     for (final serverRangesForProcess

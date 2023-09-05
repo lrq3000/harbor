@@ -385,7 +385,7 @@ class _ProfilePageState extends State<ProfilePage> {
               d == null) {
             return const SizedBox();
           } else {
-            var keyStr = convert.base64Url.encode(d.bytes);
+            final keyStr = convert.base64Url.encode(d.bytes);
             return Column(children: [
               Align(
                 alignment: AlignmentDirectional.center,
@@ -434,7 +434,7 @@ class _ProfilePageState extends State<ProfilePage> {
     List<StatelessWidget> renderClaims(
       final List<main.ClaimInfo> claims,
     ) {
-      List<StatelessWidget> result = [];
+      final List<StatelessWidget> result = [];
 
       for (var i = 0; i < claims.length; i++) {
         final text = claims[i].getField(fixnum.Int64(0)) ?? 'unknown';
@@ -467,7 +467,7 @@ class _ProfilePageState extends State<ProfilePage> {
       return result;
     }
 
-    List<Widget> listViewChildren = [
+    final List<Widget> listViewChildren = [
       Center(
         child: tap_debouncer.TapDebouncer(
           onTap: () async {

@@ -118,7 +118,7 @@ class _VouchPageState extends State<VouchPage> {
   Widget build(final BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
 
-    List<Widget> columnChildren = [];
+    final List<Widget> columnChildren = [];
 
     if (stateEvent == null || statePointer == null) {
       columnChildren.addAll([

@@ -125,7 +125,7 @@ Future<protocol.RangesForSystem> rangesForSystem(
     Uint8List.fromList(system.key),
   ]);
 
-  protocol.RangesForSystem? result = protocol.RangesForSystem();
+  final protocol.RangesForSystem result = protocol.RangesForSystem();
 
   for (final row in rows) {
     final process = protocol.Process();

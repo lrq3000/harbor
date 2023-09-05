@@ -17,7 +17,7 @@ class NewOrImportProfilePage extends StatefulWidget {
 class _NewOrImportProfilePageState extends State<NewOrImportProfilePage> {
   List<StatelessWidget> _renderProfiles(
       final List<main.ProcessInfo> identities) {
-    List<StatelessWidget> result = [];
+    final List<StatelessWidget> result = [];
 
     for (var i = 0; i < identities.length; i++) {
       result.add(shared_ui.StandardButtonGeneric(
