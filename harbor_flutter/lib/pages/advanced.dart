@@ -243,20 +243,6 @@ class _AdvancedPageState extends State<AdvancedPage> {
     );
   }
 
-  Future<void> handleOpenHarborSocial(
-    final main.PolycentricModel state,
-    final main.ProcessInfo identity,
-  ) async {
-    final query = await main.makeSystemLink(state.db, identity.system);
-
-    final Uri url = Uri.parse("https://harbor.social/$query");
-
-    await url_launcher.launchUrl(
-      url,
-      mode: url_launcher.LaunchMode.externalApplication,
-    );
-  }
-
   @override
   Widget build(final BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
@@ -308,14 +294,6 @@ class _AdvancedPageState extends State<AdvancedPage> {
           left: shared_ui.makeSVG('open_browser.svg', 'Open'),
           onPressed: () async {
             await handleOpenGitLab();
-          },
-        ),
-        shared_ui.StandardButtonGeneric(
-          actionText: 'Open harbor.social',
-          actionDescription: 'Open your profile on the website',
-          left: shared_ui.makeSVG('open_browser.svg', 'Open'),
-          onPressed: () async {
-            await handleOpenHarborSocial(state, identity);
           },
         ),
         const SizedBox(height: 10),

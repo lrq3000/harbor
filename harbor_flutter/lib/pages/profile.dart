@@ -414,6 +414,20 @@ class _ProfilePageState extends State<ProfilePage> {
         });
   }
 
+  Future<void> handleOpenHarborSocial(
+    final main.PolycentricModel state,
+    final main.ProcessInfo identity,
+  ) async {
+    final query = await main.makeSystemLink(state.db, identity.system);
+
+    final Uri url = Uri.parse("https://harbor.social/$query");
+
+    await url_launcher.launchUrl(
+      url,
+      mode: url_launcher.LaunchMode.externalApplication,
+    );
+  }
+
   @override
   Widget build(final BuildContext context) {
     final state = context.watch<main.PolycentricModel>();
@@ -673,6 +687,14 @@ class _ProfilePageState extends State<ProfilePage> {
               MaterialPageRoute<VouchOptionsPage>(builder: (context) {
             return VouchOptionsPage(processSecret: identity.processSecret);
           }));
+        },
+      ),
+      shared_ui.StandardButtonGeneric(
+        actionText: 'Open harbor.social',
+        actionDescription: 'Open your profile on the website',
+        left: shared_ui.makeSVG('open_browser.svg', 'Open'),
+        onPressed: () async {
+          await handleOpenHarborSocial(state, identity);
         },
       ),
       shared_ui.StandardButtonGeneric(
