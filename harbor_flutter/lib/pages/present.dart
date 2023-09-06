@@ -87,7 +87,7 @@ class PresentPage extends StatelessWidget {
                 ))),
         const Center(
             child: Text(
-          "Requests you to verify their claim",
+          "Wants you to verify this claim",
           style: TextStyle(
             fontWeight: FontWeight.w300,
             fontSize: 20,
