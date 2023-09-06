@@ -589,28 +589,35 @@ void showSnackBar(final BuildContext context, final String text) {
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
 
-List<Widget> renderClaim(final main.ClaimInfo claim) {
+String? claimToBasicString(final main.ClaimInfo claim) {
   if (claim.claim.claimType == models.ClaimType.claimTypeOccupation) {
     final organization = claim.getField(fixnum.Int64(0));
     final role = claim.getField(fixnum.Int64(1));
+
+    if (organization != null && role != null) {
+      return "$role at $organization";
+    } else if (organization == null && role != null) {
+      return role;
+    } else if (organization != null && role == null) {
+      return "Unspecified role at $organization";
+    }
+
+    return null;
+  } else {
+    return claim.getField(fixnum.Int64(0));
+  }
+}
+
+List<Widget> renderClaim(final main.ClaimInfo claim) {
+  if (claim.claim.claimType == models.ClaimType.claimTypeOccupation) {
+    final basic = claimToBasicString(claim);
     final location = claim.getField(fixnum.Int64(2));
 
     return [
-      if (organization != null)
+      if (basic != null)
         Center(
           child: Text(
-            "Organization: $organization",
-            style: const TextStyle(
-              fontWeight: FontWeight.w200,
-              fontSize: 20,
-              color: Colors.grey,
-            ),
-          ),
-        ),
-      if (role != null)
-        Center(
-          child: Text(
-            "Role: $role",
+            basic,
             style: const TextStyle(
               fontWeight: FontWeight.w200,
               fontSize: 20,

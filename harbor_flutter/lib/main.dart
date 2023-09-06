@@ -873,9 +873,9 @@ Future<ClaimInfo> makePlatformClaim(
 Future<ClaimInfo> makeOccupationClaim(
   final sqflite.Transaction transaction,
   final ProcessSecret processInfo,
-  final String organization,
-  final String role,
-  final String location,
+  final String? organization,
+  final String? role,
+  final String? location,
 ) async {
   return await persistClaim(
     transaction,

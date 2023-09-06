@@ -39,9 +39,13 @@ class _CreateOccupationClaimPageState extends State<CreateOccupationClaimPage> {
         await main.makeOccupationClaim(
           transaction,
           identity.processSecret,
-          textControllerOrganization.text,
-          textControllerRole.text,
-          textControllerLocation.text,
+          textControllerOrganization.text.isEmpty
+              ? null
+              : textControllerOrganization.text,
+          textControllerRole.text.isEmpty ? null : textControllerRole.text,
+          textControllerLocation.text.isEmpty
+              ? null
+              : textControllerLocation.text,
         );
       });
 
