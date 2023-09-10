@@ -61,6 +61,7 @@ flutter_launcher_icons:
   adaptive_icon_foreground: "assets/logo.png"
   android: true
   ios: true
+  remove_alphas_ios: true
 
 flutter_native_splash:
   color: "#000000"
