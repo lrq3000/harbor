@@ -26,8 +26,7 @@ void checkAuthorityResponse(final String name, final http.Response response) {
   throw AuthorityException(fields['message'] as String);
 }
 
-// const authorityServer = "https://verifiers.grayjay.app";
-const authorityServer = "http://10.10.10.58:3092";
+const authorityServer = "https://verifiers.polycentric.io";
 
 void checkResponse(final String name, final http.Response response) {
   if (response.statusCode != 200) {

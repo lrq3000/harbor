@@ -1002,7 +1002,7 @@ class PolycentricModel extends ChangeNotifier {
 }
 
 Future<PolycentricModel> setupModel() async {
-  return PolycentricModel(await queries.createDB('neopass17.db'));
+  return PolycentricModel(await queries.createDB('harbor1.db'));
 }
 
 class NeopassApp extends StatelessWidget {
