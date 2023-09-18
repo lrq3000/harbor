@@ -4,7 +4,13 @@
 
 Harbor is an identity management application written, targeting iOS, and Android, built on [Polycentric](https://gitlab.futo.org/polycentric/polycentric). Create pseudonymous identities, make claims, link identities across applications.
 
-![Profile page](readmefiles/screenshot1.webp) ![Platform page](readmefiles/screenshot2.webp)
+
+<table border="0">
+ <tr>
+    <td><b><img src="readmefiles/screenshot1.webp" height="500" /></b></td>
+    <td><b><img src="readmefiles/screenshot2.webp" height="500" /></b></td>
+ </tr>
+</table>
 
 Targeting Flutter stable `3.10.3`.
 
