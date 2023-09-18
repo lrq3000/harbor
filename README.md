@@ -2,7 +2,7 @@
 
 ![pipeline](https://gitlab.futo.org/polycentric/harbor/badges/main/pipeline.svg)
 
-Harbor is an identity management application written, targeting iOS, and Android, built on [Polycentric](https://gitlab.futo.org/polycentric/polycentric). Create pseudonymous identities, make claims, link identities across applications.
+Harbor is an identity management application written, targeting iOS, and Android, built on [Polycentric](https://gitlab.futo.org/polycentric/polycentric). Create pseudonymous identities, make claims, link identities across applications. Checkout [harbor.social](https://harbor.social), or [docs.polycentric.io](https://docs.polycentric.io) for more information
 
 
 <table border="0">
