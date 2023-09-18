@@ -391,7 +391,7 @@ class _AdvancedPageState extends State<AdvancedPage> {
 
   Future<void> handleOpenGitLab() async {
     final Uri url = Uri.parse("https://gitlab.futo.org"
-        "/polycentric/neopass/~commit/${version.version}");
+        "/polycentric/harbor/~commit/${version.version}");
 
     await url_launcher.launchUrl(
       url,
