@@ -9,6 +9,28 @@ import '../shared_ui.dart' as shared_ui;
 import '../api_methods.dart' as api_methods;
 import '../protocol.pb.dart' as protocol;
 
+String platformToLinkHint(fixnum.Int64 claimType) {
+  if (claimType == models.ClaimType.claimTypeYouTube) {
+    return "https://www.youtube.com/@example";
+  } else if (claimType == models.ClaimType.claimTypeOdysee) {
+    return "https://odysee.com/@example";
+  } else if (claimType == models.ClaimType.claimTypeRumble) {
+    return "https://rumble.com/c/example";
+  } else if (claimType == models.ClaimType.claimTypeTwitch) {
+    return "https://twitch.tv/example";
+  } else if (claimType == models.ClaimType.claimTypeInstagram) {
+    return "https://www.instagram.com/example";
+  } else if (claimType == models.ClaimType.claimTypeMinds) {
+    return "https://www.minds.com/example";
+  } else if (claimType == models.ClaimType.claimTypePatreon) {
+    return "https://www.patreon.com/example";
+  } else if (claimType == models.ClaimType.claimTypeSubstack) {
+    return "https://example.substack.com";
+  }
+
+  return "";
+}
+
 class MakePlatformClaimPage extends StatefulWidget {
   final int identityIndex;
   final fixnum.Int64 claimType;
@@ -48,8 +70,8 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
         const SizedBox(height: 100),
         shared_ui.LabeledTextField(
           controller: textController,
-          title: "Profile information",
-          label: "Profile handle",
+          title: "Enter profile / account link",
+          label: platformToLinkHint(widget.claimType),
         ),
         const SizedBox(height: 150),
         Align(
