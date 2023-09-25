@@ -54,6 +54,13 @@ Future<ProcessSecret> createNewIdentity(final sqflite.Database db) async {
       'https://srv1-stg.polycentric.io',
     );
 
+    await setAuthority(
+      transaction,
+      processInfo,
+      protocol.LWWElementSet_Operation.ADD,
+      'https://verifiers.polycentric.io',
+    );
+
     return processInfo;
   });
 }
@@ -452,14 +459,15 @@ Future<List<ClaimInfo>> loadClaims(
   return result;
 }
 
-Future<List<String>> loadServerList(
+Future<List<String>> loadCRDTSetItemsAsListOfString(
   final sqflite.Transaction transaction,
   final protocol.PublicKey system,
+  final fixnum.Int64 contentType,
 ) async {
   final signedEvents = await queries.loadLatestCRDTSetItemsByContentType(
     transaction,
     system,
-    models.ContentType.contentTypeServer,
+    contentType,
   );
 
   final List<String> result = [];
@@ -473,9 +481,9 @@ Future<List<String>> loadServerList(
       continue;
     }
 
-    if (event.contentType != models.ContentType.contentTypeServer) {
-      logger
-          .d("expected server event but got: ${event.contentType.toString()}");
+    if (event.contentType != contentType) {
+      logger.d("expected ${contentType.toString()} event "
+          "but got: ${event.contentType.toString()}");
 
       continue;
     }
@@ -490,6 +498,17 @@ Future<List<String>> loadServerList(
   }
 
   return result;
+}
+
+Future<List<String>> loadServerList(
+  final sqflite.Transaction transaction,
+  final protocol.PublicKey system,
+) async {
+  return await loadCRDTSetItemsAsListOfString(
+    transaction,
+    system,
+    models.ContentType.contentTypeServer,
+  );
 }
 
 Future<String> loadLatestUsername(
@@ -840,6 +859,21 @@ Future<void> setServer(
     models.ContentType.contentTypeServer,
     operation,
     Uint8List.fromList(utf8.encode(server)),
+  );
+}
+
+Future<void> setAuthority(
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final protocol.LWWElementSet_Operation operation,
+  final String authority,
+) async {
+  await setCRDTSetItem(
+    transaction,
+    processInfo,
+    models.ContentType.contentTypeAuthority,
+    operation,
+    Uint8List.fromList(utf8.encode(authority)),
   );
 }
 

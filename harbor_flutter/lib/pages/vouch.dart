@@ -9,6 +9,7 @@ import '../models.dart' as models;
 import '../main.dart' as main;
 import '../shared_ui.dart' as shared_ui;
 import '../api_methods.dart' as api_methods;
+import '../synchronizer.dart' as synchronizer;
 
 class VouchPage extends StatefulWidget {
   final main.ProcessSecret processSecret;
@@ -175,6 +176,8 @@ class _VouchPageState extends State<VouchPage> {
                 await main.makeVouch(
                     transaction, widget.processSecret, statePointer!);
               });
+
+              synchronizer.backfillServers(state.db, statePointer!.system);
 
               if (context.mounted) {
                 Navigator.of(context).pop();

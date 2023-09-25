@@ -42,7 +42,7 @@ class _ClaimPageState extends State<ClaimPage> {
             final d = snapshot.data;
             if (d == null || d.isEmpty) {
               ws = [
-                const Text("Nobody has vouched for this claim",
+                const Text("Nobody has verified this claim",
                     style: TextStyle(color: Colors.white70))
               ];
             } else {
@@ -63,7 +63,7 @@ class _ClaimPageState extends State<ClaimPage> {
           return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Vouchers",
+                const Text("Verifications",
                     style: TextStyle(
                       fontWeight: FontWeight.w300,
                       fontSize: 16,

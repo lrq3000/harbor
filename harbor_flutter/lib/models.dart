@@ -163,6 +163,7 @@ class ContentType {
   static final contentTypeBanner = fixnum.Int64(13);
   static final contentTypeOpinion = fixnum.Int64(14);
   static final contentTypeStore = fixnum.Int64(15);
+  static final contentTypeAuthority = fixnum.Int64(16);
 }
 
 class ClaimType {
