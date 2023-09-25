@@ -7,7 +7,7 @@ clean:
 	flutter clean
 
 build-apk:
-	flutter build apk
+	flutter build apk --debug
 
 test:
 	flutter test
