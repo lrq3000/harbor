@@ -303,5 +303,5 @@ Future<String> postValidate(
 
   checkResponse('getChallenge', response);
 
-  return response.bodyBytes.toString();
+  return convert.utf8.decode(response.bodyBytes);
 }
