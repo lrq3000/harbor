@@ -22,6 +22,7 @@ import 'new_or_import_profile.dart';
 import 'vouch_options.dart';
 import 'advanced.dart';
 import '../logger.dart';
+import 'package:harbor_flutter/pages/authenticate.dart';
 
 class ProfilePage extends StatefulWidget {
   final int identityIndex;
@@ -686,6 +687,20 @@ class _ProfilePageState extends State<ProfilePage> {
           Navigator.push(context,
               MaterialPageRoute<VouchOptionsPage>(builder: (context) {
             return VouchOptionsPage(processSecret: identity.processSecret);
+          }));
+        },
+      ),
+      shared_ui.StandardButtonGeneric(
+        actionText: 'Authenticate',
+        actionDescription: 'Scan a QR code to login',
+        left: shared_ui.makeSVG('login.svg', 'Login'),
+        onPressed: () async {
+          Navigator.push(context,
+              MaterialPageRoute<AuthenticatePage>(builder: (context) {
+            return AuthenticatePage(
+              identityIndex: widget.identityIndex,
+              link: Uri.parse('http://10.10.10.58'),
+            );
           }));
         },
       ),
