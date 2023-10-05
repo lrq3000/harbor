@@ -1,10 +1,11 @@
 import 'dart:core';
+import 'dart:convert' as dart_convert;
+import 'dart:io' as dart_io;
 
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:cryptography/cryptography.dart' as cryptography;
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
-import 'dart:io' as dart_io;
 
 import 'package:harbor_flutter/api_methods.dart' as api_methods;
 import 'package:harbor_flutter/main.dart' as main;
@@ -56,8 +57,12 @@ class _AuthenticatePage extends State<AuthenticatePage> {
         challenge.body,
       );
 
+      final challengeWithPrefix =
+          dart_convert.utf8.encode("authenticate:").toList(growable: true);
+      challengeWithPrefix.addAll(challengeBody.challenge);
+
       final signature = await cryptography.Ed25519().sign(
-        challengeBody.challenge,
+        challengeWithPrefix,
         keyPair: identity.processSecret.system,
       );
 
