@@ -9,7 +9,7 @@ import '../shared_ui.dart' as shared_ui;
 import '../api_methods.dart' as api_methods;
 import '../protocol.pb.dart' as protocol;
 
-String platformToLinkHint(fixnum.Int64 claimType) {
+String _platformToLinkHint(fixnum.Int64 claimType) {
   if (claimType == models.ClaimType.claimTypeYouTube) {
     return "https://www.youtube.com/@example";
   } else if (claimType == models.ClaimType.claimTypeOdysee) {
@@ -71,7 +71,7 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
         shared_ui.LabeledTextField(
           controller: textController,
           title: "Enter profile / account link",
-          label: platformToLinkHint(widget.claimType),
+          label: _platformToLinkHint(widget.claimType),
         ),
         const SizedBox(height: 150),
         Align(
