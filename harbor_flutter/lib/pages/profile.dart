@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'dart:convert' as convert;
 import 'dart:ui' as dart_ui;
 import 'package:fixnum/fixnum.dart' as fixnum;
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import '../main.dart' as main;
 import '../models.dart' as models;
@@ -695,13 +696,17 @@ class _ProfilePageState extends State<ProfilePage> {
         actionDescription: 'Scan a QR code to login',
         left: shared_ui.makeSVG('login.svg', 'Login'),
         onPressed: () async {
-          Navigator.push(context,
-              MaterialPageRoute<AuthenticatePage>(builder: (context) {
-            return AuthenticatePage(
-              identityIndex: widget.identityIndex,
-              link: Uri.parse('http://10.10.10.58:3001'),
-            );
-          }));
+          final String rawScan = await FlutterBarcodeScanner.scanBarcode(
+              "#ff6666", 'Cancel', false, ScanMode.QR);
+          if (rawScan != "-1" && context.mounted) {
+            Navigator.push(context,
+                MaterialPageRoute<AuthenticatePage>(builder: (context) {
+              return AuthenticatePage(
+                identityIndex: widget.identityIndex,
+                link: Uri.parse(rawScan),
+              );
+            }));
+          }
         },
       ),
       shared_ui.StandardButtonGeneric(
