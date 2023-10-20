@@ -282,7 +282,7 @@ Future<GetOAuthUsernameResponse> getOAuthUsername(
 }
 
 Future<protocol.HarborChallengeResponse> getChallenge(final Uri link) async {
-  final response = await http.get(Uri.parse("${link.toString()}/challenge"));
+  final response = await http.get(Uri.parse("${link.toString()}challenge"));
 
   checkResponse('getChallenge', response);
 
@@ -294,14 +294,14 @@ Future<String> postValidate(
   final protocol.HarborValidateRequest request,
 ) async {
   final response = await http.post(
-    Uri.parse("${link.toString()}/validate"),
+    Uri.parse("${link.toString()}validate"),
     headers: <String, String>{
       'Content-Type': 'application/octet-stream',
     },
     body: request.writeToBuffer(),
   );
 
-  checkResponse('getChallenge', response);
+  checkResponse('postValidate', response);
 
   return convert.utf8.decode(response.bodyBytes);
 }
