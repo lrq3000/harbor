@@ -709,10 +709,11 @@ const QueryClaimToSystemRequest$json = {
   '2': [
     {'1': 'claim_type', '3': 1, '4': 1, '5': 4, '10': 'claimType'},
     {'1': 'trust_root', '3': 2, '4': 1, '5': 11, '6': '.userpackage.PublicKey', '10': 'trustRoot'},
-    {'1': 'match_any_field', '3': 3, '4': 1, '5': 9, '9': 0, '10': 'matchAnyField', '17': true},
+    {'1': 'match_any_field', '3': 3, '4': 1, '5': 9, '9': 0, '10': 'matchAnyField'},
+    {'1': 'match_all_fields', '3': 4, '4': 1, '5': 11, '6': '.userpackage.QueryClaimToSystemRequestMatchAll', '9': 0, '10': 'matchAllFields'},
   ],
   '8': [
-    {'1': '_match_any_field'},
+    {'1': 'query'},
   ],
 };
 
@@ -720,8 +721,22 @@ const QueryClaimToSystemRequest$json = {
 final $typed_data.Uint8List queryClaimToSystemRequestDescriptor = $convert.base64Decode(
     'ChlRdWVyeUNsYWltVG9TeXN0ZW1SZXF1ZXN0Eh0KCmNsYWltX3R5cGUYASABKARSCWNsYWltVH'
     'lwZRI1Cgp0cnVzdF9yb290GAIgASgLMhYudXNlcnBhY2thZ2UuUHVibGljS2V5Ugl0cnVzdFJv'
-    'b3QSKwoPbWF0Y2hfYW55X2ZpZWxkGAMgASgJSABSDW1hdGNoQW55RmllbGSIAQFCEgoQX21hdG'
-    'NoX2FueV9maWVsZA==');
+    'b3QSKAoPbWF0Y2hfYW55X2ZpZWxkGAMgASgJSABSDW1hdGNoQW55RmllbGQSWgoQbWF0Y2hfYW'
+    'xsX2ZpZWxkcxgEIAEoCzIuLnVzZXJwYWNrYWdlLlF1ZXJ5Q2xhaW1Ub1N5c3RlbVJlcXVlc3RN'
+    'YXRjaEFsbEgAUg5tYXRjaEFsbEZpZWxkc0IHCgVxdWVyeQ==');
+
+@$core.Deprecated('Use queryClaimToSystemRequestMatchAllDescriptor instead')
+const QueryClaimToSystemRequestMatchAll$json = {
+  '1': 'QueryClaimToSystemRequestMatchAll',
+  '2': [
+    {'1': 'fields', '3': 1, '4': 3, '5': 11, '6': '.userpackage.ClaimFieldEntry', '10': 'fields'},
+  ],
+};
+
+/// Descriptor for `QueryClaimToSystemRequestMatchAll`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List queryClaimToSystemRequestMatchAllDescriptor = $convert.base64Decode(
+    'CiFRdWVyeUNsYWltVG9TeXN0ZW1SZXF1ZXN0TWF0Y2hBbGwSNAoGZmllbGRzGAEgAygLMhwudX'
+    'NlcnBhY2thZ2UuQ2xhaW1GaWVsZEVudHJ5UgZmaWVsZHM=');
 
 @$core.Deprecated('Use queryClaimToSystemResponseDescriptor instead')
 const QueryClaimToSystemResponse$json = {
@@ -835,4 +850,49 @@ final $typed_data.Uint8List uRLInfoDataLinkDescriptor = $convert.base64Decode(
     'c3MSGAoHc2VydmVycxgDIAMoCVIHc2VydmVycxIdCgpieXRlX2NvdW50GAQgASgEUglieXRlQ2'
     '91bnQSLgoIc2VjdGlvbnMYBSADKAsyEi51c2VycGFja2FnZS5SYW5nZVIIc2VjdGlvbnMSFwoE'
     'bWltZRgGIAEoCUgAUgRtaW1liAEBQgcKBV9taW1l');
+
+@$core.Deprecated('Use harborChallengeResponseDescriptor instead')
+const HarborChallengeResponse$json = {
+  '1': 'HarborChallengeResponse',
+  '2': [
+    {'1': 'body', '3': 1, '4': 1, '5': 12, '10': 'body'},
+    {'1': 'hmac', '3': 2, '4': 1, '5': 12, '10': 'hmac'},
+  ],
+};
+
+/// Descriptor for `HarborChallengeResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List harborChallengeResponseDescriptor = $convert.base64Decode(
+    'ChdIYXJib3JDaGFsbGVuZ2VSZXNwb25zZRISCgRib2R5GAEgASgMUgRib2R5EhIKBGhtYWMYAi'
+    'ABKAxSBGhtYWM=');
+
+@$core.Deprecated('Use harborChallengeResponseBodyDescriptor instead')
+const HarborChallengeResponseBody$json = {
+  '1': 'HarborChallengeResponseBody',
+  '2': [
+    {'1': 'challenge', '3': 1, '4': 1, '5': 12, '10': 'challenge'},
+    {'1': 'created_on', '3': 2, '4': 1, '5': 4, '10': 'createdOn'},
+  ],
+};
+
+/// Descriptor for `HarborChallengeResponseBody`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List harborChallengeResponseBodyDescriptor = $convert.base64Decode(
+    'ChtIYXJib3JDaGFsbGVuZ2VSZXNwb25zZUJvZHkSHAoJY2hhbGxlbmdlGAEgASgMUgljaGFsbG'
+    'VuZ2USHQoKY3JlYXRlZF9vbhgCIAEoBFIJY3JlYXRlZE9u');
+
+@$core.Deprecated('Use harborValidateRequestDescriptor instead')
+const HarborValidateRequest$json = {
+  '1': 'HarborValidateRequest',
+  '2': [
+    {'1': 'challenge', '3': 1, '4': 1, '5': 11, '6': '.userpackage.HarborChallengeResponse', '10': 'challenge'},
+    {'1': 'system', '3': 2, '4': 1, '5': 11, '6': '.userpackage.PublicKey', '10': 'system'},
+    {'1': 'signature', '3': 3, '4': 1, '5': 12, '10': 'signature'},
+  ],
+};
+
+/// Descriptor for `HarborValidateRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List harborValidateRequestDescriptor = $convert.base64Decode(
+    'ChVIYXJib3JWYWxpZGF0ZVJlcXVlc3QSQgoJY2hhbGxlbmdlGAEgASgLMiQudXNlcnBhY2thZ2'
+    'UuSGFyYm9yQ2hhbGxlbmdlUmVzcG9uc2VSCWNoYWxsZW5nZRIuCgZzeXN0ZW0YAiABKAsyFi51'
+    'c2VycGFja2FnZS5QdWJsaWNLZXlSBnN5c3RlbRIcCglzaWduYXR1cmUYAyABKAxSCXNpZ25hdH'
+    'VyZQ==');
 

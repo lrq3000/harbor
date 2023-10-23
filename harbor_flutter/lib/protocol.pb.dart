@@ -2316,16 +2316,29 @@ class QueryReferencesResponse extends $pb.GeneratedMessage {
   $core.List<$fixnum.Int64> get counts => $_getList(3);
 }
 
+enum QueryClaimToSystemRequest_Query {
+  matchAnyField, 
+  matchAllFields, 
+  notSet
+}
+
 class QueryClaimToSystemRequest extends $pb.GeneratedMessage {
   factory QueryClaimToSystemRequest() => create();
   QueryClaimToSystemRequest._() : super();
   factory QueryClaimToSystemRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory QueryClaimToSystemRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
+  static const $core.Map<$core.int, QueryClaimToSystemRequest_Query> _QueryClaimToSystemRequest_QueryByTag = {
+    3 : QueryClaimToSystemRequest_Query.matchAnyField,
+    4 : QueryClaimToSystemRequest_Query.matchAllFields,
+    0 : QueryClaimToSystemRequest_Query.notSet
+  };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'QueryClaimToSystemRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
+    ..oo(0, [3, 4])
     ..a<$fixnum.Int64>(1, _omitFieldNames ? '' : 'claimType', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
     ..aOM<PublicKey>(2, _omitFieldNames ? '' : 'trustRoot', subBuilder: PublicKey.create)
     ..aOS(3, _omitFieldNames ? '' : 'matchAnyField')
+    ..aOM<QueryClaimToSystemRequestMatchAll>(4, _omitFieldNames ? '' : 'matchAllFields', subBuilder: QueryClaimToSystemRequestMatchAll.create)
     ..hasRequiredFields = false
   ;
 
@@ -2349,6 +2362,9 @@ class QueryClaimToSystemRequest extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static QueryClaimToSystemRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<QueryClaimToSystemRequest>(create);
   static QueryClaimToSystemRequest? _defaultInstance;
+
+  QueryClaimToSystemRequest_Query whichQuery() => _QueryClaimToSystemRequest_QueryByTag[$_whichOneof(0)]!;
+  void clearQuery() => clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
   $fixnum.Int64 get claimType => $_getI64(0);
@@ -2378,6 +2394,53 @@ class QueryClaimToSystemRequest extends $pb.GeneratedMessage {
   $core.bool hasMatchAnyField() => $_has(2);
   @$pb.TagNumber(3)
   void clearMatchAnyField() => clearField(3);
+
+  @$pb.TagNumber(4)
+  QueryClaimToSystemRequestMatchAll get matchAllFields => $_getN(3);
+  @$pb.TagNumber(4)
+  set matchAllFields(QueryClaimToSystemRequestMatchAll v) { setField(4, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasMatchAllFields() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearMatchAllFields() => clearField(4);
+  @$pb.TagNumber(4)
+  QueryClaimToSystemRequestMatchAll ensureMatchAllFields() => $_ensure(3);
+}
+
+class QueryClaimToSystemRequestMatchAll extends $pb.GeneratedMessage {
+  factory QueryClaimToSystemRequestMatchAll() => create();
+  QueryClaimToSystemRequestMatchAll._() : super();
+  factory QueryClaimToSystemRequestMatchAll.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory QueryClaimToSystemRequestMatchAll.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'QueryClaimToSystemRequestMatchAll', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
+    ..pc<ClaimFieldEntry>(1, _omitFieldNames ? '' : 'fields', $pb.PbFieldType.PM, subBuilder: ClaimFieldEntry.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  QueryClaimToSystemRequestMatchAll clone() => QueryClaimToSystemRequestMatchAll()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  QueryClaimToSystemRequestMatchAll copyWith(void Function(QueryClaimToSystemRequestMatchAll) updates) => super.copyWith((message) => updates(message as QueryClaimToSystemRequestMatchAll)) as QueryClaimToSystemRequestMatchAll;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static QueryClaimToSystemRequestMatchAll create() => QueryClaimToSystemRequestMatchAll._();
+  QueryClaimToSystemRequestMatchAll createEmptyInstance() => create();
+  static $pb.PbList<QueryClaimToSystemRequestMatchAll> createRepeated() => $pb.PbList<QueryClaimToSystemRequestMatchAll>();
+  @$core.pragma('dart2js:noInline')
+  static QueryClaimToSystemRequestMatchAll getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<QueryClaimToSystemRequestMatchAll>(create);
+  static QueryClaimToSystemRequestMatchAll? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<ClaimFieldEntry> get fields => $_getList(0);
 }
 
 class QueryClaimToSystemResponse extends $pb.GeneratedMessage {
@@ -2756,6 +2819,176 @@ class URLInfoDataLink extends $pb.GeneratedMessage {
   $core.bool hasMime() => $_has(5);
   @$pb.TagNumber(6)
   void clearMime() => clearField(6);
+}
+
+class HarborChallengeResponse extends $pb.GeneratedMessage {
+  factory HarborChallengeResponse() => create();
+  HarborChallengeResponse._() : super();
+  factory HarborChallengeResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory HarborChallengeResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'HarborChallengeResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
+    ..a<$core.List<$core.int>>(1, _omitFieldNames ? '' : 'body', $pb.PbFieldType.OY)
+    ..a<$core.List<$core.int>>(2, _omitFieldNames ? '' : 'hmac', $pb.PbFieldType.OY)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  HarborChallengeResponse clone() => HarborChallengeResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  HarborChallengeResponse copyWith(void Function(HarborChallengeResponse) updates) => super.copyWith((message) => updates(message as HarborChallengeResponse)) as HarborChallengeResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static HarborChallengeResponse create() => HarborChallengeResponse._();
+  HarborChallengeResponse createEmptyInstance() => create();
+  static $pb.PbList<HarborChallengeResponse> createRepeated() => $pb.PbList<HarborChallengeResponse>();
+  @$core.pragma('dart2js:noInline')
+  static HarborChallengeResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<HarborChallengeResponse>(create);
+  static HarborChallengeResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<$core.int> get body => $_getN(0);
+  @$pb.TagNumber(1)
+  set body($core.List<$core.int> v) { $_setBytes(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasBody() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearBody() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.List<$core.int> get hmac => $_getN(1);
+  @$pb.TagNumber(2)
+  set hmac($core.List<$core.int> v) { $_setBytes(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasHmac() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearHmac() => clearField(2);
+}
+
+class HarborChallengeResponseBody extends $pb.GeneratedMessage {
+  factory HarborChallengeResponseBody() => create();
+  HarborChallengeResponseBody._() : super();
+  factory HarborChallengeResponseBody.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory HarborChallengeResponseBody.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'HarborChallengeResponseBody', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
+    ..a<$core.List<$core.int>>(1, _omitFieldNames ? '' : 'challenge', $pb.PbFieldType.OY)
+    ..a<$fixnum.Int64>(2, _omitFieldNames ? '' : 'createdOn', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  HarborChallengeResponseBody clone() => HarborChallengeResponseBody()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  HarborChallengeResponseBody copyWith(void Function(HarborChallengeResponseBody) updates) => super.copyWith((message) => updates(message as HarborChallengeResponseBody)) as HarborChallengeResponseBody;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static HarborChallengeResponseBody create() => HarborChallengeResponseBody._();
+  HarborChallengeResponseBody createEmptyInstance() => create();
+  static $pb.PbList<HarborChallengeResponseBody> createRepeated() => $pb.PbList<HarborChallengeResponseBody>();
+  @$core.pragma('dart2js:noInline')
+  static HarborChallengeResponseBody getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<HarborChallengeResponseBody>(create);
+  static HarborChallengeResponseBody? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<$core.int> get challenge => $_getN(0);
+  @$pb.TagNumber(1)
+  set challenge($core.List<$core.int> v) { $_setBytes(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasChallenge() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearChallenge() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get createdOn => $_getI64(1);
+  @$pb.TagNumber(2)
+  set createdOn($fixnum.Int64 v) { $_setInt64(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasCreatedOn() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearCreatedOn() => clearField(2);
+}
+
+class HarborValidateRequest extends $pb.GeneratedMessage {
+  factory HarborValidateRequest() => create();
+  HarborValidateRequest._() : super();
+  factory HarborValidateRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory HarborValidateRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'HarborValidateRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'userpackage'), createEmptyInstance: create)
+    ..aOM<HarborChallengeResponse>(1, _omitFieldNames ? '' : 'challenge', subBuilder: HarborChallengeResponse.create)
+    ..aOM<PublicKey>(2, _omitFieldNames ? '' : 'system', subBuilder: PublicKey.create)
+    ..a<$core.List<$core.int>>(3, _omitFieldNames ? '' : 'signature', $pb.PbFieldType.OY)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  HarborValidateRequest clone() => HarborValidateRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  HarborValidateRequest copyWith(void Function(HarborValidateRequest) updates) => super.copyWith((message) => updates(message as HarborValidateRequest)) as HarborValidateRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static HarborValidateRequest create() => HarborValidateRequest._();
+  HarborValidateRequest createEmptyInstance() => create();
+  static $pb.PbList<HarborValidateRequest> createRepeated() => $pb.PbList<HarborValidateRequest>();
+  @$core.pragma('dart2js:noInline')
+  static HarborValidateRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<HarborValidateRequest>(create);
+  static HarborValidateRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  HarborChallengeResponse get challenge => $_getN(0);
+  @$pb.TagNumber(1)
+  set challenge(HarborChallengeResponse v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasChallenge() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearChallenge() => clearField(1);
+  @$pb.TagNumber(1)
+  HarborChallengeResponse ensureChallenge() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  PublicKey get system => $_getN(1);
+  @$pb.TagNumber(2)
+  set system(PublicKey v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasSystem() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearSystem() => clearField(2);
+  @$pb.TagNumber(2)
+  PublicKey ensureSystem() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  $core.List<$core.int> get signature => $_getN(2);
+  @$pb.TagNumber(3)
+  set signature($core.List<$core.int> v) { $_setBytes(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasSignature() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearSignature() => clearField(3);
 }
 
 
