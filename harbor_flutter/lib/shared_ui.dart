@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart' as flutter_svg;
+import 'package:harbor_flutter/extensions.dart';
 import 'package:harbor_flutter/logger.dart';
 import 'package:tap_debouncer/tap_debouncer.dart' as tap_debouncer;
 import 'package:fixnum/fixnum.dart' as fixnum;
@@ -604,7 +605,7 @@ String? claimToBasicString(final main.ClaimInfo claim) {
 
     return null;
   } else {
-    return claim.getField(fixnum.Int64(0));
+    return claim.claim.claimFields.toClaimFieldsString();
   }
 }
 
@@ -638,7 +639,7 @@ List<Widget> renderClaim(final main.ClaimInfo claim) {
         ),
     ];
   } else {
-    final text = claim.getField(fixnum.Int64(0)) ?? "unknown";
+    final text = claim.claim.claimFields.toClaimFieldsString();
 
     return [
       Center(
