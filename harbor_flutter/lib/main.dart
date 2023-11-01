@@ -324,8 +324,30 @@ Future<List<PublicKey>> _getVouchersCompute(
       continue;
     }
 
-    final referenceMatches = e.references
-        .any((final r) => claimPointer == Pointer.fromBuffer(r.reference));
+    final referenceMatches = e.references.any((final r) {
+      final pointer = Pointer.fromBuffer(r.reference);
+      if (pointer.logicalClock != claimPointer.logicalClock) {
+        return false;
+      }
+      if (pointer.system.keyType != claimPointer.system.keyType) {
+        return false;
+      }
+      if (!listEquals(pointer.system.key, claimPointer.system.key)) {
+        return false;
+      }
+      if (!listEquals(pointer.process.process, claimPointer.process.process)) {
+        return false;
+      }
+      if (pointer.eventDigest.digestType !=
+          claimPointer.eventDigest.digestType) {
+        return false;
+      }
+      if (!listEquals(
+          pointer.eventDigest.digest, claimPointer.eventDigest.digest)) {
+        return false;
+      }
+      return true;
+    });
     if (referenceMatches) {
       if (!vouchers.contains(e.system)) {
         vouchers.add(e.system);
