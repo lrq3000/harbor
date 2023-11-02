@@ -111,8 +111,7 @@ class _AdvancedPageState extends State<AdvancedPage> {
         context: context,
         builder: (final BuildContext context) {
           return AlertDialog(
-            title: Text("Add Server",
-                style: Theme.of(context).textTheme.bodyMedium),
+            title: const Text("Add Server"),
             content: TextField(
               autofocus: true,
               decoration: const InputDecoration(
@@ -127,7 +126,6 @@ class _AdvancedPageState extends State<AdvancedPage> {
                   ),
                 ),
               ),
-              style: Theme.of(context).textTheme.bodyMedium,
               cursorColor: Colors.white,
               controller: newServerController,
             ),
@@ -184,10 +182,8 @@ class _AdvancedPageState extends State<AdvancedPage> {
         context: context,
         builder: (final BuildContext context) {
           return AlertDialog(
-            title: Text("Remove Server",
-                style: Theme.of(context).textTheme.bodyMedium),
-            content: Text("Are you sure you want to remove this server?",
-                style: Theme.of(context).textTheme.bodyMedium),
+            title: const Text("Remove Server"),
+            content: const Text("Are you sure you want to remove this server?"),
             actions: [
               shared_ui.StandardDialogButton(
                 text: "Cancel",
@@ -233,8 +229,7 @@ class _AdvancedPageState extends State<AdvancedPage> {
         context: context,
         builder: (final BuildContext context) {
           return AlertDialog(
-            title: Text("Add Authority",
-                style: Theme.of(context).textTheme.bodyMedium),
+            title: const Text("Add Authority"),
             content: TextField(
               autofocus: true,
               decoration: const InputDecoration(
@@ -249,7 +244,6 @@ class _AdvancedPageState extends State<AdvancedPage> {
                   ),
                 ),
               ),
-              style: Theme.of(context).textTheme.bodyMedium,
               cursorColor: Colors.white,
               controller: newAuthorityController,
             ),
@@ -306,10 +300,9 @@ class _AdvancedPageState extends State<AdvancedPage> {
         context: context,
         builder: (final BuildContext context) {
           return AlertDialog(
-            title: Text("Remove Authority",
-                style: Theme.of(context).textTheme.bodyMedium),
-            content: Text("Are you sure you want to remove this authority?",
-                style: Theme.of(context).textTheme.bodyMedium),
+            title: const Text("Remove Authority"),
+            content:
+                const Text("Are you sure you want to remove this authority?"),
             actions: [
               shared_ui.StandardDialogButton(
                 text: "Cancel",
@@ -352,12 +345,9 @@ class _AdvancedPageState extends State<AdvancedPage> {
         context: context,
         builder: (final BuildContext context) {
           return AlertDialog(
-            title: Text("Delete Account",
-                style: Theme.of(context).textTheme.bodyMedium),
-            content: Text(
-                "Are you sure you want to delete your account? "
-                "This action cannot be undone.",
-                style: Theme.of(context).textTheme.bodyMedium),
+            title: const Text("Delete Account"),
+            content: const Text("Are you sure you want to delete your account? "
+                "This action cannot be undone."),
             actions: [
               shared_ui.StandardDialogButton(
                 text: "Cancel",

@@ -54,8 +54,7 @@ class ImportPage extends StatelessWidget {
         context: context,
         builder: (final BuildContext context) {
           return AlertDialog(
-            title: Text("Enter Polycentric Link",
-                style: Theme.of(context).textTheme.bodyMedium),
+            title: const Text("Enter Polycentric Link"),
             content: TextField(
               autofocus: true,
               decoration: const InputDecoration(
@@ -70,7 +69,6 @@ class ImportPage extends StatelessWidget {
                   ),
                 ),
               ),
-              style: Theme.of(context).textTheme.bodyMedium,
               cursorColor: Colors.white,
               controller: textController,
             ),
