@@ -590,6 +590,44 @@ Future<String> loadLatestStore(
   }
 }
 
+Future<String> loadLatestStoreData(
+  final sqflite.Transaction transaction,
+  final protocol.PublicKey system,
+) async {
+  final signedEvent = await queries.loadLatestCRDTByContentType(
+    transaction,
+    system,
+    models.ContentType.contentTypeStoreData,
+  );
+
+  if (signedEvent == null) {
+    return '';
+  } else {
+    final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
+
+    return utf8.decode(event.lwwElement.value);
+  }
+}
+
+Future<String> loadLatestPromotion(
+  final sqflite.Transaction transaction,
+  final protocol.PublicKey system,
+) async {
+  final signedEvent = await queries.loadLatestCRDTByContentType(
+    transaction,
+    system,
+    models.ContentType.contentTypePromotion,
+  );
+
+  if (signedEvent == null) {
+    return '';
+  } else {
+    final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
+
+    return utf8.decode(event.lwwElement.value);
+  }
+}
+
 Future<Image?> loadImage(
   final sqflite.Transaction transaction,
   final String mime,
@@ -659,6 +697,46 @@ Future<Image?> loadLatestAvatar(
           (final manifest) =>
               manifest.width == fixnum.Int64(256) &&
               manifest.height == fixnum.Int64(256));
+
+      return loadImage(transaction, manifest.mime, system, manifest.process,
+          manifest.sections);
+    }
+  } catch (err) {
+    return null;
+  }
+}
+
+Future<Image?> loadLatestPromotionBanner(
+  final sqflite.Transaction transaction,
+  final protocol.PublicKey system,
+) async {
+  try {
+    final signedEvent = await queries.loadLatestCRDTByContentType(
+      transaction,
+      system,
+      models.ContentType.contentTypePromotionBanner,
+    );
+
+    if (signedEvent == null) {
+      return null;
+    } else {
+      final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
+
+      if (event.contentType != models.ContentType.contentTypePromotionBanner) {
+        logger.d("expected blob section event but got: "
+            "${event.contentType.toString()}");
+
+        return null;
+      }
+
+      final protocol.ImageBundle bundle = protocol.ImageBundle.fromBuffer(
+        event.lwwElement.value,
+      );
+
+      final protocol.ImageManifest manifest = bundle.imageManifests.firstWhere(
+          (final manifest) =>
+              manifest.width == fixnum.Int64(600) &&
+              manifest.height == fixnum.Int64(200));
 
       return loadImage(transaction, manifest.mime, system, manifest.process,
           manifest.sections);
@@ -833,6 +911,45 @@ Future<void> setStore(
   );
 }
 
+Future<void> setStoreData(
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final String storeLink,
+) async {
+  await setCRDT(
+    transaction,
+    processInfo,
+    models.ContentType.contentTypeStoreData,
+    Uint8List.fromList(utf8.encode(storeLink)),
+  );
+}
+
+Future<void> setPromotionBanner(
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final protocol.ImageBundle imageBundle,
+) async {
+  await setCRDT(
+    transaction,
+    processInfo,
+    models.ContentType.contentTypePromotionBanner,
+    imageBundle.writeToBuffer(),
+  );
+}
+
+Future<void> setPromotion(
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final String storeLink,
+) async {
+  await setCRDT(
+    transaction,
+    processInfo,
+    models.ContentType.contentTypePromotion,
+    Uint8List.fromList(utf8.encode(storeLink)),
+  );
+}
+
 Future<void> makeClaim(
   final sqflite.Transaction transaction,
   final ProcessSecret processInfo,
@@ -995,12 +1112,15 @@ class ProcessInfo {
   final String username;
   final List<ClaimInfo> claims;
   final Image? avatar;
+  final String promotion;
+  final Image? promotionBanner;
   final String description;
   final String store;
+  final String storeData;
   final List<String> servers;
 
   ProcessInfo(this.processSecret, this.system, this.username, this.claims,
-      this.avatar, this.description, this.store, this.servers);
+      this.avatar, this.promotion, this.promotionBanner, this.description, this.store, this.storeData, this.servers);
 }
 
 class PolycentricModel extends ChangeNotifier {
@@ -1035,7 +1155,22 @@ class PolycentricModel extends ChangeNotifier {
           system,
         );
 
+        final storeData = await loadLatestStoreData(
+          transaction,
+          system,
+        );
+
         final avatar = await loadLatestAvatar(
+          transaction,
+          system,
+        );
+
+        final promotion = await loadLatestPromotion(
+          transaction,
+          system,
+        );
+
+        final promotionBanner = await loadLatestPromotionBanner(
           transaction,
           system,
         );
@@ -1044,8 +1179,8 @@ class PolycentricModel extends ChangeNotifier {
         final claims = await loadClaims(transaction, system);
 
         this.identities.add(
-              ProcessInfo(identity, system, username, claims, avatar,
-                  description, store, servers),
+              ProcessInfo(identity, system, username, claims, avatar, promotion, promotionBanner,
+                  description, store, storeData, servers),
             );
       });
 
@@ -1082,34 +1217,43 @@ class NeopassApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Harbor',
         theme: darkTheme.copyWith(
-            brightness: Brightness.dark,
-            primaryColor: const Color(0xFF2D63ED),
-            canvasColor: Colors.black,
-            scaffoldBackgroundColor: Colors.black,
-            dialogBackgroundColor: shared_ui.buttonColor,
-            textTheme: darkTheme.textTheme.apply(fontFamily: 'inter'),
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.black,
-            ),
-            elevatedButtonTheme: ElevatedButtonThemeData(
+          brightness: Brightness.dark,
+          primaryColor: const Color(0xFF2D63ED),
+          colorScheme: const ColorScheme.dark(
+            primary: Color(0xFF2D63ED),
+            secondary: Colors.white,
+          ),
+          canvasColor: Colors.black,
+          scaffoldBackgroundColor: Colors.black,
+          dialogBackgroundColor: shared_ui.buttonColor,
+          textTheme: darkTheme.textTheme.apply(fontFamily: 'inter'),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.black,
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all(shared_ui.buttonColor),
+                elevation: MaterialStateProperty.all(0)),
+          ),
+          outlinedButtonTheme: OutlinedButtonThemeData(
               style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(shared_ui.buttonColor),
-                  elevation: MaterialStateProperty.all(0)),
-            ),
-            outlinedButtonTheme: OutlinedButtonThemeData(
-                style: ButtonStyle(
-                    side: MaterialStateProperty.all(const BorderSide(
-              color: Colors.transparent,
-            )))),
-            iconButtonTheme: IconButtonThemeData(
-                style: ButtonStyle(
-                    side: MaterialStateProperty.all(const BorderSide(
-              color: Colors.transparent,
-            )))),
-            textButtonTheme: TextButtonThemeData(
-                style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all(Colors.white)))),
+                  side: MaterialStateProperty.all(const BorderSide(
+            color: Colors.transparent,
+          )))),
+          iconButtonTheme: IconButtonThemeData(
+              style: ButtonStyle(
+                  side: MaterialStateProperty.all(const BorderSide(
+            color: Colors.transparent,
+          )))),
+          textButtonTheme: TextButtonThemeData(
+              style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all(Colors.white))
+          ),
+          tabBarTheme: const TabBarTheme(
+            indicatorColor: Colors.white
+          )
+        ),
         home: SafeArea(child: initialPage),
       ),
     );
