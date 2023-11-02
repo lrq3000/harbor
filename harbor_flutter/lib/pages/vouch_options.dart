@@ -61,8 +61,7 @@ class VouchOptionsPage extends StatelessWidget {
         context: context,
         builder: (final BuildContext context) {
           return AlertDialog(
-            title: Text("Enter Polycentric Link",
-                style: Theme.of(context).textTheme.bodyMedium),
+            title: const Text("Enter Polycentric Link"),
             content: TextField(
               autofocus: true,
               decoration: const InputDecoration(
@@ -77,21 +76,18 @@ class VouchOptionsPage extends StatelessWidget {
                   ),
                 ),
               ),
-              style: Theme.of(context).textTheme.bodyMedium,
               cursorColor: Colors.white,
               controller: textController,
             ),
             actions: [
               TextButton(
-                child: Text("Cancel",
-                    style: Theme.of(context).textTheme.bodyMedium),
+                child: const Text("Cancel"),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               TextButton(
-                child: Text("Submit",
-                    style: Theme.of(context).textTheme.bodyMedium),
+                child: const Text("Submit"),
                 onPressed: () async {
                   if (textController.text.isEmpty) {
                     return;

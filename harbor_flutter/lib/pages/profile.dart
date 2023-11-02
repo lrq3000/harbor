@@ -19,6 +19,7 @@ import '../shared_ui.dart' as shared_ui;
 import '../synchronizer.dart' as synchronizer;
 import 'claim.dart';
 import 'create_claim.dart';
+import 'monetization.dart';
 import 'new_or_import_profile.dart';
 import 'vouch_options.dart';
 import 'advanced.dart';
@@ -50,8 +51,7 @@ class _ProfilePageState extends State<ProfilePage> {
           return AlertDialog(
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10.0))),
-            title: Text("Edit Username",
-                style: Theme.of(context).textTheme.bodyMedium),
+            title: const Text("Edit Username"),
             content: TextField(
               autofocus: true,
               decoration: const InputDecoration(
@@ -66,7 +66,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
               ),
-              style: Theme.of(context).textTheme.bodyMedium,
               cursorColor: Colors.white,
               controller: usernameController,
             ),
@@ -116,8 +115,7 @@ class _ProfilePageState extends State<ProfilePage> {
           return AlertDialog(
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10.0))),
-            title: Text("Edit Description",
-                style: Theme.of(context).textTheme.bodyMedium),
+            title: const Text("Edit Description"),
             content: TextField(
               autofocus: true,
               minLines: 1,
@@ -134,7 +132,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
               ),
-              style: Theme.of(context).textTheme.bodyMedium,
               cursorColor: Colors.white,
               controller: descriptionController,
             ),
@@ -169,82 +166,6 @@ class _ProfilePageState extends State<ProfilePage> {
         });
   }
 
-  Future<void> editStore(
-    final BuildContext context,
-    final main.PolycentricModel state,
-    final main.ProcessInfo identity,
-  ) async {
-    final TextEditingController controller = TextEditingController(
-      text: identity.store,
-    );
-
-    await showDialog<AlertDialog>(
-        context: context,
-        builder: (final BuildContext context) {
-          return AlertDialog(
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10.0))),
-            title: Text("Edit Store",
-                style: Theme.of(context).textTheme.bodyMedium),
-            content: TextField(
-              autofocus: true,
-              minLines: 1,
-              maxLines: 5,
-              decoration: const InputDecoration(
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.white,
-                  ),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              style: Theme.of(context).textTheme.bodyMedium,
-              cursorColor: Colors.white,
-              controller: controller,
-            ),
-            actions: [
-              shared_ui.StandardDialogButton(
-                text: "Cancel",
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                },
-              ),
-              shared_ui.StandardDialogButton(
-                text: "Submit",
-                onPressed: () async {
-                  if (controller.text.isNotEmpty) {
-                    try {
-                      if (!Uri.parse(controller.text).isAbsolute) {
-                        shared_ui.showSnackBar(context, 'Invalid URI');
-
-                        return;
-                      }
-                    } catch (err) {
-                      logger.w(err);
-                    }
-                  }
-
-                  await state.db.transaction((transaction) async {
-                    await main.setStore(
-                        transaction, identity.processSecret, controller.text);
-                  });
-
-                  await state.mLoadIdentities();
-
-                  if (context.mounted) {
-                    Navigator.of(context).pop();
-                  }
-                },
-              ),
-            ],
-          );
-        });
-  }
-
   Future<void> deleteClaimDialog(
     final BuildContext context,
     final main.PolycentricModel state,
@@ -255,12 +176,9 @@ class _ProfilePageState extends State<ProfilePage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Delete Claim",
-                style: Theme.of(context).textTheme.bodyMedium),
-            content: Text(
-                "Are you sure you want to delete this claim? "
-                "This action cannot be undone.",
-                style: Theme.of(context).textTheme.bodyMedium),
+            title: const Text("Delete Claim"),
+            content: const Text("Are you sure you want to delete this claim? "
+                "This action cannot be undone."),
             actions: [
               shared_ui.StandardDialogButton(
                 text: "Cancel",
@@ -718,11 +636,14 @@ class _ProfilePageState extends State<ProfilePage> {
         },
       ),
       shared_ui.StandardButtonGeneric(
-        actionText: 'Set Store',
-        actionDescription: 'Link to a store on the web',
-        left: shared_ui.makeSVG('shopping_cart.svg', 'Store'),
+        actionText: 'Monetization',
+        actionDescription: 'Configure monetization options',
+        left: shared_ui.makeSVG('money.svg', 'Claim'),
         onPressed: () async {
-          await editStore(context, state, identity);
+          Navigator.push(context,
+              MaterialPageRoute<MonetizationPage>(builder: (context) {
+            return MonetizationPage(identityIndex: widget.identityIndex);
+          }));
         },
       ),
       shared_ui.StandardButtonGeneric(

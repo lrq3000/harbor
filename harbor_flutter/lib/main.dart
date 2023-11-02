@@ -1072,6 +1072,7 @@ class NeopassApp extends StatelessWidget {
         ? const NewOrImportProfilePage()
         : const NewOrImportProfilePage();
 
+    final darkTheme = ThemeData.dark();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<PolycentricModel>(
@@ -1080,19 +1081,35 @@ class NeopassApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Harbor',
-        theme: ThemeData(
-          primarySwatch: shared_ui.buttonColor,
-          canvasColor: const Color(0xFF000000),
-          dialogBackgroundColor: shared_ui.buttonColor,
-          fontFamily: 'inter',
-          textTheme: const TextTheme(
-            bodyMedium: TextStyle(
-              fontSize: 14,
-              color: Colors.white,
-              fontWeight: FontWeight.w300,
+        theme: darkTheme.copyWith(
+            brightness: Brightness.dark,
+            primaryColor: const Color(0xFF2D63ED),
+            canvasColor: Colors.black,
+            scaffoldBackgroundColor: Colors.black,
+            dialogBackgroundColor: shared_ui.buttonColor,
+            textTheme: darkTheme.textTheme.apply(fontFamily: 'inter'),
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.black,
             ),
-          ),
-        ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(shared_ui.buttonColor),
+                  elevation: MaterialStateProperty.all(0)),
+            ),
+            outlinedButtonTheme: OutlinedButtonThemeData(
+                style: ButtonStyle(
+                    side: MaterialStateProperty.all(const BorderSide(
+              color: Colors.transparent,
+            )))),
+            iconButtonTheme: IconButtonThemeData(
+                style: ButtonStyle(
+                    side: MaterialStateProperty.all(const BorderSide(
+              color: Colors.transparent,
+            )))),
+            textButtonTheme: TextButtonThemeData(
+                style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all(Colors.white)))),
         home: SafeArea(child: initialPage),
       ),
     );

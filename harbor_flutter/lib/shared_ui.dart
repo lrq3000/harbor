@@ -307,13 +307,12 @@ class StandardButtonGeneric extends StatelessWidget {
                   tap_debouncer.TapDebouncerFunc? onTap) {
                 return OutlinedButton(
                   style: OutlinedButton.styleFrom(
-                    backgroundColor: buttonColor,
-                    foregroundColor: Colors.black,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
-                    shape: buttonShape,
-                  ),
+                      backgroundColor: buttonColor,
+                      foregroundColor: Colors.black,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 20, horizontal: 5),
+                      shape: buttonShape),
                   onPressed: onTap,
                   child: Row(
                     children: rowChildren,
@@ -375,7 +374,7 @@ class StandardDialogButton extends StatelessWidget {
       builder: (BuildContext context, tap_debouncer.TapDebouncerFunc? onTap) {
         return TextButton(
           onPressed: onTap,
-          child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
+          child: Text(text),
         );
       },
     );
@@ -564,11 +563,11 @@ Future<void> errorDialog(
       context: context,
       builder: (final BuildContext context) {
         return AlertDialog(
-          title: Text("Error", style: Theme.of(context).textTheme.bodyMedium),
-          content: Text(text, style: Theme.of(context).textTheme.bodyMedium),
+          title: const Text("Error"),
+          content: Text(text),
           actions: [
             TextButton(
-              child: Text("Ok", style: Theme.of(context).textTheme.bodyMedium),
+              child: const Text("Ok"),
               onPressed: () async {
                 if (context.mounted) {
                   Navigator.of(context).pop();
