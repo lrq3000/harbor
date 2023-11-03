@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:ui' as dart_ui;
-import 'package:convert/convert.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:harbor_flutter/pages/monetization_store_help.dart';
@@ -486,10 +485,12 @@ class _MonetizationPageState extends State<MonetizationPage> with TickerProvider
             if (!identity.membershipUrls.contains(newUrl)) {
               final newMembershipUrls = identity.membershipUrls.toList();
               newMembershipUrls.add(newUrl);
-              setMembershipUrls(newMembershipUrls, state, identity);
+              await setMembershipUrls(newMembershipUrls, state, identity);
             }
 
-            Navigator.pop(c);
+            if (c.mounted) {
+              Navigator.pop(c);
+            }
           });
         }
       ),
@@ -532,10 +533,12 @@ class _MonetizationPageState extends State<MonetizationPage> with TickerProvider
             if (!identity.donationDestinations.contains(v)) {
               final newDonationDestinations = identity.donationDestinations.toList();
               newDonationDestinations.add(v);
-              setDonationDestinations(newDonationDestinations, state, identity);
+              await setDonationDestinations(newDonationDestinations, state, identity);
             }
 
-            Navigator.pop(c);
+            if (c.mounted) {
+              Navigator.pop(c);
+            }
           });
         }
       ),
@@ -561,7 +564,7 @@ class _MonetizationPageState extends State<MonetizationPage> with TickerProvider
   }
 
   Widget buildPromotionPage(final BuildContext ctx, final main.PolycentricModel state, final ProcessInfo identity) {
-    return Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    return SingleChildScrollView(child: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       buildHeader(ctx, "Promotion URL"),
       const SizedBox(height: 8),
       buildTextField(ctx, identity.promotion, "Enter promotion URL", (t) async { await setPromotion(t, state, identity); }),
@@ -604,7 +607,7 @@ class _MonetizationPageState extends State<MonetizationPage> with TickerProvider
         )
       else 
         const Text("No promotion set")
-    ]));
+    ])));
   }
 
   Future clearPromotionBannerField(final main.PolycentricModel state, final ProcessInfo identity) async {
