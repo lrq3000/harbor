@@ -113,14 +113,14 @@ class ImportPage extends StatelessWidget {
         shared_ui.StandardButtonGeneric(
             actionText: 'Text',
             actionDescription: 'Paste an exported identity',
-            left: shared_ui.makeSVG('content_copy.svg', 'Copy'),
+            left: shared_ui.makeSVG(context, 'content_copy.svg', 'Copy'),
             onPressed: () async {
               await textImport(context, state);
             }),
         shared_ui.StandardButtonGeneric(
           actionText: 'QR Code',
           actionDescription: 'Backup from another phone',
-          left: shared_ui.makeSVG('qr_code_2.svg', 'Scan'),
+          left: shared_ui.makeSVG(context, 'qr_code_2.svg', 'Scan'),
           onPressed: () async {
             try {
               final rawScan = await FlutterBarcodeScanner.scanBarcode(

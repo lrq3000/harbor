@@ -150,7 +150,7 @@ class _PresentPageState extends State<PresentPage> {
                 actionText: 'Copy',
                 actionDescription:
                     'Share this unique code with others to verify',
-                left: shared_ui.makeSVG('content_copy.svg', 'Copy'),
+                left: shared_ui.makeSVG(context, 'content_copy.svg', 'Copy'),
                 onPressed: () async {
                   await handlePresentClipboard(state, _link!, context);
                 },
@@ -158,7 +158,7 @@ class _PresentPageState extends State<PresentPage> {
               shared_ui.StandardButtonGeneric(
                 actionText: 'Share',
                 actionDescription: 'Share code for verification',
-                left: shared_ui.makeSVG('share.svg', 'Share'),
+                left: shared_ui.makeSVG(context, 'share.svg', 'Share'),
                 onPressed: () async {
                   await handlePresentShare(state, _link!);
                 },

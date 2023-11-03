@@ -379,7 +379,7 @@ class _ProfilePageState extends State<ProfilePage> {
               shared_ui.claimToBasicString(claims[i]) ?? 'unknown',
           left: Container(
             margin: const EdgeInsets.only(top: 5, bottom: 5),
-            child: shared_ui.claimTypeToVisual(claims[i].claim.claimType),
+            child: shared_ui.claimTypeToVisual(context, claims[i].claim.claimType),
           ),
           onPressed: () async {
             Navigator.push(context,
@@ -545,7 +545,7 @@ class _ProfilePageState extends State<ProfilePage> {
         shared_ui.StandardButtonGeneric(
           actionText: 'Store',
           actionDescription: identity.store,
-          left: shared_ui.makeSVG('shopping_cart.svg', 'Store'),
+          left: shared_ui.makeSVG(context, 'shopping_cart.svg', 'Store'),
           onPressed: () async {
             await url_launcher.launchUrl(
               Uri.parse(identity.store),
@@ -590,7 +590,7 @@ class _ProfilePageState extends State<ProfilePage> {
       shared_ui.StandardButtonGeneric(
         actionText: 'Make a claim',
         actionDescription: 'Make a new claim for your profile',
-        left: shared_ui.makeSVG('add_circle.svg', 'Claim'),
+        left: shared_ui.makeSVG(context, 'add_circle.svg', 'Claim'),
         onPressed: () async {
           Navigator.push(context,
               MaterialPageRoute<CreateClaimPage>(builder: (context) {
@@ -601,7 +601,7 @@ class _ProfilePageState extends State<ProfilePage> {
       shared_ui.StandardButtonGeneric(
         actionText: 'Vouch for a claim',
         actionDescription: 'Vouch for someone elses claim',
-        left: shared_ui.makeSVG('check_box.svg', 'Vouch'),
+        left: shared_ui.makeSVG(context, 'check_box.svg', 'Vouch'),
         onPressed: () async {
           Navigator.push(context,
               MaterialPageRoute<VouchOptionsPage>(builder: (context) {
@@ -612,7 +612,7 @@ class _ProfilePageState extends State<ProfilePage> {
       shared_ui.StandardButtonGeneric(
         actionText: 'Authenticate',
         actionDescription: 'Scan a QR code to login',
-        left: shared_ui.makeSVG('login.svg', 'Login'),
+        left: shared_ui.makeSVG(context, 'login.svg', 'Login'),
         onPressed: () async {
           final String rawScan = await FlutterBarcodeScanner.scanBarcode(
               "#ff6666", 'Cancel', false, ScanMode.QR);
@@ -630,7 +630,7 @@ class _ProfilePageState extends State<ProfilePage> {
       shared_ui.StandardButtonGeneric(
         actionText: 'Open harbor.social',
         actionDescription: 'Open your profile on the website',
-        left: shared_ui.makeSVG('open_browser.svg', 'Open'),
+        left: shared_ui.makeSVG(context, 'open_browser.svg', 'Open'),
         onPressed: () async {
           await handleOpenHarborSocial(state, identity);
         },
@@ -638,7 +638,7 @@ class _ProfilePageState extends State<ProfilePage> {
       shared_ui.StandardButtonGeneric(
         actionText: 'Monetization',
         actionDescription: 'Configure monetization options',
-        left: shared_ui.makeSVG('money.svg', 'Claim'),
+        left: shared_ui.makeSVG(context, 'money.svg', 'Claim'),
         onPressed: () async {
           Navigator.push(context,
               MaterialPageRoute<MonetizationPage>(builder: (context) {
@@ -649,7 +649,7 @@ class _ProfilePageState extends State<ProfilePage> {
       shared_ui.StandardButtonGeneric(
         actionText: 'Change account',
         actionDescription: 'Switch to a different account',
-        left: shared_ui.makeSVG('switch_account.svg', 'Switch'),
+        left: shared_ui.makeSVG(context, 'switch_account.svg', 'Switch'),
         onPressed: () async {
           Navigator.push(context,
               MaterialPageRoute<NewOrImportProfilePage>(builder: (context) {
@@ -660,7 +660,7 @@ class _ProfilePageState extends State<ProfilePage> {
       shared_ui.StandardButtonGeneric(
         actionText: 'Advanced',
         actionDescription: 'Extra settings and app information',
-        left: shared_ui.makeSVG('settings.svg', 'Settings'),
+        left: shared_ui.makeSVG(context, 'settings.svg', 'Settings'),
         onPressed: () async {
           Navigator.push(context,
               MaterialPageRoute<AdvancedPage>(builder: (context) {

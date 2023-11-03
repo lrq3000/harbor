@@ -238,6 +238,8 @@ class StandardButtonGeneric extends StatelessWidget {
               if (primary != null) primary!,
               if (actionText != null)
                 Text(actionText!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 18,
@@ -245,6 +247,8 @@ class StandardButtonGeneric extends StatelessWidget {
               if (secondary != null) secondary!,
               if (actionDescription != null)
                 Text(actionDescription!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontWeight: FontWeight.w200,
                       fontSize: 16,
@@ -254,6 +258,7 @@ class StandardButtonGeneric extends StatelessWidget {
           ),
         ),
       ),
+      const SizedBox(width: 8)
     ];
 
     if (onDelete != null) {
@@ -394,60 +399,64 @@ Image makeButtonImage(final String path) {
   return Image.asset(path);
 }
 
-Widget makeSVG(final String fileName, final String label) {
+Widget makeSVG(final BuildContext ctx, final String fileName, final String label, { final double width = 48, final double height = 48 }) {
   final asset = flutter_svg.SvgPicture.asset(
     'assets/$fileName',
     colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
     semanticsLabel: label,
-    height: 48,
-    width: 48,
+    height: width,
+    width: height,
   );
 
   // This is a workaround for iOS, where SVGs need to be rendered at double size to look correct.
   // https://github.com/dnfield/flutter_svg/issues/668#issuecomment-1614419653
   // This currently applies for all platforms, but could be changed to only apply for iOS.
-  return Transform.scale(
-    filterQuality: FilterQuality.medium,
-    scale: 0.5,
-    child: Transform.scale(
-      scale: 2,
-      child: asset,
-    ),
-  );
+  if (Theme.of(ctx).platform == TargetPlatform.iOS) {
+    return Transform.scale(
+      filterQuality: FilterQuality.medium,
+      scale: 0.5,
+      child: Transform.scale(
+        scale: 2,
+        child: asset,
+      ),
+    );
+  }
+
+  return asset;
 }
 
-Widget claimTypeToVisual(fixnum.Int64 claimType) {
+Widget claimTypeToVisual(final BuildContext ctx, fixnum.Int64 claimType) {
   if (claimType == models.ClaimType.claimTypeGeneric) {
-    return makeSVG('format_quote.svg', 'Quote');
+    return makeSVG(ctx, 'format_quote.svg', 'Quote');
   } else if (claimType == models.ClaimType.claimTypeSkill) {
-    return makeSVG('build.svg', 'Skill');
+    return makeSVG(ctx, 'build.svg', 'Skill');
   } else if (claimType == models.ClaimType.claimTypeOccupation) {
-    return makeSVG('work.svg', 'Occupation');
+    return makeSVG(ctx, 'work.svg', 'Occupation');
   } else if (claimType == models.ClaimType.claimTypeYouTube) {
-    return makeSVG('youtube.svg', 'YouTube');
+    return makeSVG(ctx, 'youtube.svg', 'YouTube');
   } else if (claimType == models.ClaimType.claimTypeOdysee) {
-    return makeSVG('odysee.svg', 'Odysee');
+    return makeSVG(ctx, 'odysee.svg', 'Odysee');
   } else if (claimType == models.ClaimType.claimTypeRumble) {
-    return makeSVG('rumble.svg', 'Rumble');
+    return makeSVG(ctx, 'rumble.svg', 'Rumble');
   } else if (claimType == models.ClaimType.claimTypeTwitch) {
-    return makeSVG('twitch.svg', 'Twitch');
+    return makeSVG(ctx, 'twitch.svg', 'Twitch');
   } else if (claimType == models.ClaimType.claimTypeInstagram) {
-    return makeSVG('instagram.svg', 'Instagram');
+    return makeSVG(ctx, 'instagram.svg', 'Instagram');
   } else if (claimType == models.ClaimType.claimTypeMinds) {
-    return makeSVG('minds.svg', 'Minds');
+    return makeSVG(ctx, 'minds.svg', 'Minds');
   } else if (claimType == models.ClaimType.claimTypeTwitter) {
-    return makeSVG('twitter.svg', 'Twitter');
+    return makeSVG(ctx, 'twitter.svg', 'Twitter');
   } else if (claimType == models.ClaimType.claimTypeDiscord) {
-    return makeSVG('discord.svg', 'Discord');
+    return makeSVG(ctx, 'discord.svg', 'Discord');
   } else if (claimType == models.ClaimType.claimTypePatreon) {
-    return makeSVG('patreon.svg', 'Patreon');
+    return makeSVG(ctx, 'patreon.svg', 'Patreon');
   } else if (claimType == models.ClaimType.claimTypeSubstack) {
-    return makeSVG('substack.svg', 'Substack');
+    return makeSVG(ctx, 'substack.svg', 'Substack');
   }
 
   logger.e("unknown claim type: $claimType");
 
-  return makeSVG('question_mark.svg', 'Substack');
+  return makeSVG(ctx, 'question_mark.svg', 'Substack');
 }
 
 Text makeAppBarTitleText(String text) {

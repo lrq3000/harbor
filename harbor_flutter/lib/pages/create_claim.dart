@@ -26,7 +26,7 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
     StatelessWidget makePlatformButton(final fixnum.Int64 claimType) {
       return shared_ui.ClaimButtonGeneric(
         nameText: models.ClaimType.claimTypeToString(claimType),
-        top: shared_ui.claimTypeToVisual(claimType),
+        top: shared_ui.claimTypeToVisual(context, claimType),
         onPressed: () {
           if (main.isOAuthClaim(claimType)) {
             Navigator.push(context,
@@ -77,7 +77,7 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
             shared_ui.ClaimButtonGeneric(
               nameText: "Occupation",
               top: shared_ui
-                  .claimTypeToVisual(models.ClaimType.claimTypeOccupation),
+                  .claimTypeToVisual(context, models.ClaimType.claimTypeOccupation),
               onPressed: () {
                 Navigator.push(context,
                     MaterialPageRoute<CreateOccupationClaimPage>(
@@ -90,7 +90,7 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
             ),
             shared_ui.ClaimButtonGeneric(
               nameText: "Skill",
-              top: shared_ui.claimTypeToVisual(models.ClaimType.claimTypeSkill),
+              top: shared_ui.claimTypeToVisual(context, models.ClaimType.claimTypeSkill),
               onPressed: () {
                 Navigator.push(context,
                     MaterialPageRoute<CreateSkillClaimPage>(builder: (context) {
@@ -103,7 +103,7 @@ class _CreateClaimPageState extends State<CreateClaimPage> {
             shared_ui.ClaimButtonGeneric(
               nameText: "Freeform",
               top: shared_ui
-                  .claimTypeToVisual(models.ClaimType.claimTypeGeneric),
+                  .claimTypeToVisual(context, models.ClaimType.claimTypeGeneric),
               onPressed: () {
                 Navigator.push(context,
                     MaterialPageRoute<CreateSkillClaimPage>(builder: (context) {

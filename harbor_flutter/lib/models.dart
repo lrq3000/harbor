@@ -167,6 +167,8 @@ class ContentType {
   static final contentTypeStoreData = fixnum.Int64(17);
   static final contentTypePromotionBanner = fixnum.Int64(18);
   static final contentTypePromotion = fixnum.Int64(19);
+  static final contentTypeMembershipUrls = fixnum.Int64(20);
+  static final contentTypeDonationDestinations = fixnum.Int64(21);
 }
 
 class ClaimType {

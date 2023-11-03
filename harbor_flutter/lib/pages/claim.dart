@@ -96,7 +96,7 @@ class _ClaimPageState extends State<ClaimPage> {
                       color: Colors.white54,
                     )),
                 left: shared_ui.makeSVG(
-                    'question_mark.svg', 'Unknown'), //TODO: Replace with Avatar
+                    context, 'question_mark.svg', 'Unknown'), //TODO: Replace with Avatar
                 onPressed: () async {
                   //TODO: Navigate to profile
                 },
@@ -121,7 +121,7 @@ class _ClaimPageState extends State<ClaimPage> {
                     color: Colors.white54,
                   )),
               left: shared_ui.makeSVG(
-                  'question_mark.svg', 'Unknown'), //TODO: Replace with Avatar
+                  context, 'question_mark.svg', 'Unknown'), //TODO: Replace with Avatar
               onPressed: () async {
                 //TODO: Navigate to profile
               },
@@ -210,7 +210,7 @@ class _ClaimPageState extends State<ClaimPage> {
             actionText: 'Automated',
             actionDescription:
                 'Get an automated authority to vouch for this claim',
-            left: shared_ui.makeSVG('smart_toy.svg', 'Automated'),
+            left: shared_ui.makeSVG(context, 'smart_toy.svg', 'Automated'),
             onPressed: () async {
               if (main.isOAuthClaim(claim.claim.claimType)) {
                 Navigator.push(context,
@@ -236,7 +236,7 @@ class _ClaimPageState extends State<ClaimPage> {
         shared_ui.StandardButtonGeneric(
           actionText: 'Manual',
           actionDescription: 'Get a manual authority to vouch for this claim',
-          left: shared_ui.makeSVG('refresh.svg', 'Manual'),
+          left: shared_ui.makeSVG(context, 'refresh.svg', 'Manual'),
           onPressed: () async {
             Navigator.push(context,
                 MaterialPageRoute<PresentPage>(builder: (context) {

@@ -57,7 +57,7 @@ class _MakePlatformClaimPageState extends State<MakePlatformClaimPage> {
       ),
       children: [
         const SizedBox(height: 105),
-        Center(child: shared_ui.claimTypeToVisual(widget.claimType)),
+        Center(child: shared_ui.claimTypeToVisual(context, widget.claimType)),
         const SizedBox(height: 25),
         Center(
             child: Text(

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui' as dart_ui;
 import 'package:convert/convert.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:harbor_flutter/pages/monetization_store_help.dart';
 import 'package:http/http.dart' as http;
 
@@ -31,6 +32,7 @@ class MonetizationPage extends StatefulWidget {
 
 class _MonetizationPageState extends State<MonetizationPage> with TickerProviderStateMixin {
   late TabController tabController;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -331,12 +333,231 @@ class _MonetizationPageState extends State<MonetizationPage> with TickerProvider
     }
   }
 
+  Widget makeSVG(final BuildContext ctx, final String fileName, final String label) {
+    return Center(child: shared_ui.makeSVG(ctx, fileName, label, width: 30, height: 30));
+  }
+
+  Widget buildMembershipButton(final BuildContext ctx, String url, final main.PolycentricModel state, final ProcessInfo identity, Future Function()? onTap, Future Function()? onDelete) {
+    final uri = Uri.parse(url);
+
+    String name;
+    Widget icon;
+    if (uri.host == "patreon.com") {
+      icon = makeSVG(context, 'patreon.svg', 'Patreon');
+      name = "Patreon";
+    } else {
+      icon = const Icon(Icons.web, color: Colors.white);
+      name = uri.host;
+    }
+
+    return Padding(padding: const EdgeInsets.fromLTRB(0, 0, 0, 4), child: shared_ui.StandardButtonGeneric(
+        actionText: name,
+        actionDescription: "Become a member on $name",
+        left: icon,
+        onPressed: onTap,
+        onDelete: onDelete,
+      ));
+  }
+
+  Widget buildDonationButton(final BuildContext ctx, String destination, final main.PolycentricModel state, final ProcessInfo identity, Future Function()? onTap, Future Function()? onDelete) {    
+    final uri = Uri.tryParse(destination);
+    if (uri != null && uri.isAbsolute) {
+      String name;
+      Widget icon;
+      if (uri.host == "paypal.com") {
+        icon = const Icon(Icons.paypal, color: Colors.white);
+        name = "Paypal";
+      } else {
+        icon = const Icon(Icons.web, color: Colors.white);
+        name = uri.host;
+      }
+
+      return Padding(padding: const EdgeInsets.fromLTRB(0, 0, 0, 4), child: shared_ui.StandardButtonGeneric(
+        actionText: name,
+        actionDescription: "Donate on $name",
+        left: icon,
+        onPressed: onTap,
+        onDelete: onDelete,
+      ));
+    } else {
+      final cryptoType = getCryptoType(destination);
+      if (cryptoType != CryptoType.unknown) {
+        String name;
+        Widget icon;
+
+        switch (cryptoType) {
+          case CryptoType.bitcoin:
+            icon = makeSVG(context, 'bitcoin.svg', 'Bitcoin');
+            name = "Bitcoin";
+            break;
+          case CryptoType.ethereum:
+            icon = makeSVG(context, 'ethereum.svg', 'Ethereum');
+            name = "Ethereum";
+            break;
+          case CryptoType.litecoin:
+            icon = makeSVG(context, 'litecoin.svg', 'Litecoin');
+            name = "Litecoin";
+            break;
+          case CryptoType.ripple:
+            icon = makeSVG(context, 'ripple.svg', 'Ripple');
+            name = "Ripple";
+            break;
+          default:
+            icon = const Icon(Icons.web, color: Colors.white);
+            name = "Unknown";
+            break;
+        }
+
+        return Padding(padding: const EdgeInsets.fromLTRB(0, 0, 0, 4), child: shared_ui.StandardButtonGeneric(
+          actionText: name,
+          actionDescription: destination,
+          left: icon,
+          onPressed: onTap,
+          onDelete: onDelete,
+        ));
+      } else {
+        return Padding(padding: const EdgeInsets.fromLTRB(0, 0, 0, 4), child: shared_ui.StandardButtonGeneric(
+          actionText: "Unknown",
+          actionDescription: destination,
+          left: const Icon(Icons.question_mark, color: Colors.white),
+          onPressed: onTap,
+          onDelete: onDelete,
+        ));
+      }
+    }
+  }
+
+  CryptoType getCryptoType(String address) {
+    // Bitcoin P2PKH and P2SH addresses, and bech32 (SegWit) addresses
+    final RegExp btcRegex = RegExp(r'^(1|3)[1-9A-HJ-NP-Za-km-z]{25,34}$|^(bc1)[0-9a-zA-HJ-NP-Z]{39,59}$');
+
+    // Ethereum and ERC20 tokens (does not validate checksum)
+    final RegExp ethRegex = RegExp(r'^(0x)[0-9a-fA-F]{40}$');
+
+    // Litecoin, for legacy 'L' addresses, 'M' for P2SH, and 'ltc1' for bech32 (does not validate checksum)
+    final RegExp ltcRegex = RegExp(r'^(L|M)[1-9A-HJ-NP-Za-km-z]{26,33}$|^(ltc1)[0-9a-zA-HJ-NP-Z]{39,59}$');
+
+    // Ripple (does not validate checksum)
+    final RegExp xrpRegex = RegExp(r'^r[1-9A-HJ-NP-Za-km-z]{24,34}$');
+
+
+    // Check for Litecoin first to prevent misclassification with Bitcoin
+    if (ltcRegex.hasMatch(address)) {
+      return CryptoType.litecoin;
+    } else if (btcRegex.hasMatch(address)) {
+      return CryptoType.bitcoin;
+    } else if (ethRegex.hasMatch(address)) {
+      return CryptoType.ethereum;
+    } else if (xrpRegex.hasMatch(address)) {
+      return CryptoType.ripple;
+    } else {
+      return CryptoType.unknown;
+    }
+  }
+
   Widget buildMembershipPage(final BuildContext ctx, final main.PolycentricModel state, final ProcessInfo identity) {
-    return Center(child: Text("Member"));
+    return SingleChildScrollView(child: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      buildHeader(ctx, "Memberships"),
+      const SizedBox(height: 4),
+      buildSubtext(ctx, "Monthly recurring payment options"),
+      const SizedBox(height: 8),
+
+      ... identity.membershipUrls.map((e) => buildMembershipButton(ctx, e, state, identity, null, () async {
+        final newMembershipUrls = identity.membershipUrls.where((v) => v != e).toList();
+        setState(() { isLoading = true; });
+        try {
+          await setMembershipUrls(newMembershipUrls, state, identity);
+        } finally {
+          setState(() { isLoading = false; });
+        }
+      })),
+
+      shared_ui.StandardButton(
+        actionText: "Add", 
+        actionDescription: "Add an additional membership option", 
+        icon: Icons.add, onPressed: () async {
+          await showTextFieldDialog(ctx, "", "Enter URL", (c, t) async {
+            final uri = Uri.parse(t);
+            if (!uri.isAbsolute) {
+              throw Exception('Invalid URI');
+            }
+
+            final newUrl = uri.toString().trim();
+            if (!identity.membershipUrls.contains(newUrl)) {
+              final newMembershipUrls = identity.membershipUrls.toList();
+              newMembershipUrls.add(newUrl);
+              setMembershipUrls(newMembershipUrls, state, identity);
+            }
+
+            Navigator.pop(c);
+          });
+        }
+      ),
+
+      const SizedBox(height: 16),
+      buildHeader(ctx, "Preview"),
+      const SizedBox(height: 4),
+      buildSubtext(ctx, "This is what users will see"),
+      const SizedBox(height: 8),
+
+      ... identity.membershipUrls.map((e) => buildMembershipButton(ctx, e, state, identity, () async {
+        await launchUrlString(e, mode: LaunchMode.externalApplication);
+      }, null))
+    ])));
   }
 
   Widget buildDonationPage(final BuildContext ctx, final main.PolycentricModel state, final ProcessInfo identity) {
-    return Center(child: Text("Donation"));
+    return SingleChildScrollView(child: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      buildHeader(ctx, "Donations"),
+      const SizedBox(height: 4),
+      buildSubtext(ctx, "One time payment options"),
+      const SizedBox(height: 8),
+
+      ... identity.donationDestinations.map((e) => buildDonationButton(ctx, e, state, identity, null, () async {
+        final newDonationDestinations = identity.donationDestinations.where((v) => v != e).toList();
+        setState(() { isLoading = true; });
+        try {
+          await setDonationDestinations(newDonationDestinations, state, identity);
+        } finally {
+          setState(() { isLoading = false; });
+        }
+      })),
+
+      shared_ui.StandardButton(
+        actionText: "Add", 
+        actionDescription: "Add an additional donation option", 
+        icon: Icons.add, onPressed: () async {
+          await showTextFieldDialog(ctx, "", "Enter donation destination (URL, crypto address, ...)", (c, t) async {
+            final v = t.trim();
+            if (!identity.donationDestinations.contains(v)) {
+              final newDonationDestinations = identity.donationDestinations.toList();
+              newDonationDestinations.add(v);
+              setDonationDestinations(newDonationDestinations, state, identity);
+            }
+
+            Navigator.pop(c);
+          });
+        }
+      ),
+
+      const SizedBox(height: 16),
+      buildHeader(ctx, "Preview"),
+      const SizedBox(height: 4),
+      buildSubtext(ctx, "This is what users will see"),
+      const SizedBox(height: 8),
+
+      ... identity.donationDestinations.map((e) => buildDonationButton(ctx, e, state, identity, () async {
+        final uri = Uri.tryParse(e);
+        if (uri?.isAbsolute == true) {
+          await launchUrlString(e, mode: LaunchMode.externalApplication);
+        } else {
+          final scaffoldMessenger = ScaffoldMessenger.of(ctx);
+          await Clipboard.setData(ClipboardData(text: e));
+          scaffoldMessenger.showSnackBar(const SnackBar(
+              content: Text('Copied to clipboard', textAlign: TextAlign.center)));
+        }
+      }, null))
+    ])));
   }
 
   Widget buildPromotionPage(final BuildContext ctx, final main.PolycentricModel state, final ProcessInfo identity) {
@@ -357,11 +578,18 @@ class _MonetizationPageState extends State<MonetizationPage> with TickerProvider
       buildSubtext(ctx, "Must be 600px wide and 200px high"),
       const SizedBox(height: 20),
       Center(child: buildButton(ctx, "Delete", () async {
-        await clearPromotionBannerField(state, identity);
+        setState(() { isLoading = true; });
+        try {
+          await clearPromotionBannerField(state, identity);
+        } finally {
+          setState(() { isLoading = false; });
+        }
       })),
 
       const SizedBox(height: 16),
       buildHeader(ctx, "Preview"),
+      const SizedBox(height: 4),
+      buildSubtext(ctx, "This is what users will see"),
       const SizedBox(height: 8),
       
       if (identity.promotion.isNotEmpty) 
@@ -387,6 +615,30 @@ class _MonetizationPageState extends State<MonetizationPage> with TickerProvider
         transaction,
         identity.processSecret,
         imageBundle,
+      );
+    });
+
+    await state.mLoadIdentities();
+  }
+
+  Future setMembershipUrls(final List<String> membershipUrls, final main.PolycentricModel state, final ProcessInfo identity) async {
+    await state.db.transaction((transaction) async {
+      await main.setMembershipUrls(
+        transaction,
+        identity.processSecret,
+        membershipUrls,
+      );
+    });
+
+    await state.mLoadIdentities();
+  }
+
+  Future setDonationDestinations(final List<String> donationDestinations, final main.PolycentricModel state, final ProcessInfo identity) async {
+    await state.db.transaction((transaction) async {
+      await main.setDonationDestinations(
+        transaction,
+        identity.processSecret,
+        donationDestinations,
       );
     });
 
@@ -526,30 +778,36 @@ class _MonetizationPageState extends State<MonetizationPage> with TickerProvider
 
     final identity = state.identities[widget.identityIndex];
 
-    return Scaffold(
-      appBar: AppBar(
-        title: shared_ui.makeAppBarTitleText("Monetization"),
-        bottom: TabBar(
-          indicatorColor: Colors.white,
-          controller: tabController,
-          tabs: const [
-            Tab(text: "DONATION"),
-            Tab(text: "MEMBER"),
-            Tab(text: "STORE"),
-            Tab(text: "PROMOTION")
-          ],
+    return Stack(children: [
+      Scaffold(
+        appBar: AppBar(
+          title: shared_ui.makeAppBarTitleText("Monetization"),
+          bottom: TabBar(
+            indicatorColor: Colors.white,
+            controller: tabController,
+            tabs: const [
+              Tab(text: "DONATION"),
+              Tab(text: "MEMBER"),
+              Tab(text: "STORE"),
+              Tab(text: "PROMOTION")
+            ],
+          ),
         ),
+        body: TabBarView(
+            controller: tabController,
+            children: [
+              buildDonationPage(context, state, identity),
+              buildMembershipPage(context, state, identity),
+              buildStorePage(context, state, identity),
+              buildPromotionPage(context, state, identity)
+            ],
+          ),
       ),
-      body: TabBarView(
-          controller: tabController,
-          children: [
-            buildDonationPage(context, state, identity),
-            buildMembershipPage(context, state, identity),
-            buildStorePage(context, state, identity),
-            buildPromotionPage(context, state, identity)
-          ],
-        ),
-    );
+      if (isLoading) ...[
+        const ModalBarrier(dismissible: false, color: Colors.black45),
+        const Center(child: CircularProgressIndicator()),
+      ],
+    ]);
   }
 }
 
@@ -569,3 +827,5 @@ class StoreItem {
     );
   }
 }
+
+enum CryptoType { bitcoin, ethereum, litecoin, ripple, unknown }

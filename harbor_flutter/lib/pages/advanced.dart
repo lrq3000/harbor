@@ -66,7 +66,7 @@ class _AdvancedPageState extends State<AdvancedPage> {
       result.add(shared_ui.StandardButtonGeneric(
         actionText: "Polycentric address",
         actionDescription: servers[i],
-        left: shared_ui.makeSVG('cloud_upload.svg', 'Server'),
+        left: shared_ui.makeSVG(context, 'cloud_upload.svg', 'Server'),
         onPressed: () async {},
         onDelete: () async {
           await deleteServerDialog(context, state, identity, servers[i]);
@@ -89,7 +89,7 @@ class _AdvancedPageState extends State<AdvancedPage> {
       result.add(shared_ui.StandardButtonGeneric(
         actionText: "Authority",
         actionDescription: authorities[i],
-        left: shared_ui.makeSVG('cloud_upload.svg', 'Server'),
+        left: shared_ui.makeSVG(context, 'cloud_upload.svg', 'Server'),
         onPressed: () async {},
         onDelete: () async {
           await deleteAuthorityDialog(context, state, identity, authorities[i]);
@@ -418,7 +418,7 @@ class _AdvancedPageState extends State<AdvancedPage> {
         shared_ui.StandardButtonGeneric(
           actionText: 'Delete account',
           actionDescription: 'Permanently delete account from this device',
-          left: shared_ui.makeSVG('delete.svg', 'Delete'),
+          left: shared_ui.makeSVG(context, 'delete.svg', 'Delete'),
           onPressed: () async {
             await deleteAccountDialog(context, state, identity);
           },
@@ -426,7 +426,7 @@ class _AdvancedPageState extends State<AdvancedPage> {
         shared_ui.StandardButtonGeneric(
           actionText: 'Backup',
           actionDescription: 'Make a backup of your identity',
-          left: shared_ui.makeSVG('save.svg', 'Backup'),
+          left: shared_ui.makeSVG(context, 'save.svg', 'Backup'),
           onPressed: () async {
             Navigator.push(context,
                 MaterialPageRoute<BackupPage>(builder: (context) {
@@ -437,7 +437,7 @@ class _AdvancedPageState extends State<AdvancedPage> {
         shared_ui.StandardButtonGeneric(
           actionText: 'Open GitLab',
           actionDescription: 'Load the source for this version of the app',
-          left: shared_ui.makeSVG('open_browser.svg', 'Open'),
+          left: shared_ui.makeSVG(context, 'open_browser.svg', 'Open'),
           onPressed: () async {
             await handleOpenGitLab();
           },
@@ -459,7 +459,7 @@ class _AdvancedPageState extends State<AdvancedPage> {
         shared_ui.StandardButtonGeneric(
           actionText: 'Add server',
           actionDescription: 'Publish your data to another server',
-          left: shared_ui.makeSVG('add_circle.svg', 'Add server'),
+          left: shared_ui.makeSVG(context, 'add_circle.svg', 'Add server'),
           onPressed: () async {
             await addServerDialog(context, state, identity.processSecret);
           },
@@ -481,7 +481,7 @@ class _AdvancedPageState extends State<AdvancedPage> {
         shared_ui.StandardButtonGeneric(
           actionText: 'Add authority',
           actionDescription: 'Use another authority for verifications',
-          left: shared_ui.makeSVG('add_circle.svg', 'Add server'),
+          left: shared_ui.makeSVG(context, 'add_circle.svg', 'Add server'),
           onPressed: () async {
             await addAuthorityDialog(context, state, identity.processSecret);
           },

@@ -170,7 +170,7 @@ class _VouchPageState extends State<VouchPage> {
         shared_ui.StandardButtonGeneric(
             actionText: 'Vouch',
             actionDescription: 'Vouch for this claim',
-            left: shared_ui.makeSVG('content_copy.svg', 'copy'),
+            left: shared_ui.makeSVG(context, 'content_copy.svg', 'copy'),
             onPressed: () async {
               await state.db.transaction((transaction) async {
                 await main.makeVouch(

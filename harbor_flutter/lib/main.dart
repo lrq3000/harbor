@@ -628,6 +628,44 @@ Future<String> loadLatestPromotion(
   }
 }
 
+Future<List<String>> loadLatestMembershipUrls(
+  final sqflite.Transaction transaction,
+  final protocol.PublicKey system,
+) async {
+  final signedEvent = await queries.loadLatestCRDTByContentType(
+    transaction,
+    system,
+    models.ContentType.contentTypeMembershipUrls,
+  );
+
+  if (signedEvent == null) {
+    return List.empty();
+  }
+  
+  final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
+  final decodedList = jsonDecode(utf8.decode(event.lwwElement.value)) as List<dynamic>;
+  return decodedList.map((item) => item as String).toList();
+}
+
+Future<List<String>> loadLatestDonationDestinations(
+  final sqflite.Transaction transaction,
+  final protocol.PublicKey system,
+) async {
+  final signedEvent = await queries.loadLatestCRDTByContentType(
+    transaction,
+    system,
+    models.ContentType.contentTypeDonationDestinations,
+  );
+
+  if (signedEvent == null) {
+    return List.empty();
+  }
+  
+  final protocol.Event event = protocol.Event.fromBuffer(signedEvent.event);
+  final decodedList = jsonDecode(utf8.decode(event.lwwElement.value)) as List<dynamic>;
+  return decodedList.map((item) => item as String).toList();
+}
+
 Future<Image?> loadImage(
   final sqflite.Transaction transaction,
   final String mime,
@@ -950,6 +988,32 @@ Future<void> setPromotion(
   );
 }
 
+Future<void> setMembershipUrls(
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final List<String> membershipUrls,
+) async {
+  await setCRDT(
+    transaction,
+    processInfo,
+    models.ContentType.contentTypeMembershipUrls,
+    Uint8List.fromList(utf8.encode(jsonEncode(membershipUrls))),
+  );
+}
+
+Future<void> setDonationDestinations(
+  final sqflite.Transaction transaction,
+  final ProcessSecret processInfo,
+  final List<String> donationDestinations,
+) async {
+  await setCRDT(
+    transaction,
+    processInfo,
+    models.ContentType.contentTypeDonationDestinations,
+    Uint8List.fromList(utf8.encode(jsonEncode(donationDestinations))),
+  );
+}
+
 Future<void> makeClaim(
   final sqflite.Transaction transaction,
   final ProcessSecret processInfo,
@@ -1118,9 +1182,11 @@ class ProcessInfo {
   final String store;
   final String storeData;
   final List<String> servers;
+  final List<String> membershipUrls;
+  final List<String> donationDestinations;
 
   ProcessInfo(this.processSecret, this.system, this.username, this.claims,
-      this.avatar, this.promotion, this.promotionBanner, this.description, this.store, this.storeData, this.servers);
+      this.avatar, this.promotion, this.promotionBanner, this.description, this.store, this.storeData, this.servers, this.membershipUrls, this.donationDestinations);
 }
 
 class PolycentricModel extends ChangeNotifier {
@@ -1175,12 +1241,22 @@ class PolycentricModel extends ChangeNotifier {
           system,
         );
 
+        final membershipUrls = await loadLatestMembershipUrls(
+          transaction,
+          system,
+        );
+
+        final donationDestinations = await loadLatestDonationDestinations(
+          transaction,
+          system,
+        );
+
         final servers = await loadServerList(transaction, system);
         final claims = await loadClaims(transaction, system);
 
         this.identities.add(
               ProcessInfo(identity, system, username, claims, avatar, promotion, promotionBanner,
-                  description, store, storeData, servers),
+                  description, store, storeData, servers, membershipUrls, donationDestinations),
             );
       });
 

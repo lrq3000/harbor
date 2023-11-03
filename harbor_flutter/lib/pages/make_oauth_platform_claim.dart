@@ -148,7 +148,7 @@ class _MakeOAuthPlatformClaimPageState
       ),
       children: [
         const SizedBox(height: 100),
-        Center(child: shared_ui.claimTypeToVisual(widget.claimType)),
+        Center(child: shared_ui.claimTypeToVisual(context, widget.claimType)),
         const SizedBox(height: 120),
         if (screenState == 0) ...[
           if (callbackUrl != null) ...[
